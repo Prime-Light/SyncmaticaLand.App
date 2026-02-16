@@ -37,12 +37,14 @@ export default async function RootLayout({ children, params }: Readonly<Props>) 
     }
 
     return (
-        <html lang="en" className={figtree.variable} suppressHydrationWarning>
+        <html lang={locale} className={figtree.variable} suppressHydrationWarning>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    <Navbar />
-                    <NextIntlClientProvider>{children}</NextIntlClientProvider>
-                </ThemeProvider>
+                <NextIntlClientProvider>
+                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                        <Navbar />
+                        {children}
+                    </ThemeProvider>
+                </NextIntlClientProvider>
             </body>
         </html>
     );

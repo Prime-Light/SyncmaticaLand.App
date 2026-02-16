@@ -1,5 +1,10 @@
 {
-    "HomePage": {
-        "title": "你好世界！"
+    "Navbar": {
+        "home": "首页",
+        "schematics": "原理图",
+        "apiDocs": "API 文档",
+        "sponsor": "赞助",
+        "about": "关于我们",
+        "logoSubtitle": "投影共和国"
     }
 }
