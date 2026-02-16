@@ -1,0 +1,3 @@
+files:
+    - source: /messages/zh-CN.json
+      translation: /messages/%locale%.json
