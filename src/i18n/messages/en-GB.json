@@ -1,0 +1,10 @@
+{
+    "Navbar": {
+        "home": "Home",
+        "schematics": "Schematics",
+        "apiDocs": "API Docs",
+        "sponsor": "Donate",
+        "about": "About Us",
+        "logoSubtitle": "投影共和国"
+    }
+}
