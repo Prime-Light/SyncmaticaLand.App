@@ -1,1 +1,0 @@
-export { TextType } from "./text-type";
