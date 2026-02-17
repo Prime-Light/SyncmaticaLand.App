@@ -1,10 +1,22 @@
 {
     "Navbar": {
-        "home": "首页",
-        "schematics": "原理图",
-        "apiDocs": "API 文档",
-        "sponsor": "赞助",
-        "about": "关于我们",
-        "logoSubtitle": "投影共和国"
+        "Home": "首页",
+        "Schematics": "原理图",
+        "ApiDocs": "API 文档",
+        "Sponsor": "赞助",
+        "About": "关于我们",
+        "LogoSubtitle": "投影共和国"
+    },
+    "ThemeToggle": {
+        "AriaLabel": "切换主题",
+        "Light": "亮色",
+        "Dark": "暗色",
+        "System": "跟随系统"
+    },
+    "Pages": {
+        "Index": {
+            "__url__": "/",
+            "WelcomePrefix": "欢迎来到"
+        }
     }
 }
