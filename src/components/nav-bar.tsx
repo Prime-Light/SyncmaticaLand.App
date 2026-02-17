@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 
 const navItems = [
-    { key: "home", href: "/", icon: Home },
-    { key: "schematics", href: "/schematics", icon: Box },
-    { key: "apiDocs", href: "/api-docs", icon: FileCode },
-    { key: "sponsor", href: "/sponsor", icon: Heart },
-    { key: "about", href: "/about", icon: Users },
+    { key: "Home", href: "/", icon: Home },
+    { key: "Schematics", href: "/schematics", icon: Box },
+    { key: "ApiDocs", href: "/apiDocs", icon: FileCode },
+    { key: "Sponsor", href: "/sponsor", icon: Heart },
+    { key: "About", href: "/about", icon: Users },
 ];
 
 export function Navbar() {
@@ -28,7 +28,7 @@ export function Navbar() {
                     <Stone className="h-6 w-6" />
                     <div className="hidden sm:flex flex-col leading-none">
                         <span className="font-bold text-sm tracking-tight">SyncmaticaLand</span>
-                        <span className="text-[10px] text-muted-foreground">{t("logoSubtitle")}</span>
+                        <span className="text-[10px] text-muted-foreground">{t("LogoSubtitle")}</span>
                     </div>
                 </Link>
 

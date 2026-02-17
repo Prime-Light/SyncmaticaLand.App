@@ -1,6 +1,31 @@
+// Components
 export { Navbar } from "./nav-bar";
 export { ThemeProvider } from "./theme-provider";
 export { ThemeToggle } from "./theme-toggle";
+export {
+    TypographyH1,
+    TypographyH2,
+    TypographyH3,
+    TypographyH4,
+    TypographyP,
+    TypographyBlockquote,
+    TypographyTable,
+    TypographyThead,
+    TypographyTbody,
+    TypographyTh,
+    TypographyTr,
+    TypographyTd,
+    TypographyList,
+    TypographyInlineCode,
+    TypographyLead,
+    TypographyLarge,
+    TypographySmall,
+    TypographyMuted,
+} from "./typography";
+export { Footer } from "./footer";
+
+
+// Components Lib
 export {
     AlertDialog,
     AlertDialogAction,
@@ -79,3 +104,4 @@ export {
     Separator,
     Textarea,
 } from "./ui";
+export { TextType } from "./vue-bits";
