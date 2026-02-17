@@ -1,0 +1,10 @@
+{
+    "Navbar": {
+        "home": "首頁",
+        "schematics": "原理圖",
+        "apiDocs": "API 文檔",
+        "sponsor": "捐獻",
+        "about": "關於我們",
+        "logoSubtitle": "投影共和國"
+    }
+}
