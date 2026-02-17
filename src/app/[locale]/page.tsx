@@ -56,7 +56,8 @@ export default function Index() {
                 <TypographyH1 className="-mr-6 lg:text-4xl xl:text-6xl">
                     <TextType
                         as="span"
-                        text={t("MainTitle")}
+                        className="whitespace-nowrap inline"
+                        text={[`${t("WelcomePrefix")} 投影共和国`, `${t("WelcomePrefix")} SyncmaticaLand`]}
                         typingSpeed={75}
                         deletingSpeed={50}
                         pauseDuration={1500}

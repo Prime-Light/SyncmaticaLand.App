@@ -16,7 +16,7 @@
     "Pages": {
         "Index": {
             "__url__": "/",
-            "MainTitle": "欢迎来到投影共和国"
+            "WelcomePrefix": "欢迎来到"
         }
     }
 }
