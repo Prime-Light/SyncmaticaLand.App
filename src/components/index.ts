@@ -23,6 +23,7 @@ export {
     TypographyMuted,
 } from "./typography";
 export { Footer } from "./footer";
+export { TextType } from "./text-type";
 
 
 // Components Lib
@@ -104,4 +105,3 @@ export {
     Separator,
     Textarea,
 } from "./ui";
-export { TextType } from "./vue-bits";
