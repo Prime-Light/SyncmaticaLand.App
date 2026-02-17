@@ -25,7 +25,6 @@ export {
 export { Footer } from "./footer";
 export { TextType } from "./text-type";
 
-
 // Components Lib
 export {
     AlertDialog,
