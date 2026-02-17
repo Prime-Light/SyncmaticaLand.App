@@ -4,29 +4,31 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Stone, Home, Box, FileCode, Heart, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 const navItems = [
-    { name: "首页", href: "/", icon: Home },
-    { name: "原理图", href: "/schematics", icon: Box },
-    { name: "API Docs", href: "/api-docs", icon: FileCode },
-    { name: "赞助", href: "/sponsor", icon: Heart },
-    { name: "关于我们", href: "/about", icon: Users },
+    { key: "home", href: "/", icon: Home },
+    { key: "schematics", href: "/schematics", icon: Box },
+    { key: "apiDocs", href: "/api-docs", icon: FileCode },
+    { key: "sponsor", href: "/sponsor", icon: Heart },
+    { key: "about", href: "/about", icon: Users },
 ];
 
 export function Navbar() {
     const pathname = usePathname();
+    const t = useTranslations("Navbar");
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-14 max-w-screen-2xl items-center">
                 {/* Logo */}
                 <Link href="/" className="mr-6 flex items-center space-x-2">
                     <Stone className="h-6 w-6" />
                     <div className="hidden sm:flex flex-col leading-none">
                         <span className="font-bold text-sm tracking-tight">SyncmaticaLand</span>
-                        <span className="text-[10px] text-muted-foreground">投影共和国</span>
+                        <span className="text-[10px] text-muted-foreground">{t("logoSubtitle")}</span>
                     </div>
                 </Link>
 
@@ -36,6 +38,7 @@ export function Navbar() {
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.href;
+                        const name = t(item.key);
 
                         return (
                             <Button
@@ -49,9 +52,9 @@ export function Navbar() {
                                         : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                                 )}
                                 asChild>
-                                <Link href={item.href} title={item.name}>
+                                <Link href={item.href} title={name}>
                                     <Icon className="h-4 w-4 sm:mr-2" />
-                                    <span className="hidden sm:inline">{item.name}</span>
+                                    <span className="hidden sm:inline">{name}</span>
                                 </Link>
                             </Button>
                         );
@@ -60,7 +63,7 @@ export function Navbar() {
 
                 {/* 右侧 - Theme Toggle */}
                 <div className="flex items-center ml-2">
-                    <ModeToggle />
+                    <ThemeToggle />
                 </div>
             </div>
         </header>
