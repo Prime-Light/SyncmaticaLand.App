@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Stone, Home, Box, FileCode, Heart, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 
@@ -21,7 +21,7 @@ export function Navbar() {
     const t = useTranslations("Navbar");
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-14 max-w-screen-2xl items-center">
                 {/* Logo */}
                 <Link href="/" className="mr-6 flex items-center space-x-2">
@@ -63,7 +63,7 @@ export function Navbar() {
 
                 {/* 右侧 - Theme Toggle */}
                 <div className="flex items-center ml-2">
-                    <ModeToggle />
+                    <ThemeToggle />
                 </div>
             </div>
         </header>
