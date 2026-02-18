@@ -1,10 +1,22 @@
 {
     "Navbar": {
-        "home": "Home",
-        "schematics": "Schematics",
-        "apiDocs": "API Docs",
-        "sponsor": "Donate",
-        "about": "About Us",
-        "logoSubtitle": "投影共和国"
+        "Home": "Home",
+        "Schematics": "Schematics",
+        "ApiDocs": "API Docs",
+        "Sponsor": "Sponsor",
+        "About": "About Us",
+        "LogoSubtitle": "投影共和国"
+    },
+    "ThemeToggle": {
+        "AriaLabel": "Toggle Theme",
+        "Light": "Light",
+        "Dark": "Dark",
+        "System": "System"
+    },
+    "Pages": {
+        "Index": {
+            "__url__": "/",
+            "WelcomePrefix": "Welcome to"
+        }
     }
 }

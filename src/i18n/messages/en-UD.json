@@ -1,10 +1,22 @@
 {
     "Navbar": {
-        "home": "ǝɯoH",
-        "schematics": "sɔı̣ʇɐɯǝɥɔS",
-        "apiDocs": "sɔoꓷ IԀⱯ",
-        "sponsor": "ǝʇɐuoꓷ",
-        "about": "sꓵ ʇnoqⱯ",
-        "logoSubtitle": "投影共和国"
+        "Home": "ǝɯoH",
+        "Schematics": "sɔı̣ʇɐɯǝɥɔS",
+        "ApiDocs": "sɔoꓷ IԀⱯ",
+        "Sponsor": "ǝʇɐuoꓷ",
+        "About": "sꓵ ʇnoqⱯ",
+        "LogoSubtitle": "投影共和国"
+    },
+    "ThemeToggle": {
+        "AriaLabel": "ǝɯǝɥꓕ ǝןƃƃoꓕ",
+        "Light": "ʇɥƃı̣ꓶ",
+        "Dark": "ʞɹɐꓷ",
+        "System": "ɯǝʇsʎS"
+    },
+    "Pages": {
+        "Index": {
+            "__url__": "/",
+            "WelcomePrefix": "oʇ ǝɯoɔןǝM"
+        }
     }
 }

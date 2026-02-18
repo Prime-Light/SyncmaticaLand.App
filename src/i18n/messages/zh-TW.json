@@ -1,10 +1,22 @@
 {
     "Navbar": {
-        "home": "首頁",
-        "schematics": "原理圖",
-        "apiDocs": "API 文檔",
-        "sponsor": "捐獻",
-        "about": "關於我們",
-        "logoSubtitle": "投影共和國"
+        "Home": "首頁",
+        "Schematics": "原理圖",
+        "ApiDocs": "API 文件",
+        "Sponsor": "贊助",
+        "About": "關於我們",
+        "LogoSubtitle": "投影共和國"
+    },
+    "ThemeToggle": {
+        "AriaLabel": "切換主題",
+        "Light": "亮色",
+        "Dark": "暗色",
+        "System": "跟隨系統"
+    },
+    "Pages": {
+        "Index": {
+            "__url__": "/",
+            "WelcomePrefix": "歡迎來到"
+        }
     }
 }
