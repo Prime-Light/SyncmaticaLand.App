@@ -1,206 +1,184 @@
-import {
-    Badge,
-    Button,
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-    Footer,
-    Separator,
-    TextType,
-    TypographyH1,
-    TypographyLead,
-} from "@/components";
-import { ArrowRight, Box, Code2, Download, Eye, Heart, Info, Upload } from "lucide-react";
+"use client";
+
+import { Button, Footer } from "@/components";
+import gsap from "gsap";
+import { Compass, FileText, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
+import Typewriter from "typewriter-effect";
 
-const features = [
-    {
-        icon: Upload,
-        title: "上传原理图",
-        description: "轻松上传您的 Minecraft 投影原理图，与社区分享您的建筑作品。",
-    },
-    {
-        icon: Download,
-        title: "免费下载",
-        description: "浏览海量社区共享的原理图，一键下载到您的游戏中使用。",
-    },
-    {
-        icon: Eye,
-        title: "在线预览",
-        description: "无需下载即可在线预览原理图内容，快速找到您需要的建筑。",
-    },
-    {
-        icon: Code2,
-        title: "API 支持",
-        description: "提供完整的 RESTful API，方便开发者集成和自动化下载。",
-    },
-];
-
-const recentSchematics = [
-    { id: 1, name: "中世纪城堡", author: "BuilderPro", downloads: 1280, category: "建筑" },
-    { id: 2, name: "自动化农场", author: "RedstoneMaster", downloads: 856, category: "红石" },
-    { id: 3, name: "现代别墅", author: "ArchitectOne", downloads: 2341, category: "建筑" },
-    { id: 4, name: "刷怪塔", author: "SurvivalExpert", downloads: 3422, category: "生存" },
-];
+type Point2D = {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+};
 
 export default function Index() {
+    const heroRef = useRef<HTMLElement | null>(null);
+    const particleCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    useEffect(() => {
+        if (!heroRef.current) {
+            return;
+        }
+
+        const ctx = gsap.context(() => {
+            gsap.from("[data-hero-item]", {
+                opacity: 0,
+                y: 26,
+                duration: 0.9,
+                stagger: 0.1,
+                ease: "power3.out",
+            });
+        }, heroRef);
+
+        return () => {
+            ctx.revert();
+        };
+    }, []);
+
+    useEffect(() => {
+        const canvas = particleCanvasRef.current;
+        if (!canvas) {
+            return;
+        }
+
+        const context = canvas.getContext("2d");
+        if (!context) {
+            return;
+        }
+
+        let width = 0;
+        let height = 0;
+        let points: Point2D[] = [];
+        let frameId = 0;
+
+        const init = () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            const count = width < 768 ? 70 : 120;
+            points = Array.from({ length: count }, () => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4,
+            }));
+        };
+
+        const draw = () => {
+            context.clearRect(0, 0, width, height);
+            context.fillStyle = "rgba(59, 130, 246, 0.72)";
+            context.strokeStyle = "rgba(59, 130, 246, 0.22)";
+            context.lineWidth = 0.8;
+
+            for (let i = 0; i < points.length; i += 1) {
+                const point = points[i];
+                point.x += point.vx;
+                point.y += point.vy;
+
+                if (point.x < 0 || point.x > width) {
+                    point.vx *= -1;
+                }
+                if (point.y < 0 || point.y > height) {
+                    point.vy *= -1;
+                }
+
+                context.beginPath();
+                context.arc(point.x, point.y, 1.4, 0, Math.PI * 2);
+                context.fill();
+
+                for (let j = i + 1; j < points.length; j += 1) {
+                    const other = points[j];
+                    const dx = point.x - other.x;
+                    const dy = point.y - other.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 125) {
+                        context.globalAlpha = (1 - distance / 125) * 0.55;
+                        context.beginPath();
+                        context.moveTo(point.x, point.y);
+                        context.lineTo(other.x, other.y);
+                        context.stroke();
+                    }
+                }
+            }
+
+            context.globalAlpha = 1;
+            frameId = requestAnimationFrame(draw);
+        };
+
+        init();
+        draw();
+        window.addEventListener("resize", init);
+
+        return () => {
+            window.removeEventListener("resize", init);
+            if (frameId) {
+                cancelAnimationFrame(frameId);
+            }
+        };
+    }, []);
+
     const t = useTranslations("Pages.Index");
 
     return (
-        <main className="mx-auto">
-            {/* 首页标题 */}
-            <section className="flex flex-col items-center justify-center h-screen">
-                <TypographyH1 className="-mr-6 lg:text-4xl xl:text-6xl">
-                    <TextType
-                        as="span"
-                        className="whitespace-nowrap inline"
-                        text={[`${t("WelcomePrefix")} 投影共和国`, `${t("WelcomePrefix")} SyncmaticaLand`]}
-                        typingSpeed={75}
-                        deletingSpeed={50}
-                        pauseDuration={1500}
-                        showCursor={true}
-                        cursorCharacter="_"
-                    />
-                </TypographyH1>
-                <TypographyLead className="mt-8 lg:text-xl xl:text-3xl">Minecraft 原理图共享平台</TypographyLead>
-                <TypographyLead className="mt-8 text-center">
-                    在这里，分享和发现精彩的 Minecraft 建筑投影
-                    <br></br>无论是宏伟的城堡还是精巧的红石机械，这里都有你需要的灵感
-                </TypographyLead>
-                <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0 mt-12">
-                    <Button size="lg" asChild className="w-full sm:w-auto">
-                        <Link href="/schematics">
-                            <Box className="ml-1 mr-1.5 h-5 w-5 -translate-y-[0.5px]" />
-                            浏览原理图
-                        </Link>
-                    </Button>
-                    <Button size="lg" variant="secondary" asChild className="w-full sm:w-auto">
-                        <Link href="#details">
-                            <Info className="ml-1 mr-1.5 h-5 w-5 -translate-y-[0.5px]" />
-                            了解我们
-                        </Link>
-                    </Button>
-                    <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
-                        <Link href="/api-docs">
-                            <Code2 className="ml-1 mr-1.5 h-5 w-5" />
-                            API 文档
-                        </Link>
-                    </Button>
-                </div>
-            </section>
+        <main className="relative  overflow-hidden bg-background text-foreground">
+            <canvas ref={particleCanvasRef} className="pointer-events-none fixed inset-0 z-0 opacity-55 dark:opacity-75" />
+            <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_18%_24%,rgba(59,130,246,0.12),transparent_45%),radial-gradient(circle_at_78%_30%,rgba(14,165,233,0.08),transparent_46%),radial-gradient(circle_at_55%_84%,rgba(59,130,246,0.08),transparent_50%)] dark:bg-[radial-gradient(circle_at_18%_24%,rgba(37,99,235,0.16),transparent_42%),radial-gradient(circle_at_78%_30%,rgba(14,165,233,0.12),transparent_44%),radial-gradient(circle_at_55%_84%,rgba(59,130,246,0.1),transparent_48%)]" />
 
-            {/* 详细介绍 */}
-            <section className="container mx-auto flex flex-col items-center w-full min-h-[calc(100vh-72px)]">
-                {/* 平台特色 */}
-                <section className="py-12 sm:py-16 lg:py-24">
-                    <div className="container px-4 md:px-6">
-                        <div className="text-center mb-8 sm:mb-12">
-                            <h2 className="text-2xl font-bold tracking-tight sm:text-4xl">平台特色</h2>
-                            <p className="mt-3 sm:mt-4 text-sm sm:text-base text-muted-foreground">为 Minecraft 玩家打造的专业原理图共享平台</p>
-                        </div>
-                        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                            {features.map((feature, index) => {
-                                const Icon = feature.icon;
-                                return (
-                                    <Card key={index} className="relative overflow-hidden">
-                                        <CardHeader className="p-4 sm:p-6">
-                                            <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-primary/10 mb-3 sm:mb-4">
-                                                <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                                            </div>
-                                            <CardTitle className="text-base sm:text-lg">{feature.title}</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
-                                            <CardDescription className="text-sm sm:text-base">{feature.description}</CardDescription>
-                                        </CardContent>
-                                    </Card>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </section>
+            <section
+                ref={heroRef}
+                className="relative z-10 mx-auto flex h-[calc(100vh-56px-86px)] max-w-4xl items-center justify-center px-6 py-14 text-center md:px-10">
+                <div className="w-full space-y-6">
+                    <p
+                        data-hero-item
+                        className="inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs tracking-[0.12em] text-primary">
+                        {t("BetaAvailable")}
+                    </p>
 
-                <Separator />
+                    <h1 data-hero-item className="mx-auto max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+                        <Typewriter
+                            onInit={(typewriter) => {
+                                typewriter.typeString(t("Title1")).pauseFor(900).deleteAll(70).typeString(t("Title2")).pauseFor(1400).start();
+                            }}
+                            options={{
+                                autoStart: true,
+                                loop: true,
+                                delay: 110,
+                                deleteSpeed: 65,
+                                cursor: "|",
+                            }}
+                        />
+                    </h1>
 
-                {/* 最新原理图 */}
-                <section className="w-full py-12 sm:py-16 lg:py-24">
-                    <div className="container px-4 md:px-6 mx-auto">
-                        <div className="flex items-center justify-between mb-6 sm:mb-8">
-                            <div>
-                                <h2 className="text-2xl font-bold tracking-tight sm:text-4xl">最新原理图</h2>
-                                <p className="mt-1 sm:mt-2 text-sm sm:text-base text-muted-foreground">社区最新分享的优秀作品</p>
-                            </div>
-                            <Button variant="ghost" asChild size="sm" className="hidden sm:flex items-center">
-                                <Link href="/schematics">
-                                    查看全部
-                                    <ArrowRight className="ml-2 h-4 w-4" />
-                                </Link>
-                            </Button>
-                        </div>
-                        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                            {recentSchematics.map((schematic) => (
-                                <Card key={schematic.id} className="cursor-pointer transition-shadow hover:shadow-lg">
-                                    <CardHeader className="p-3 sm:p-6 pb-2 sm:pb-3">
-                                        <div className="aspect-video rounded-lg bg-muted flex items-center justify-center">
-                                            <Box className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground/50" />
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
-                                        <div className="flex items-start justify-between gap-2">
-                                            <div className="min-w-0 flex-1">
-                                                <h3 className="font-semibold text-sm sm:text-base truncate">{schematic.name}</h3>
-                                                <p className="text-xs sm:text-sm text-muted-foreground">by {schematic.author}</p>
-                                            </div>
-                                            <Badge variant="secondary" className="text-xs shrink-0">
-                                                {schematic.category}
-                                            </Badge>
-                                        </div>
-                                        <div className="mt-3 sm:mt-4 flex items-center text-xs sm:text-sm text-muted-foreground">
-                                            <Download className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                            {schematic.downloads.toLocaleString()} 次下载
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                        <div className="mt-4 sm:mt-6 text-center sm:hidden">
-                            <Button variant="ghost" asChild size="sm">
-                                <Link href="/schematics" className="flex items-center justify-center">
-                                    查看全部
-                                    <ArrowRight className="ml-2 h-4 w-4" />
-                                </Link>
-                            </Button>
-                        </div>
-                    </div>
-                </section>
-            </section>
+                    <p data-hero-item className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+                        {t("Description")}
+                    </p>
 
-            <Separator />
-
-            {/* CTA */}
-            <section className="w-full py-12 sm:py-16 lg:py-24 bg-muted/50">
-                <div className="px-4 md:px-6">
-                    <div className="flex flex-col items-center space-y-4 sm:space-y-6 text-center">
-                        <h2 className="text-xl lg:text-3xl font-bold tracking-tight sm:text-4xl">探索更多精彩的建筑作品</h2>
-                        <p className="mx-auto max-w-150 text-sm sm:text-base text-muted-foreground px-2 sm:px-0">
-                            加入 SyncmaticaLand 社区，发现全球 Minecraft 玩家的创意建筑。
-                        </p>
-                        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0">
-                            <Button size="lg" asChild className="w-full sm:w-auto">
-                                <Link href="/schematics">
-                                    <Box className="mr-2 h-5 w-5" />
-                                    浏览原理图
-                                </Link>
-                            </Button>
-                            <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
-                                <Link href="/sponsor">
-                                    <Heart className="mr-2 h-5 w-5" />
-                                    支持我们
-                                </Link>
-                            </Button>
-                        </div>
+                    <div data-hero-item className="flex flex-wrap items-center justify-center gap-3">
+                        <Button asChild size="lg">
+                            <Link href="/schematics" className="inline-flex items-center gap-2">
+                                <Compass className="h-4 w-4" />
+                                {t("BtnStartBrowse")}
+                            </Link>
+                        </Button>
+                        <Button asChild size="lg" variant="outline">
+                            <Link href="/api-docs" className="inline-flex items-center gap-2">
+                                <FileText className="h-4 w-4" />
+                                {t("BtnApiDocs")}
+                            </Link>
+                        </Button>
+                        <Button asChild size="lg" variant="outline">
+                            <Link href="/about" className="inline-flex items-center gap-2">
+                                <Users className="h-4 w-4" />
+                                {t("BtnAboutUs")}
+                            </Link>
+                        </Button>
                     </div>
                 </div>
             </section>

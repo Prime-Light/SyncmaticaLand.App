@@ -68,3 +68,23 @@ export {
 } from "./select";
 export { Separator } from "./separator";
 export { Textarea } from "./textarea";
+export {
+    TypographyH1,
+    TypographyH2,
+    TypographyH3,
+    TypographyH4,
+    TypographyP,
+    TypographyBlockquote,
+    TypographyTable,
+    TypographyThead,
+    TypographyTbody,
+    TypographyTh,
+    TypographyTr,
+    TypographyTd,
+    TypographyList,
+    TypographyInlineCode,
+    TypographyLead,
+    TypographyLarge,
+    TypographySmall,
+    TypographyMuted,
+} from "./typography";

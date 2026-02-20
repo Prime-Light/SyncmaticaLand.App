@@ -12,6 +12,7 @@
         "@base-ui/react": "^1.2.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
+        "gsap": "^3.14.2",
         "lucide-react": "^0.564.0",
         "next": "16.1.6",
         "next-intl": "^4.8.2",
@@ -33,13 +34,5 @@
         "eslint-config-next": "16.1.6",
         "tailwindcss": "^4",
         "typescript": "^5"
-    },
-    "ignoreScripts": [
-        "sharp",
-        "unrs-resolver"
-    ],
-    "trustedDependencies": [
-        "sharp",
-        "unrs-resolver"
-    ]
+    }
 }

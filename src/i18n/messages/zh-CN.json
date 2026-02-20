@@ -16,7 +16,13 @@
     "Pages": {
         "Index": {
             "__url__": "/",
-            "WelcomePrefix": "欢迎来到"
+            "BetaAvailable": "测试版现在可用",
+            "Title1": "投影共和国",
+            "Title2": "SyncmaticaLand",
+            "Description": "投影共和国是一个为 Minecraft 原理图设计的分享平台。你可以上传作品、发现灵感、下载复用，让搭建流程更高效。",
+            "BtnStartBrowse": "开始浏览",
+            "BtnApiDocs": "API 文档",
+            "BtnAboutUs": "关于我们"
         }
     }
 }
