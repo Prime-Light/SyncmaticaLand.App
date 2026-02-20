@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Stone, Home, Box, FileCode, Heart, Users } from "lucide-react";
+import { Stone, Home, Box, Book, LogIn, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components";
 import { Button } from "@/components/ui/button";
@@ -11,9 +11,12 @@ import { useTranslations } from "next-intl";
 const navItems = [
     { key: "Home", href: "/", icon: Home },
     { key: "Schematics", href: "/schematics", icon: Box },
-    { key: "ApiDocs", href: "/apiDocs", icon: FileCode },
-    { key: "Sponsor", href: "/sponsor", icon: Heart },
-    { key: "About", href: "/about", icon: Users },
+    { key: "Docs", href: "/docs", icon: Book },
+];
+
+const accountItems = [
+    { key: "Login", href: "/auth/login", icon: LogIn },
+    { key: "SignUp", href: "/auth/signup", icon: UserPlus },
 ];
 
 export function Navbar() {
@@ -37,7 +40,31 @@ export function Navbar() {
                     {/* 主要导航项 */}
                     {navItems.map((item) => {
                         const Icon = item.icon;
-                        const isActive = pathname === item.href;
+                        const isActive = item.href === "/" ? pathname.split("/").length === 2 : pathname.includes(item.href);
+                        const name = t(item.key);
+
+                        return (
+                            <Button
+                                key={item.href}
+                                variant="ghost"
+                                size="default"
+                                className={cn(
+                                    "inline-flex items-center justify-center rounded-md px-2 sm:px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+                                    isActive
+                                        ? "bg-accent text-accent-foreground"
+                                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                )}
+                                asChild>
+                                <Link href={item.href} title={name}>
+                                    <Icon className="h-4 w-4 sm:mr-2" />
+                                    <span className="hidden sm:inline">{name}</span>
+                                </Link>
+                            </Button>
+                        );
+                    })}
+                    {accountItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = item.href === "/" ? pathname.split("/").length === 2 : pathname.includes(item.href);
                         const name = t(item.key);
 
                         return (

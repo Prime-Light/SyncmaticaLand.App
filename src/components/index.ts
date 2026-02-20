@@ -99,5 +99,7 @@ export {
     TypographyMuted,
 } from "./ui";
 
-// Project Basic Components Lib
+// Project Components Lib
 export { Footer, Navbar, TextType, ThemeToggle } from "./basic";
+export { LoginForm, SignupForm } from "./auth";
+export { LogosGithubIcon, LogosDiscordIcon, LogosGoogleIcon, LogosMicrosoftIcon } from "./icons";

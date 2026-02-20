@@ -1,11 +1,11 @@
 {
     "Navbar": {
+        "LogoSubtitle": "投影共和国",
         "Home": "首页",
         "Schematics": "原理图",
-        "ApiDocs": "API 文档",
-        "Sponsor": "赞助",
-        "About": "关于我们",
-        "LogoSubtitle": "投影共和国"
+        "Docs": "文档",
+        "Login": "登录",
+        "SignUp": "注册"
     },
     "ThemeToggle": {
         "AriaLabel": "切换主题",
@@ -24,26 +24,47 @@
             "BtnApiDocs": "API 文档",
             "BtnAboutUs": "关于我们"
         },
-        "Login": {
-            "Title": "欢迎回来",
-            "Subtitle": "使用 Apple 或 Google 账号登录",
-            "LoginWithApple": "使用 Apple 登录",
-            "LoginWithGoogle": "使用 Google 登录",
-            "Or": "或",
-            "Email": "邮箱",
-            "Password": "密码",
-            "ForgotPassword": "忘记密码？",
-            "Login": "登录",
-            "NoAccount": "还没有账号？",
-            "SignUp": "注册",
-            "ByClickingContinue": "点击继续即表示你同意我们的",
-            "TermsOfService": "服务条款",
-            "And": "和",
-            "PrivacyPolicy": "隐私政策",
-            "MoreLoginMethods": "更多登录方式",
-            "LoginWithGithub": "使用 GitHub 登录",
-            "LoginWithMicrosoft": "使用 Microsoft 登录",
-            "LoginWithDiscord": "使用 Discord 登录"
+        "Auth": {
+            "Login": {
+                "__url__": "/auth/login",
+                "Title": "欢迎回来",
+                "Subtitle": "使用 Apple 或 Google 账号登录",
+                "LoginWithApple": "使用 Apple 登录",
+                "LoginWithGoogle": "使用 Google 登录",
+                "Or": "或",
+                "Email": "邮箱",
+                "Password": "密码",
+                "ForgotPassword": "忘记密码？",
+                "Login": "登录",
+                "NoAccount": "还没有账号？",
+                "SignUp": "注册",
+                "ByClickingContinue": "点击继续即表示你同意我们的",
+                "TermsOfService": "服务条款",
+                "And": "和",
+                "PrivacyPolicy": "隐私政策",
+                "MoreLoginMethods": "更多登录方式",
+                "LoginWithGithub": "使用 GitHub 登录",
+                "LoginWithMicrosoft": "使用 Microsoft 登录",
+                "LoginWithDiscord": "使用 Discord 登录"
+            },
+            "Signup": {
+                "__url__": "/auth/signup",
+                "Title": "创建账号",
+                "Subtitle": "使用 Apple 或 Google 账号注册",
+                "SignupWithApple": "使用 Apple 注册",
+                "SignupWithGoogle": "使用 Google 注册",
+                "Or": "或",
+                "Email": "邮箱",
+                "Password": "密码",
+                "ConfirmPassword": "确认密码",
+                "SignUp": "注册",
+                "AlreadyHaveAccount": "已经有账号？",
+                "Login": "登录",
+                "ByClickingContinue": "点击继续即表示你同意我们的",
+                "TermsOfService": "服务条款",
+                "And": "和",
+                "PrivacyPolicy": "隐私政策"
+            }
         }
     }
 }
