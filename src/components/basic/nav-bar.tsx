@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Stone, Home, Box, FileCode, Heart, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 
