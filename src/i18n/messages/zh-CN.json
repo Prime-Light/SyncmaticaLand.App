@@ -23,6 +23,23 @@
             "BtnStartBrowse": "开始浏览",
             "BtnApiDocs": "API 文档",
             "BtnAboutUs": "关于我们"
+        },
+        "Login": {
+            "Title": "欢迎回来",
+            "Subtitle": "使用 Apple 或 Google 账号登录",
+            "LoginWithApple": "使用 Apple 登录",
+            "LoginWithGoogle": "使用 Google 登录",
+            "OrContinueWith": "或使用邮箱继续",
+            "Email": "邮箱",
+            "Password": "密码",
+            "ForgotPassword": "忘记密码？",
+            "Login": "登录",
+            "NoAccount": "还没有账号？",
+            "SignUp": "注册",
+            "ByClickingContinue": "点击继续即表示你同意我们的",
+            "TermsOfService": "服务条款",
+            "And": "和",
+            "PrivacyPolicy": "隐私政策"
         }
     }
 }
