@@ -3,6 +3,7 @@
 import { Button, Footer } from "@/components";
 import gsap from "gsap";
 import { Compass, FileText, Users } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import Typewriter from "typewriter-effect";
@@ -123,33 +124,27 @@ export default function Index() {
         };
     }, []);
 
+    const t = useTranslations("Pages.Index");
+
     return (
-        <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
+        <main className="relative  overflow-hidden bg-background text-foreground">
             <canvas ref={particleCanvasRef} className="pointer-events-none fixed inset-0 z-0 opacity-55 dark:opacity-75" />
             <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_18%_24%,rgba(59,130,246,0.12),transparent_45%),radial-gradient(circle_at_78%_30%,rgba(14,165,233,0.08),transparent_46%),radial-gradient(circle_at_55%_84%,rgba(59,130,246,0.08),transparent_50%)] dark:bg-[radial-gradient(circle_at_18%_24%,rgba(37,99,235,0.16),transparent_42%),radial-gradient(circle_at_78%_30%,rgba(14,165,233,0.12),transparent_44%),radial-gradient(circle_at_55%_84%,rgba(59,130,246,0.1),transparent_48%)]" />
 
             <section
                 ref={heroRef}
-                className="relative z-10 mx-auto flex min-h-[calc(100vh-56px)] max-w-4xl items-center justify-center px-6 py-14 text-center md:px-10">
+                className="relative z-10 mx-auto flex h-[calc(100vh-56px-86px)] max-w-4xl items-center justify-center px-6 py-14 text-center md:px-10">
                 <div className="w-full space-y-6">
                     <p
                         data-hero-item
                         className="inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs tracking-[0.12em] text-primary">
-                        测试版现在可用
+                        {t("BetaAvailable")}
                     </p>
 
-                    <h1
-                        data-hero-item
-                        className="mx-auto max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+                    <h1 data-hero-item className="mx-auto max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
                         <Typewriter
                             onInit={(typewriter) => {
-                                typewriter
-                                    .typeString("投影共和国")
-                                    .pauseFor(900)
-                                    .deleteAll(70)
-                                    .typeString("SyncmaticaLand")
-                                    .pauseFor(1400)
-                                    .start();
+                                typewriter.typeString(t("Title1")).pauseFor(900).deleteAll(70).typeString(t("Title2")).pauseFor(1400).start();
                             }}
                             options={{
                                 autoStart: true,
@@ -162,26 +157,26 @@ export default function Index() {
                     </h1>
 
                     <p data-hero-item className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                        投影共和国是一个为 Minecraft 原理图设计的分享平台。你可以上传作品、发现灵感、下载复用，让搭建流程更高效。
+                        {t("Description")}
                     </p>
 
                     <div data-hero-item className="flex flex-wrap items-center justify-center gap-3">
                         <Button asChild size="lg">
                             <Link href="/schematics" className="inline-flex items-center gap-2">
                                 <Compass className="h-4 w-4" />
-                                开始浏览
+                                {t("BtnStartBrowse")}
                             </Link>
                         </Button>
                         <Button asChild size="lg" variant="outline">
                             <Link href="/api-docs" className="inline-flex items-center gap-2">
                                 <FileText className="h-4 w-4" />
-                                API 文档
+                                {t("BtnApiDocs")}
                             </Link>
                         </Button>
                         <Button asChild size="lg" variant="outline">
                             <Link href="/about" className="inline-flex items-center gap-2">
                                 <Users className="h-4 w-4" />
-                                关于我们
+                                {t("BtnAboutUs")}
                             </Link>
                         </Button>
                     </div>
@@ -192,4 +187,3 @@ export default function Index() {
         </main>
     );
 }
-

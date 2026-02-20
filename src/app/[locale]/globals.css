@@ -126,6 +126,12 @@
 }
 
 @layer components {
-    .container {
+    /* W.I.P. */
+}
+
+@layer utilities {
+    /* 全局禁止选中，但排除特定元素 */
+    *:not(.selectable):not(input):not(textarea):not(select) {
+        @apply select-none;
     }
 }

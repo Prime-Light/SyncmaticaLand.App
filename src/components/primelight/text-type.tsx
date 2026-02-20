@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-// @ts-ignore: no bundled types for `typewriter-effect`
 import Typewriter from "typewriter-effect";
 
 type Props = {

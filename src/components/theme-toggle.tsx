@@ -1,12 +1,11 @@
 "use client";
 
-import * as React from "react";
-import { MonitorCog, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useTranslations } from "next-intl";
 
 export function ThemeToggle() {
     const { setTheme, theme } = useTheme();
@@ -16,11 +15,8 @@ export function ThemeToggle() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
-                    <Sun className={`absolute h-[1.2rem] w-[1.2rem] opacity-0 transition-all ${theme === "light" ? "opacity-100" : ""}`} />
-                    <Moon className={`absolute h-[1.2rem] w-[1.2rem] opacity-0 transition-all ${theme === "dark" ? "opacity-100" : ""}`} />
-                    <MonitorCog
-                        className={`absolute h-[1.2rem] w-[1.2rem] opacity-0 transition-all ${theme === "system" ? "opacity-100" : ""}`}
-                    />
+                    <Sun className={`absolute h-[1.2rem] w-[1.2rem] opacity-100 transition-all dark:opacity-0`} />
+                    <Moon className={`absolute h-[1.2rem] w-[1.2rem] opacity-0 transition-all dark:opacity-100`} />
                     <span className="sr-only">{t("AriaLabel")}</span>
                 </Button>
             </DropdownMenuTrigger>
