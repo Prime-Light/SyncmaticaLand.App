@@ -29,7 +29,7 @@
             "Subtitle": "使用 Apple 或 Google 账号登录",
             "LoginWithApple": "使用 Apple 登录",
             "LoginWithGoogle": "使用 Google 登录",
-            "OrContinueWith": "或使用邮箱继续",
+            "Or": "或",
             "Email": "邮箱",
             "Password": "密码",
             "ForgotPassword": "忘记密码？",
@@ -39,7 +39,11 @@
             "ByClickingContinue": "点击继续即表示你同意我们的",
             "TermsOfService": "服务条款",
             "And": "和",
-            "PrivacyPolicy": "隐私政策"
+            "PrivacyPolicy": "隐私政策",
+            "MoreLoginMethods": "更多登录方式",
+            "LoginWithGithub": "使用 GitHub 登录",
+            "LoginWithMicrosoft": "使用 Microsoft 登录",
+            "LoginWithDiscord": "使用 Discord 登录"
         }
     }
 }

@@ -1,21 +1,11 @@
-"use client";
-
-import { LoginForm } from "@/components/auth/login-form";
-import { Stone } from "lucide-react";
+import { LoginForm } from "@/components/auth/login-form"
 
 export default function LoginPage() {
-    return (
-        <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-            <div className="flex w-full max-w-sm flex-col gap-6">
-                <a href="#" className="flex items-center gap-2 self-center font-medium">
-                    <div className="bg-black text-white-foreground flex size-6 items-center justify-center rounded-md">
-                        <Stone className="size-4" />
-                    </div>
-                    SyncmaticaLand
-                </a>
-                <LoginForm />
-            </div>
-        </div>
-    );
+  return (
+    <div className="bg-background fixed inset-0 flex flex-col items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <LoginForm />
+      </div>
+    </div>
+  )
 }
-
