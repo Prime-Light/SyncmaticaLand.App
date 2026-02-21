@@ -55,7 +55,8 @@ export async function resendEmailVerificationAction() {
         await account.createEmailVerification({ url: verificationUrl });
 
         return { success: true };
-    } catch {
+    } catch (err) {
+        console.debug('[ERR] Caught unexcepted error in "session.ts" while resending verify email: \n' + err);
         return { success: false };
     }
 }

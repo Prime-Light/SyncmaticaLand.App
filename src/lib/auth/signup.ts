@@ -30,7 +30,7 @@ export async function signupAction(_prevState: SignupActionState, formData: Form
             password,
         });
 
-        const session = await account.createEmailPasswordSession(email, password);
+        const session = await account.createEmailPasswordSession({ email, password });
         const cookieStore = await cookies();
         const sessionCookieName = getSessionCookieName(projectId);
 

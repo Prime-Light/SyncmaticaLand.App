@@ -22,11 +22,12 @@ export async function GET() {
                     name: user.name,
                     email: user.email,
                     emailVerification: user.emailVerification,
+                    labels: user.labels,
                 },
             },
             { status: 200 }
         );
     } catch {
-        return NextResponse.json({ user: null }, { status: 200 });
+        return NextResponse.json({ user: null }, { status: 500 });
     }
 }

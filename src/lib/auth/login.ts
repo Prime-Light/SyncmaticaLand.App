@@ -22,7 +22,7 @@ export async function loginAction(_prevState: LoginActionState, formData: FormDa
     try {
         const { account, projectId } = createAdminClient();
 
-        const session = await account.createEmailPasswordSession(email, password);
+        const session = await account.createEmailPasswordSession({ email, password });
         const cookieStore = await cookies();
         const sessionCookieName = getSessionCookieName(projectId);
 
@@ -38,7 +38,8 @@ export async function loginAction(_prevState: LoginActionState, formData: FormDa
             success: true,
             messageKey: "login_success",
         };
-    } catch {
+    } catch (err) {
+        console.error(err);
         return {
             success: false,
             messageKey: "login_failed",

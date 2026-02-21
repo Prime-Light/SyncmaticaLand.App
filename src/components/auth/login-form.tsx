@@ -57,7 +57,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                 {t("ForgotPassword")}
                             </Link>
                         </div>
-                        <Input id="password" name="password" type="password" required />
+                        <Input id="password" name="password" type="password" autoComplete="current-password" required />
                     </Field>
                     {messageText ? (
                         <Alert

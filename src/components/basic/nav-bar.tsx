@@ -3,14 +3,21 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Stone, Home, Box, Book, LogIn, UserPlus } from "lucide-react";
+import { Stone, Home, Box, Book, LogIn, UserPlus, Sparkles, ShieldUser, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutAction, resendEmailVerificationAction } from "@/lib/auth/session";
-import { ThemeToggle } from "@/components";
+import { Badge, ThemeToggle } from "@/components";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useTranslations } from "next-intl";
 
 const navItems = [
@@ -24,12 +31,13 @@ const accountItems = [
     { key: "SignUp", href: "/auth/signup", icon: UserPlus },
 ];
 
-type CurrentUser = {
+interface CurrentUser {
     id: string;
     name: string;
     email: string;
     emailVerification: boolean;
-};
+    labels: string[];
+}
 
 export function Navbar() {
     const pathname = usePathname();
@@ -126,74 +134,88 @@ export function Navbar() {
                             </Button>
                         );
                     })}
-                    {user
-                        ? (
-                                  <DropdownMenu>
-                                      <DropdownMenuTrigger asChild>
-                                      <Button variant="ghost" size="default" className={navButtonClass}>
-                                          <Avatar size="sm">
-                                              <AvatarFallback>{userInitials}</AvatarFallback>
-                                          </Avatar>
-                                          <span className="hidden sm:inline">{user.name || tx("User", "User")}</span>
-                                      </Button>
-                                      </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end" className="w-56">
-                                      <DropdownMenuLabel className="space-y-0.5">
-                                          <div className="truncate text-sm font-medium">{user.name || tx("User", "User")}</div>
-                                          <div className="text-muted-foreground truncate text-xs">{user.email}</div>
-                                      </DropdownMenuLabel>
-                                      {!user.emailVerification ? (
-                                          <>
-                                              <DropdownMenuSeparator />
-                                              <Alert>
-                                                  <AlertTitle>{tx("VerifyEmailTitle", "Please verify your email")}</AlertTitle>
-                                                  <AlertDescription>
-                                                      <div>{tx("VerifyEmailDesc", "Your account is active, but email is not verified.")}</div>
-                                                      <Button
-                                                          type="button"
-                                                          variant="link"
-                                                          className="h-auto p-0 text-xs"
-                                                          onClick={handleResendVerification}>
-                                                          {tx("ResendVerifyEmail", "Resend verification email")}
-                                                      </Button>
-                                                      {verificationNotice === "sent" ? (
-                                                          <div className="text-green-700">{tx("VerifyEmailSent", "Verification email sent.")}</div>
-                                                      ) : null}
-                                                      {verificationNotice === "failed" ? (
-                                                          <div className="text-destructive">
-                                                              {tx("VerifyEmailSendFailed", "Failed to send verification email.")}
-                                                          </div>
-                                                      ) : null}
-                                                  </AlertDescription>
-                                              </Alert>
-                                          </>
-                                      ) : null}
-                                      <DropdownMenuSeparator />
-                                      <DropdownMenuItem variant="destructive" onClick={handleLogout}>
-                                          {tx("Logout", "Logout")}
-                                      </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                              </DropdownMenu>
-                          )
-                        : accountItems.map((item) => {
-                              const Icon = item.icon;
-                              const isActive = item.href === "/" ? pathname.split("/").length === 2 : pathname.includes(item.href);
-                              const name = t(item.key);
+                    {user ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="default" className={navButtonClass}>
+                                    <Avatar size="sm">
+                                        <AvatarFallback>{userInitials}</AvatarFallback>
+                                    </Avatar>
+                                    <span className="hidden sm:inline">{user.name || tx("User", "User")}</span>
+                                    <Badge variant="destructive" className={cn(user.emailVerification && "hidden")}>
+                                        Unverified
+                                    </Badge>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuLabel className="space-y-0.5">
+                                    <div className="truncate text-sm font-medium flex gap-1">
+                                        {user.name || tx("User", "User")}
+                                        <Badge variant="orange" className={cn(!user.labels.includes("admin") && "hidden")}>
+                                            <ShieldUser />
+                                            Admin
+                                        </Badge>
+                                        <Badge variant="purple" className={cn(!user.labels.includes("premium") && "hidden")}>
+                                            <Sparkles />
+                                            Premium
+                                        </Badge>
+                                    </div>
+                                    <div className="text-muted-foreground truncate text-xs">{user.email}</div>
+                                </DropdownMenuLabel>
+                                {!user.emailVerification ? (
+                                    <>
+                                        <DropdownMenuSeparator />
+                                        <Alert>
+                                            <AlertTitle>{tx("VerifyEmailTitle", "Please verify your email")}</AlertTitle>
+                                            <AlertDescription>
+                                                <div>{tx("VerifyEmailDesc", "Your account is active, but email is not verified.")}</div>
+                                                <Button
+                                                    type="button"
+                                                    variant="link"
+                                                    className="h-auto p-0 text-xs"
+                                                    onClick={handleResendVerification}>
+                                                    {tx("ResendVerifyEmail", "Resend verification email")}
+                                                </Button>
+                                                {verificationNotice === "sent" ? (
+                                                    <div className="text-green-700">{tx("VerifyEmailSent", "Verification email sent.")}</div>
+                                                ) : null}
+                                                {verificationNotice === "failed" ? (
+                                                    <div className="text-destructive">
+                                                        {tx("VerifyEmailSendFailed", "Failed to send verification email.")}
+                                                    </div>
+                                                ) : null}
+                                            </AlertDescription>
+                                        </Alert>
+                                    </>
+                                ) : null}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+                                    <LogOut />
+                                    {tx("Logout", "Logout")}
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        accountItems.map((item) => {
+                            const Icon = item.icon;
+                            const isActive = item.href === "/" ? pathname.split("/").length === 2 : pathname.includes(item.href);
+                            const name = t(item.key);
 
-                              return (
-                                  <Button
-                                      key={item.href}
-                                      variant="ghost"
-                                      size="default"
-                                      className={cn(navButtonClass, isActive && "bg-accent text-accent-foreground")}
-                                      asChild>
-                                      <Link href={item.href} title={name}>
-                                          <Icon className="h-4 w-4 sm:mr-2" />
-                                          <span className="hidden sm:inline">{name}</span>
-                                      </Link>
-                                  </Button>
-                              );
-                          })}
+                            return (
+                                <Button
+                                    key={item.href}
+                                    variant="ghost"
+                                    size="default"
+                                    className={cn(navButtonClass, isActive && "bg-accent text-accent-foreground")}
+                                    asChild>
+                                    <Link href={item.href} title={name}>
+                                        <Icon className="h-4 w-4 sm:mr-2" />
+                                        <span className="hidden sm:inline">{name}</span>
+                                    </Link>
+                                </Button>
+                            );
+                        })
+                    )}
                 </nav>
 
                 {/* 右侧 - Theme Toggle */}
