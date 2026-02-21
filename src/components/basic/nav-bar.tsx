@@ -3,12 +3,11 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Stone, Home, Box, Book, LogIn, UserPlus, Sparkles, ShieldUser, LogOut } from "lucide-react";
+import { Stone, Home, Box, Book, LogIn, UserPlus, Sparkles, ShieldUser, LogOut, MailWarning, MailCheck, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutAction, resendEmailVerificationAction } from "@/lib/auth/session";
 import { Badge, ThemeToggle } from "@/components";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -42,9 +41,9 @@ interface CurrentUser {
 export function Navbar() {
     const pathname = usePathname();
     const t = useTranslations("Navbar");
-    const tx = (key: string, fallback: string) => (t.has(key) ? t(key) : fallback);
     const [user, setUser] = useState<CurrentUser | null>(null);
     const [verificationNotice, setVerificationNotice] = useState<"" | "sent" | "failed">("");
+    const [isResending, setIsResending] = useState(false);
     const [, startTransition] = useTransition();
     const navButtonClass =
         "inline-flex items-center justify-center rounded-md px-2 sm:px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-muted-foreground hover:bg-accent hover:text-accent-foreground";
@@ -89,9 +88,14 @@ export function Navbar() {
     };
 
     const handleResendVerification = () => {
+        setIsResending(true);
         startTransition(async () => {
-            const result = await resendEmailVerificationAction();
-            setVerificationNotice(result.success ? "sent" : "failed");
+            try {
+                const result = await resendEmailVerificationAction();
+                setVerificationNotice(result.success ? "sent" : "failed");
+            } finally {
+                setIsResending(false);
+            }
         });
     };
 
@@ -141,57 +145,84 @@ export function Navbar() {
                                     <Avatar size="sm">
                                         <AvatarFallback>{userInitials}</AvatarFallback>
                                     </Avatar>
-                                    <span className="hidden sm:inline">{user.name || tx("User", "User")}</span>
-                                    <Badge variant="destructive" className={cn(user.emailVerification && "hidden")}>
-                                        Unverified
-                                    </Badge>
+                                    <span className="hidden sm:inline">{user.name || t("User")}</span>
+                                    {!user.emailVerification && (
+                                        <Badge variant="destructive" className="gap-1">
+                                            <MailWarning className="h-3 w-3" />
+                                            {t("Unverified")}
+                                        </Badge>
+                                    )}
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56">
+                            <DropdownMenuContent align="end" className="w-64">
                                 <DropdownMenuLabel className="space-y-0.5">
                                     <div className="truncate text-sm font-medium flex gap-1">
-                                        {user.name || tx("User", "User")}
-                                        <Badge variant="orange" className={cn(!user.labels.includes("admin") && "hidden")}>
-                                            <ShieldUser />
-                                            Admin
-                                        </Badge>
-                                        <Badge variant="purple" className={cn(!user.labels.includes("premium") && "hidden")}>
-                                            <Sparkles />
-                                            Premium
-                                        </Badge>
+                                        {user.name || t("User")}
+                                        {user.labels.includes("admin") && (
+                                            <Badge variant="orange">
+                                                <ShieldUser className="h-3 w-3" />
+                                                {t("Admin")}
+                                            </Badge>
+                                        )}
+                                        {user.labels.includes("premium") && (
+                                            <Badge variant="purple">
+                                                <Sparkles className="h-3 w-3" />
+                                                {t("Premium")}
+                                            </Badge>
+                                        )}
                                     </div>
                                     <div className="text-muted-foreground truncate text-xs">{user.email}</div>
                                 </DropdownMenuLabel>
-                                {!user.emailVerification ? (
+                                {!user.emailVerification && (
                                     <>
                                         <DropdownMenuSeparator />
-                                        <Alert>
-                                            <AlertTitle>{tx("VerifyEmailTitle", "Please verify your email")}</AlertTitle>
-                                            <AlertDescription>
-                                                <div>{tx("VerifyEmailDesc", "Your account is active, but email is not verified.")}</div>
+                                        <div className="px-2 py-1.5">
+                                            <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-3">
+                                                {/* 标题行 */}
+                                                <div className="flex items-start gap-2">
+                                                    <MailWarning className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                                                            {t("VerifyEmail.Title")}
+                                                        </p>
+                                                        <p className="mt-1 text-xs text-amber-700/80 dark:text-amber-400/80 leading-relaxed">
+                                                            {t("VerifyEmail.Description")}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                {/* 重新发送按钮 */}
                                                 <Button
                                                     type="button"
-                                                    variant="link"
-                                                    className="h-auto p-0 text-xs"
-                                                    onClick={handleResendVerification}>
-                                                    {tx("ResendVerifyEmail", "Resend verification email")}
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="mt-3 w-full border-amber-500/50 bg-amber-500/5 text-amber-700 hover:bg-amber-500/20 dark:text-amber-400"
+                                                    onClick={handleResendVerification}
+                                                    disabled={isResending || verificationNotice === "sent"}>
+                                                    {isResending ? (
+                                                        <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                                                    ) : verificationNotice === "sent" ? (
+                                                        <MailCheck className="h-3.5 w-3.5 mr-1.5" />
+                                                    ) : (
+                                                        <MailWarning className="h-3.5 w-3.5 mr-1.5" />
+                                                    )}
+                                                    {verificationNotice === "sent"
+                                                        ? t("VerifyEmail.ResendSuccess")
+                                                        : t("VerifyEmail.ResendButton")}
                                                 </Button>
-                                                {verificationNotice === "sent" ? (
-                                                    <div className="text-green-700">{tx("VerifyEmailSent", "Verification email sent.")}</div>
-                                                ) : null}
-                                                {verificationNotice === "failed" ? (
-                                                    <div className="text-destructive">
-                                                        {tx("VerifyEmailSendFailed", "Failed to send verification email.")}
-                                                    </div>
-                                                ) : null}
-                                            </AlertDescription>
-                                        </Alert>
+
+                                                {/* 错误提示 */}
+                                                {verificationNotice === "failed" && (
+                                                    <p className="mt-2 text-center text-xs text-destructive">{t("VerifyEmail.ResendFailed")}</p>
+                                                )}
+                                            </div>
+                                        </div>
                                     </>
-                                ) : null}
+                                )}
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem variant="destructive" onClick={handleLogout}>
-                                    <LogOut />
-                                    {tx("Logout", "Logout")}
+                                    <LogOut className="h-4 w-4" />
+                                    {t("Logout")}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

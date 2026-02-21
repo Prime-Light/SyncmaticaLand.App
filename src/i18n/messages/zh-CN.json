@@ -5,7 +5,19 @@
         "Schematics": "原理图",
         "Docs": "文档",
         "Login": "登录",
-        "SignUp": "注册"
+        "SignUp": "注册",
+        "User": "用户",
+        "Unverified": "未验证",
+        "Admin": "管理员",
+        "Premium": "高级会员",
+        "Logout": "退出登录",
+        "VerifyEmail": {
+            "Title": "请验证您的邮箱",
+            "Description": "您的账户已激活，但邮箱尚未验证。",
+            "ResendButton": "重新发送验证邮件",
+            "ResendSuccess": "验证邮件已发送，请查收。",
+            "ResendFailed": "发送失败，请稍后重试。"
+        }
     },
     "ThemeToggle": {
         "AriaLabel": "切换主题",
