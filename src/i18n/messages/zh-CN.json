@@ -50,20 +50,26 @@
             "Signup": {
                 "__url__": "/auth/signup",
                 "Title": "创建账号",
-                "Subtitle": "使用 Apple 或 Google 账号注册",
-                "SignupWithApple": "使用 Apple 注册",
-                "SignupWithGoogle": "使用 Google 注册",
                 "Or": "或",
                 "Email": "邮箱",
                 "Password": "密码",
-                "ConfirmPassword": "确认密码",
                 "SignUp": "注册",
                 "AlreadyHaveAccount": "已经有账号？",
                 "Login": "登录",
                 "ByClickingContinue": "点击继续即表示你同意我们的",
                 "TermsOfService": "服务条款",
                 "And": "和",
-                "PrivacyPolicy": "隐私政策"
+                "PrivacyPolicy": "隐私政策",
+                "Name": "姓名",
+                "NamePlaceholder": "请输入姓名",
+                "Submitting": "注册中...",
+                "AlertSuccessTitle": "成功",
+                "AlertErrorTitle": "失败",
+                "Action": {
+                    "MissingFields": "请填写姓名、邮箱和密码。",
+                    "SignupSuccess": "注册成功，请登录。",
+                    "SignupFailed": "注册失败，请稍后重试。"
+                }
             }
         }
     }
