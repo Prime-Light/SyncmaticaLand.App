@@ -2,20 +2,33 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, Stone } from "lucide-react";
+import { loginAction } from "@/lib/auth/login";
+import { AlertCircle, CheckCircle2, ChevronDown, Stone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LogosMicrosoftIcon, LogosGoogleIcon, LogosGithubIcon, LogosDiscordIcon } from "@/components";
 import Link from "next/link";
+import { useActionState } from "react";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
     const t = useTranslations("Pages.Auth.Login");
+    type LoginActionState = Awaited<ReturnType<typeof loginAction>>;
+    const initialState: LoginActionState = { success: false, messageKey: "" };
+    const [state, formAction, isPending] = useActionState(loginAction, initialState);
+    const tx = (key: string, fallback: string) => (t.has(key) ? t(key) : fallback);
+    const messageTextByKey: Record<Exclude<LoginActionState["messageKey"], "">, string> = {
+        missing_fields: tx("Action.MissingFields", "Please fill in email and password."),
+        login_success: tx("Action.LoginSuccess", "Login successful."),
+        login_failed: tx("Action.LoginFailed", "Login failed. Please try again."),
+    };
+    const messageText = state.messageKey ? messageTextByKey[state.messageKey] : "";
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
-            <form>
+            <form action={formAction}>
                 <FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
                         <a href="#" className="flex flex-col items-center gap-2 font-medium">
@@ -30,7 +43,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     </div>
                     <Field>
                         <FieldLabel htmlFor="email">{t("Email")}</FieldLabel>
-                        <Input id="email" type="email" placeholder="me@example.com" required />
+                        <Input id="email" name="email" type="email" placeholder="me@example.com" required />
                     </Field>
                     <Field>
                         <div className="flex items-center justify-between">
@@ -39,10 +52,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                 {t("ForgotPassword")}
                             </Link>
                         </div>
-                        <Input id="password" type="password" required />
+                        <Input id="password" name="password" type="password" required />
                     </Field>
+                    {messageText ? (
+                        <Alert variant={state.success ? "default" : "destructive"} className={state.success ? "border-green-500/50 text-green-700" : ""}>
+                            {state.success ? <CheckCircle2 /> : <AlertCircle />}
+                            <AlertTitle>{state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}</AlertTitle>
+                            <AlertDescription className={state.success ? "text-green-700/90" : ""}>{messageText}</AlertDescription>
+                        </Alert>
+                    ) : null}
                     <Field>
-                        <Button type="submit">{t("Login")}</Button>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? tx("Submitting", "Logging in...") : t("Login")}
+                        </Button>
                     </Field>
                     <FieldSeparator>{t("Or")}</FieldSeparator>
                     <Field className="grid gap-4 sm:grid-cols-2">

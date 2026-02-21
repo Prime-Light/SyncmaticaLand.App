@@ -45,7 +45,15 @@
                 "MoreLoginMethods": "更多登录方式",
                 "LoginWithGithub": "使用 GitHub 登录",
                 "LoginWithMicrosoft": "使用 Microsoft 登录",
-                "LoginWithDiscord": "使用 Discord 登录"
+                "LoginWithDiscord": "使用 Discord 登录",
+                "Submitting": "登录中...",
+                "AlertSuccessTitle": "成功",
+                "AlertErrorTitle": "失败",
+                "Action": {
+                    "MissingFields": "请填写邮箱和密码。",
+                    "LoginSuccess": "登录成功。",
+                    "LoginFailed": "登录失败，请稍后重试。"
+                }
             },
             "Signup": {
                 "__url__": "/auth/signup",
