@@ -11,7 +11,7 @@ import { AlertCircle, CheckCircle2, ChevronDown, Stone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LogosMicrosoftIcon, LogosGoogleIcon, LogosGithubIcon, LogosDiscordIcon } from "@/components";
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
     const t = useTranslations("Pages.Auth.Login");
@@ -25,6 +25,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         login_failed: tx("Action.LoginFailed", "Login failed. Please try again."),
     };
     const messageText = state.messageKey ? messageTextByKey[state.messageKey] : "";
+
+    useEffect(() => {
+        if (!state.success) return;
+        window.location.assign("/");
+    }, [state.success]);
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -55,7 +60,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                         <Input id="password" name="password" type="password" required />
                     </Field>
                     {messageText ? (
-                        <Alert variant={state.success ? "default" : "destructive"} className={state.success ? "border-green-500/50 text-green-700" : ""}>
+                        <Alert
+                            variant={state.success ? "default" : "destructive"}
+                            className={state.success ? "border-green-500/50 text-green-700" : ""}>
                             {state.success ? <CheckCircle2 /> : <AlertCircle />}
                             <AlertTitle>{state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}</AlertTitle>
                             <AlertDescription className={state.success ? "text-green-700/90" : ""}>{messageText}</AlertDescription>

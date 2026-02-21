@@ -1,5 +1,7 @@
 "use server";
-import { Client, ID, Users } from "node-appwrite";
+import { ID } from "node-appwrite";
+import { cookies, headers } from "next/headers";
+import { createAdminClient, createSessionClient, getSessionCookieName } from "@/lib/appwrite/server";
 
 export type SignupActionState = {
     success: boolean;
@@ -18,27 +20,34 @@ export async function signupAction(_prevState: SignupActionState, formData: Form
         };
     }
 
-    const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;
-    const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT;
-    const apiKey = process.env.APPWRITE_API_KEY;
-
-    if (!endpoint || !projectId || !apiKey) {
-        return {
-            success: false,
-            messageKey: "signup_failed",
-        };
-    }
-
-    const client = new Client().setEndpoint(endpoint).setProject(projectId).setKey(apiKey);
-    const users = new Users(client);
-
     try {
+        const { users, account, projectId } = createAdminClient();
+
         await users.create({
             userId: ID.unique(),
             name,
             email,
             password,
         });
+
+        const session = await account.createEmailPasswordSession(email, password);
+        const cookieStore = await cookies();
+        const sessionCookieName = getSessionCookieName(projectId);
+
+        cookieStore.set(sessionCookieName, session.secret, {
+            path: "/",
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production",
+            expires: new Date(session.expire),
+        });
+
+        const headerStore = await headers();
+        const origin = headerStore.get("origin");
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? origin ?? "http://localhost:3000";
+        const verificationUrl = `${baseUrl}/api/auth/verify-email`;
+        const { account: sessionAccount } = createSessionClient(session.secret);
+        await sessionAccount.createEmailVerification({ url: verificationUrl });
 
         return {
             success: true,

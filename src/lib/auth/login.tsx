@@ -1,9 +1,7 @@
 "use server";
 
-import { Account, Client } from "node-appwrite";
 import { cookies } from "next/headers";
-
-const APPWRITE_SESSION_COOKIE = "appwrite-session";
+import { createAdminClient, getSessionCookieName } from "@/lib/appwrite/server";
 
 type LoginActionState = {
     success: boolean;
@@ -21,28 +19,19 @@ export async function loginAction(_prevState: LoginActionState, formData: FormDa
         };
     }
 
-    const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;
-    const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT;
-
-    if (!endpoint || !projectId) {
-        return {
-            success: false,
-            messageKey: "login_failed",
-        };
-    }
-
     try {
-        const client = new Client().setEndpoint(endpoint).setProject(projectId);
-        const account = new Account(client);
+        const { account, projectId } = createAdminClient();
 
         const session = await account.createEmailPasswordSession(email, password);
         const cookieStore = await cookies();
+        const sessionCookieName = getSessionCookieName(projectId);
 
-        cookieStore.set(APPWRITE_SESSION_COOKIE, session.secret, {
+        cookieStore.set(sessionCookieName, session.secret, {
             path: "/",
             httpOnly: true,
             sameSite: "strict",
             secure: process.env.NODE_ENV === "production",
+            expires: new Date(session.expire),
         });
 
         return {
