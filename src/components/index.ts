@@ -1,6 +1,5 @@
 // Components
 export { ThemeProvider } from "./theme-provider";
-export { ThemeToggle } from "./theme-toggle";
 
 // ShadCN Radix Components Lib
 export {
@@ -100,5 +99,7 @@ export {
     TypographyMuted,
 } from "./ui";
 
-// Prime Light Components Lib
-export { Footer, Navbar, TextType } from "./primelight";
+// Project Components Lib
+export { Footer, Navbar, TextType, ThemeToggle } from "./basic";
+export { LoginForm, SignupForm } from "./auth";
+export { LogosGithubIcon, LogosDiscordIcon, LogosGoogleIcon, LogosMicrosoftIcon } from "./icons";
