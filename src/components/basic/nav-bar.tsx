@@ -73,11 +73,7 @@ export function Navbar() {
     const userInitials = useMemo(() => {
         const seed = user?.name?.trim() || user?.email?.trim() || "";
         if (!seed) return "U";
-        const parts = seed.split(/\s+/).filter(Boolean);
-        if (parts.length >= 2) {
-            return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-        }
-        return seed.slice(0, 2).toUpperCase();
+        return seed[0].toUpperCase();
     }, [user]);
 
     const handleLogout = () => {

@@ -37,6 +37,7 @@
             "BtnAboutUs": "关于我们"
         },
         "Auth": {
+            "RedirectingIn": "{countdown} 秒后跳转",
             "Login": {
                 "__url__": "/auth/login",
                 "Title": "欢迎回来",
@@ -61,6 +62,7 @@
                 "Submitting": "登录中...",
                 "AlertSuccessTitle": "成功",
                 "AlertErrorTitle": "失败",
+                "RedirectingIn": "{countdown} 秒后跳转",
                 "Action": {
                     "MissingFields": "请填写邮箱和密码。",
                     "LoginSuccess": "登录成功。",
@@ -85,6 +87,7 @@
                 "Submitting": "注册中...",
                 "AlertSuccessTitle": "成功",
                 "AlertErrorTitle": "失败",
+                "RedirectingIn": "{countdown} 秒后跳转",
                 "Action": {
                     "MissingFields": "请填写姓名、邮箱和密码。",
                     "SignupSuccess": "注册成功，请登录。",

@@ -11,13 +11,14 @@ import { AlertCircle, CheckCircle2, ChevronDown, Stone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LogosMicrosoftIcon, LogosGoogleIcon, LogosGithubIcon, LogosDiscordIcon } from "@/components";
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
     const t = useTranslations("Pages.Auth.Login");
     type LoginActionState = Awaited<ReturnType<typeof loginAction>>;
     const initialState: LoginActionState = { success: false, messageKey: "" };
     const [state, formAction, isPending] = useActionState(loginAction, initialState);
+    const [countdown, setCountdown] = useState(3);
     const tx = (key: string, fallback: string) => (t.has(key) ? t(key) : fallback);
     const messageTextByKey: Record<Exclude<LoginActionState["messageKey"], "">, string> = {
         missing_fields: tx("Action.MissingFields", "Please fill in email and password."),
@@ -28,7 +29,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
     useEffect(() => {
         if (!state.success) return;
-        window.location.assign("/");
+        
+        const timer = setInterval(() => {
+            setCountdown((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    window.location.assign("/");
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
     }, [state.success]);
 
     return (
@@ -65,7 +78,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                             className={state.success ? "border-green-500/50 text-green-700" : ""}>
                             {state.success ? <CheckCircle2 /> : <AlertCircle />}
                             <AlertTitle>{state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}</AlertTitle>
-                            <AlertDescription className={state.success ? "text-green-700/90" : ""}>{messageText}</AlertDescription>
+                            <AlertDescription className={state.success ? "text-green-700/90" : ""}>
+                                {messageText}
+                                {state.success && (
+                                    <span className="ml-1">({t("RedirectingIn", { countdown })})</span>
+                                )}
+                            </AlertDescription>
                         </Alert>
                     ) : null}
                     <Field>

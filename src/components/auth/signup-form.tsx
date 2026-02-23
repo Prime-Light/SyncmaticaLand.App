@@ -9,14 +9,15 @@ import { signupAction, type SignupActionState } from "@/lib/auth/signup";
 import { AlertCircle, CheckCircle2, Stone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
     const t = useTranslations("Pages.Auth.Signup");
     const initialState: SignupActionState = { success: false, messageKey: "" };
     const [state, formAction, isPending] = useActionState(signupAction, initialState);
+    const [countdown, setCountdown] = useState(3);
     const tx = (key: string, fallback: string) => (t.has(key) ? t(key) : fallback);
-    const messageTextByKey: Record<Exclude<SignupActionState["messageKey"], "">, string> = {
+    const messageTextByKey: Record<Exclude<SignupActionState["messageKey"], "" >, string> = {
         missing_fields: tx("Action.MissingFields", "Please fill in name, email, and password."),
         signup_success: tx("Action.SignupSuccess", "Signup successful. Please log in."),
         signup_failed: tx("Action.SignupFailed", "Signup failed. Please try again."),
@@ -25,7 +26,19 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
 
     useEffect(() => {
         if (!state.success) return;
-        window.location.assign("/");
+
+        const timer = setInterval(() => {
+            setCountdown((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    window.location.assign("/");
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
     }, [state.success]);
 
     return (
@@ -61,7 +74,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                             className={state.success ? "border-green-500/50 text-green-700" : ""}>
                             {state.success ? <CheckCircle2 /> : <AlertCircle />}
                             <AlertTitle>{state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}</AlertTitle>
-                            <AlertDescription className={state.success ? "text-green-700/90" : ""}>{messageText}</AlertDescription>
+                            <AlertDescription className={state.success ? "text-green-700/90" : ""}>
+                                {messageText}
+                                {state.success && (
+                                    <span className="ml-1">({t("RedirectingIn", { countdown })})</span>
+                                )}
+                            </AlertDescription>
                         </Alert>
                     ) : null}
                     <Field>
