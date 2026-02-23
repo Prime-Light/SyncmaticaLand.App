@@ -11,18 +11,18 @@ This is a modern React-based web application built with Next.js 16, featuring in
 - **Framework**: [Next.js](https://nextjs.org/) 16.1.6 (App Router)
 - **Language**: TypeScript 5
 - **UI Library**: React 19.2.3
-- **Styling**: 
-  - Tailwind CSS 4
-  - CSS Variables for theming
-  - Dark/Light mode support via next-themes
-- **UI Components**: 
-  - shadcn/ui (radix-nova style)
-  - Base UI (@base-ui/react)
-  - Radix UI primitives
-  - Lucide React icons
+- **Styling**:
+    - Tailwind CSS 4
+    - CSS Variables for theming
+    - Dark/Light mode support via next-themes
+- **UI Components**:
+    - shadcn/ui (radix-nova style)
+    - Base UI (@base-ui/react)
+    - Radix UI primitives
+    - Lucide React icons
 - **Authentication**: [Appwrite](https://appwrite.io/) (self-hosted)
-  - appwrite (client SDK)
-  - node-appwrite (server SDK)
+    - appwrite (client SDK)
+    - node-appwrite (server SDK)
 - **Internationalization**: next-intl 4.8.2
 - **Animation**: GSAP 3.14.2, typewriter-effect
 - **Package Manager**: pnpm (with workspace support)
@@ -87,6 +87,7 @@ pnpm lint
 ## Code Style Guidelines
 
 ### Formatting (Prettier)
+
 - **Tab Width**: 4 spaces
 - **Print Width**: 144 characters
 - **Line Ending**: CRLF (`\r\n`)
@@ -95,12 +96,14 @@ pnpm lint
 - **Vue Indent**: Script and style blocks are indented
 
 ### TypeScript
+
 - Strict mode enabled
 - Target: ES2017
 - Module: ESNext with bundler resolution
 - Path alias: `@/*` maps to `./src/*`
 
 ### Component Conventions
+
 - Use functional components with TypeScript
 - Server Components by default (Next.js App Router)
 - Use `"use client"` directive for client components
@@ -109,6 +112,7 @@ pnpm lint
 - UI components follow shadcn/ui patterns with Radix UI primitives
 
 ### Styling Conventions
+
 - Use Tailwind CSS utility classes
 - Use `cn()` utility from `lib/utils.ts` for conditional class merging
 - CSS variables for theming (defined in `globals.css`)
@@ -125,6 +129,7 @@ The app uses Appwrite for authentication with the following features:
 - **User Roles**: Support for `admin` and `premium` labels
 
 ### Auth Flow
+
 1. User submits credentials via Server Actions (`lib/auth/login.ts`, `lib/auth/signup.ts`)
 2. Appwrite validates and creates a session
 3. Session secret stored in HTTP-only cookie
@@ -139,6 +144,7 @@ The app uses Appwrite for authentication with the following features:
 - **Crowdin Integration**: Configured for collaborative translation
 
 ### Adding Translations
+
 1. Add new keys to `src/i18n/messages/zh-CN.json` (source language)
 2. Use `useTranslations()` hook in components
 3. Access nested keys with dot notation (e.g., `t("Pages.Auth.Login.Title")`)
@@ -157,6 +163,7 @@ NEXT_PUBLIC_APP_URL              # Application base URL
 ## Testing
 
 Currently, there is no test suite configured. Consider adding:
+
 - Jest or Vitest for unit testing
 - Playwright or Cypress for E2E testing
 
