@@ -1,11 +1,23 @@
 {
     "Navbar": {
+        "LogoSubtitle": "投影共和国",
         "Home": "首页",
         "Schematics": "原理图",
-        "ApiDocs": "API 文档",
-        "Sponsor": "赞助",
-        "About": "关于我们",
-        "LogoSubtitle": "投影共和国"
+        "Docs": "文档",
+        "Login": "登录",
+        "SignUp": "注册",
+        "User": "用户",
+        "Unverified": "未验证",
+        "Admin": "管理员",
+        "Premium": "高级会员",
+        "Logout": "退出登录",
+        "VerifyEmail": {
+            "Title": "请验证您的邮箱",
+            "Description": "您的账户已激活，但邮箱尚未验证。",
+            "ResendButton": "重新发送验证邮件",
+            "ResendSuccess": "验证邮件已发送，请查收。",
+            "ResendFailed": "发送失败，请稍后重试。"
+        }
     },
     "ThemeToggle": {
         "AriaLabel": "切换主题",
@@ -23,6 +35,66 @@
             "BtnStartBrowse": "开始浏览",
             "BtnApiDocs": "API 文档",
             "BtnAboutUs": "关于我们"
+        },
+        "Auth": {
+            "RedirectingIn": "{countdown} 秒后跳转",
+            "Login": {
+                "__url__": "/auth/login",
+                "Title": "欢迎回来",
+                "Subtitle": "使用 Apple 或 Google 账号登录",
+                "LoginWithApple": "使用 Apple 登录",
+                "LoginWithGoogle": "使用 Google 登录",
+                "Or": "或",
+                "Email": "邮箱",
+                "Password": "密码",
+                "ForgotPassword": "忘记密码？",
+                "Login": "登录",
+                "NoAccount": "还没有账号？",
+                "SignUp": "注册",
+                "ByClickingContinue": "点击继续即表示你同意我们的",
+                "TermsOfService": "服务条款",
+                "And": "和",
+                "PrivacyPolicy": "隐私政策",
+                "MoreLoginMethods": "更多登录方式",
+                "LoginWithGithub": "使用 GitHub 登录",
+                "LoginWithMicrosoft": "使用 Microsoft 登录",
+                "LoginWithDiscord": "使用 Discord 登录",
+                "Submitting": "登录中...",
+                "AlertSuccessTitle": "成功",
+                "AlertErrorTitle": "失败",
+                "RedirectingIn": "{countdown} 秒后跳转",
+                "Action": {
+                    "MissingFields": "请填写邮箱和密码。",
+                    "LoginSuccess": "登录成功。",
+                    "LoginFailed": "登录失败，请稍后重试。"
+                }
+            },
+            "Signup": {
+                "__url__": "/auth/signup",
+                "Title": "创建账号",
+                "Or": "或",
+                "Email": "邮箱",
+                "Password": "密码",
+                "SignUp": "注册",
+                "AlreadyHaveAccount": "已经有账号？",
+                "Login": "登录",
+                "ByClickingContinue": "点击继续即表示你同意我们的",
+                "TermsOfService": "服务条款",
+                "And": "和",
+                "PrivacyPolicy": "隐私政策",
+                "Name": "姓名",
+                "NamePlaceholder": "请输入姓名",
+                "Submitting": "注册中...",
+                "AlertSuccessTitle": "成功",
+                "AlertErrorTitle": "失败",
+                "RedirectingIn": "{countdown} 秒后跳转",
+                "Action": {
+                    "MissingFields": "请填写姓名、邮箱和密码。",
+                    "SignupSuccess": "注册成功，请登录。",
+                    "SignupFailed": "注册失败，请稍后重试。"
+                }
+            }
         }
     }
 }
+
