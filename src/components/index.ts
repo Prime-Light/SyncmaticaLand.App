@@ -15,6 +15,9 @@ export {
     AlertDialogPortal,
     AlertDialogTitle,
     AlertDialogTrigger,
+    Alert,
+    AlertDescription,
+    AlertTitle,
     Badge,
     badgeVariants,
     Button,
@@ -59,6 +62,11 @@ export {
     DropdownMenuSub,
     DropdownMenuSubTrigger,
     DropdownMenuSubContent,
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+    FieldSeparator,
     InputGroup,
     InputGroupAddon,
     InputGroupButton,
@@ -101,11 +109,8 @@ export {
 } from "./@radix-ui";
 
 // Prime-Light Components Lib
-export { Footer, Navbar, ThemeToggle } from "./@prime-light/basic";
+export { Footer, Navbar, ThemeToggle, Captcha, Carousel } from "./@prime-light/basic";
 export { LoginForm, SignupForm } from "./@prime-light/auth";
 
 // React-Bits Components Lib
 export { default as TextType } from "./@react-bits/TextType";
-
-// Icons
-export { LogosGithubIcon, LogosDiscordIcon, LogosGoogleIcon, LogosMicrosoftIcon } from "./icons";
