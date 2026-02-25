@@ -7,8 +7,8 @@ import { Stone, Home, Box, Book, LogIn, UserPlus, Sparkles, ShieldUser, LogOut, 
 import { cn } from "@/lib/utils";
 import { logoutAction, resendEmailVerificationAction } from "@/lib/auth/session";
 import { Badge, ThemeToggle } from "@/components";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/@radix-ui/avatar";
+import { Button } from "@/components/@radix-ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,7 +16,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/@radix-ui/dropdown-menu";
 import { useTranslations } from "next-intl";
 
 const navItems = [

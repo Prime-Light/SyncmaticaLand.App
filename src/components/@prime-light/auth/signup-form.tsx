@@ -1,10 +1,10 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/@radix-ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/@radix-ui/alert";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/@radix-ui/field";
+import { Input } from "@/components/@radix-ui/input";
 import { signupAction, type SignupActionState } from "@/lib/auth/signup";
 import { AlertCircle, CheckCircle2, Stone } from "lucide-react";
 import { useTranslations } from "next-intl";

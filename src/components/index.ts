@@ -78,6 +78,7 @@ export {
     SelectTrigger,
     SelectValue,
     Separator,
+    Skeleton,
     Textarea,
     TypographyH1,
     TypographyH2,
@@ -97,9 +98,14 @@ export {
     TypographyLarge,
     TypographySmall,
     TypographyMuted,
-} from "./ui";
+} from "./@radix-ui";
 
-// Project Components Lib
-export { Footer, Navbar, TextType, ThemeToggle } from "./basic";
-export { LoginForm, SignupForm } from "./auth";
+// Prime-Light Components Lib
+export { Footer, Navbar, ThemeToggle } from "./@prime-light/basic";
+export { LoginForm, SignupForm } from "./@prime-light/auth";
+
+// React-Bits Components Lib
+export { default as TextType } from "./@react-bits/TextType";
+
+// Icons
 export { LogosGithubIcon, LogosDiscordIcon, LogosGoogleIcon, LogosMicrosoftIcon } from "./icons";
