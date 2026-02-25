@@ -11,6 +11,9 @@ importers:
       '@base-ui/react':
         specifier: ^1.2.0
         version: 1.2.0(@types/react@19.2.14)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@cap.js/widget':
+        specifier: ^0.1.34
+        version: 0.1.34
       appwrite:
         specifier: ^22.4.1
         version: 22.4.1
@@ -251,6 +254,9 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  '@cap.js/widget@0.1.34':
+    resolution: {integrity: sha512-5ciRDSldpzKk9hnzyTOpsznuJGA71t8RNlyvVf06phG/ywVBJQiqTNIESsdcdP3PJSuZvAbkJBloRNrUZM4lVw==}
 
   '@dotenvx/dotenvx@1.52.0':
     resolution: {integrity: sha512-CaQcc8JvtzQhUSm9877b6V4Tb7HCotkcyud9X2YwdqtQKwgljkMRwU96fVYKnzN3V0Hj74oP7Es+vZ0mS+Aa1w==}
@@ -4270,6 +4276,8 @@ snapshots:
       use-sync-external-store: 1.6.0(react@19.2.3)
     optionalDependencies:
       '@types/react': 19.2.14
+
+  '@cap.js/widget@0.1.34': {}
 
   '@dotenvx/dotenvx@1.52.0':
     dependencies:

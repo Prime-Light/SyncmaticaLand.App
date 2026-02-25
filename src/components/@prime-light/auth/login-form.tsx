@@ -1,15 +1,27 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/@radix-ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/@radix-ui/alert";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/@radix-ui/dropdown-menu";
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "@/components/@radix-ui/field";
-import { Input } from "@/components/@radix-ui/input";
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+    Button,
+    Captcha,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+    FieldSeparator,
+    Input,
+} from "@/components";
+import { LogosMicrosoftIcon, LogosGoogleIcon, LogosGithubIcon, LogosDiscordIcon } from "@/components/icons";
 import { loginAction } from "@/lib/auth/login";
 import { AlertCircle, CheckCircle2, ChevronDown, Stone } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { LogosMicrosoftIcon, LogosGoogleIcon, LogosGithubIcon, LogosDiscordIcon } from "@/components";
 import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
 
@@ -19,6 +31,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     const initialState: LoginActionState = { success: false, messageKey: "" };
     const [state, formAction, isPending] = useActionState(loginAction, initialState);
     const [countdown, setCountdown] = useState(1);
+    const [captchaSolved, setCaptchaSolved] = useState(false);
     const tx = (key: string, fallback: string) => (t.has(key) ? t(key) : fallback);
     const messageTextByKey: Record<Exclude<LoginActionState["messageKey"], "">, string> = {
         missing_fields: tx("Action.MissingFields", "Please fill in email and password."),
@@ -29,7 +42,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
     useEffect(() => {
         if (!state.success) return;
-        
+
         const timer = setInterval(() => {
             setCountdown((prev) => {
                 if (prev <= 1) {
@@ -72,6 +85,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                         </div>
                         <Input id="password" name="password" type="password" autoComplete="current-password" required />
                     </Field>
+                    <Field>
+                        <FieldLabel htmlFor="cap">{t("Captcha")}</FieldLabel>
+                        <Captcha onSolve={setCaptchaSolved} />
+                    </Field>
                     {messageText ? (
                         <Alert
                             variant={state.success ? "default" : "destructive"}
@@ -80,14 +97,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                             <AlertTitle>{state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}</AlertTitle>
                             <AlertDescription className={state.success ? "text-green-600/90" : ""}>
                                 {messageText}
-                                {state.success && (
-                                    <span className="ml-1">({t("RedirectingIn", { countdown })})</span>
-                                )}
+                                {state.success && <span className="ml-1">({t("RedirectingIn", { countdown })})</span>}
                             </AlertDescription>
                         </Alert>
                     ) : null}
                     <Field>
-                        <Button type="submit" disabled={isPending}>
+                        <Button type="submit" disabled={isPending || !captchaSolved}>
                             {isPending ? tx("Submitting", "Logging in...") : t("Login")}
                         </Button>
                     </Field>

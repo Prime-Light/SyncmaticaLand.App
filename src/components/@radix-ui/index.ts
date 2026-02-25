@@ -12,6 +12,7 @@ export {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "./alert-dialog";
+export { Alert, AlertDescription, AlertTitle } from "./alert";
 export { Badge, badgeVariants } from "./badge";
 export { Button, buttonVariants } from "./button";
 export { Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent } from "./card";
@@ -51,6 +52,7 @@ export {
     DropdownMenuSubTrigger,
     DropdownMenuSubContent,
 } from "./dropdown-menu";
+export { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "./field";
 export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupInput, InputGroupTextarea } from "./input-group";
 export { Input } from "./input";
 export { Label } from "./label";

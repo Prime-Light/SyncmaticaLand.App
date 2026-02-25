@@ -1,7 +1,6 @@
 "use client";
 
-import { Button, Skeleton, TextType, TypographyH1, TypographyH4, TypographyP } from "@/components";
-import { Carousel } from "@/components/@prime-light/basic/carousel";
+import { Button, Carousel, Skeleton, TextType, TypographyH1, TypographyH4, TypographyP } from "@/components";
 import { FileUp, PackageOpen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -62,9 +61,9 @@ export default function SchematicsIndex() {
             <section className="mx-auto max-w-2/3">
                 <TypographyH4 className="">最新资源</TypographyH4>
                 <Carousel interval={3000} className="mt-4 max-w-11/12">
-                    <Skeleton className="w-full h-full" />
-                    <Skeleton className="w-full h-full" />
-                    <Skeleton className="w-full h-full" />
+                    <Skeleton className="h-full w-full" />
+                    <Skeleton className="h-full w-full" />
+                    <Skeleton className="h-full w-full" />
                 </Carousel>
             </section>
             <br></br>

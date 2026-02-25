@@ -1,10 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/@radix-ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/@radix-ui/alert";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/@radix-ui/field";
-import { Input } from "@/components/@radix-ui/input";
+import { Alert, AlertDescription, AlertTitle, Button, Captcha, Field, FieldDescription, FieldGroup, FieldLabel, Input } from "@/components";
 import { signupAction, type SignupActionState } from "@/lib/auth/signup";
 import { AlertCircle, CheckCircle2, Stone } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -15,9 +12,10 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
     const t = useTranslations("Pages.Auth.Signup");
     const initialState: SignupActionState = { success: false, messageKey: "" };
     const [state, formAction, isPending] = useActionState(signupAction, initialState);
+    const [captchaSolved, setCaptchaSolved] = useState(false);
     const [countdown, setCountdown] = useState(3);
     const tx = (key: string, fallback: string) => (t.has(key) ? t(key) : fallback);
-    const messageTextByKey: Record<Exclude<SignupActionState["messageKey"], "" >, string> = {
+    const messageTextByKey: Record<Exclude<SignupActionState["messageKey"], "">, string> = {
         missing_fields: tx("Action.MissingFields", "Please fill in name, email, and password."),
         signup_success: tx("Action.SignupSuccess", "Signup successful. Please log in."),
         signup_failed: tx("Action.SignupFailed", "Signup failed. Please try again."),
@@ -68,6 +66,10 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                         <FieldLabel htmlFor="password">{t("Password")}</FieldLabel>
                         <Input id="password" name="password" type="password" required />
                     </Field>
+                    <Field>
+                        <FieldLabel htmlFor="captcha">{t("Captcha")}</FieldLabel>
+                        <Captcha onSolve={setCaptchaSolved} />
+                    </Field>
                     {messageText ? (
                         <Alert
                             variant={state.success ? "default" : "destructive"}
@@ -76,14 +78,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                             <AlertTitle>{state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}</AlertTitle>
                             <AlertDescription className={state.success ? "text-green-700/90" : ""}>
                                 {messageText}
-                                {state.success && (
-                                    <span className="ml-1">({t("RedirectingIn", { countdown })})</span>
-                                )}
+                                {state.success && <span className="ml-1">({t("RedirectingIn", { countdown })})</span>}
                             </AlertDescription>
                         </Alert>
                     ) : null}
                     <Field>
-                        <Button type="submit" disabled={isPending}>
+                        <Button type="submit" disabled={isPending || !captchaSolved}>
                             {isPending ? tx("Submitting", "Signing up...") : t("SignUp")}
                         </Button>
                     </Field>
@@ -96,4 +96,3 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
         </div>
     );
 }
-
