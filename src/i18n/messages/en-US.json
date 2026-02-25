@@ -25,6 +25,13 @@
         "Dark": "Dark",
         "System": "System"
     },
+    "Captcha": {
+        "Verifying": "验证中...",
+        "Initial": "点击以验证",
+        "Success": "验证成功",
+        "Failed": "验证失败",
+        "WasmDisabled": "启用 WebAssembly 以加速验证"
+    },
     "Pages": {
         "Index": {
             "__url__": "/",
@@ -47,6 +54,7 @@
                 "Or": "或",
                 "Email": "邮箱",
                 "Password": "密码",
+                "Captcha": "人机验证",
                 "ForgotPassword": "忘记密码？",
                 "Login": "登录",
                 "NoAccount": "还没有账号？",
@@ -75,6 +83,7 @@
                 "Or": "或",
                 "Email": "邮箱",
                 "Password": "密码",
+                "Captcha": "人机验证",
                 "SignUp": "注册",
                 "AlreadyHaveAccount": "已经有账号？",
                 "Login": "登录",
@@ -97,4 +106,3 @@
         }
     }
 }
-
