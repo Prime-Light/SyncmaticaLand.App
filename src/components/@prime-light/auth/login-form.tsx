@@ -1,11 +1,11 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/@radix-ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/@radix-ui/alert";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/@radix-ui/dropdown-menu";
+import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "@/components/@radix-ui/field";
+import { Input } from "@/components/@radix-ui/input";
 import { loginAction } from "@/lib/auth/login";
 import { AlertCircle, CheckCircle2, ChevronDown, Stone } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -18,7 +18,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     type LoginActionState = Awaited<ReturnType<typeof loginAction>>;
     const initialState: LoginActionState = { success: false, messageKey: "" };
     const [state, formAction, isPending] = useActionState(loginAction, initialState);
-    const [countdown, setCountdown] = useState(3);
+    const [countdown, setCountdown] = useState(1);
     const tx = (key: string, fallback: string) => (t.has(key) ? t(key) : fallback);
     const messageTextByKey: Record<Exclude<LoginActionState["messageKey"], "">, string> = {
         missing_fields: tx("Action.MissingFields", "Please fill in email and password."),
@@ -75,10 +75,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     {messageText ? (
                         <Alert
                             variant={state.success ? "default" : "destructive"}
-                            className={state.success ? "border-green-500/50 text-green-700" : ""}>
+                            className={state.success ? "border-green-500/50 text-green-600" : ""}>
                             {state.success ? <CheckCircle2 /> : <AlertCircle />}
                             <AlertTitle>{state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}</AlertTitle>
-                            <AlertDescription className={state.success ? "text-green-700/90" : ""}>
+                            <AlertDescription className={state.success ? "text-green-600/90" : ""}>
                                 {messageText}
                                 {state.success && (
                                     <span className="ml-1">({t("RedirectingIn", { countdown })})</span>
