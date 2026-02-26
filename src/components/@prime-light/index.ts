@@ -1,3 +1,5 @@
+// 此文件由 generate_index_ts.py 自动生成，请勿手动修改
+
 export { LoginForm } from "./auth/login-form";
 export { SignupForm } from "./auth/signup-form";
 
