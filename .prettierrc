@@ -5,5 +5,13 @@
     "printWidth": 144,
     "vueIndentScriptAndStyle": true,
     "trailingComma": "es5",
-    "plugins": ["prettier-plugin-tailwindcss"]
+    "plugins": ["prettier-plugin-tailwindcss"],
+    "overrides": [
+        {
+            "files": "**/index.ts",
+            "options": {
+                "printWidth": 2147483647
+            }
+        }
+    ]
 }

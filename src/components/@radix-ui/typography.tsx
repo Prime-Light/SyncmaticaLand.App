@@ -108,4 +108,4 @@ export const Typography = {
     Large: TypographyLarge,
     Small: TypographySmall,
     Muted: TypographyMuted,
-}
+};

@@ -75,7 +75,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                             variant={state.success ? "default" : "destructive"}
                             className={state.success ? "border-green-500/50 text-green-700" : ""}>
                             {state.success ? <CheckCircle2 /> : <AlertCircle />}
-                            <Radix.AlertTitle>{state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}</Radix.AlertTitle>
+                            <Radix.AlertTitle>
+                                {state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}
+                            </Radix.AlertTitle>
                             <Radix.AlertDescription className={state.success ? "text-green-700/90" : ""}>
                                 {messageText}
                                 {state.success && <span className="ml-1">({t("RedirectingIn", { countdown })})</span>}

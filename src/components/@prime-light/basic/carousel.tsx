@@ -122,7 +122,7 @@ export const Carousel: React.FC<CarouselProps> = ({ children, interval = 5000, c
     }, [slides.length, getSlideOffset]);
 
     return (
-        <div className={`relative mx-auto w-full mb-10 ${className}`}>
+        <div className={`relative mx-auto mb-10 w-full ${className}`}>
             {/* 轮播容器 */}
             <div ref={containerRef} className="no-scrollbar flex h-64 snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth rounded-lg">
                 {slides.map((slide, idx) => (
@@ -133,25 +133,18 @@ export const Carousel: React.FC<CarouselProps> = ({ children, interval = 5000, c
             </div>
 
             {/* 左右箭头 */}
-            <button
-                className="absolute top-1/2 -left-10 -translate-y-1/2 rounded-full p-2 transition-colors cursor-pointer"
-                onClick={prev}>
+            <button className="absolute top-1/2 -left-10 -translate-y-1/2 cursor-pointer rounded-full p-2 transition-colors" onClick={prev}>
                 <ChevronLeft />
             </button>
 
-            <button
-                className="absolute top-1/2 -right-10 -translate-y-1/2 rounded-full p-2 transition-colors cursor-pointer"
-                onClick={next}>
+            <button className="absolute top-1/2 -right-10 -translate-y-1/2 cursor-pointer rounded-full p-2 transition-colors" onClick={next}>
                 <ChevronRight />
             </button>
 
             {/* 底部进度条（可点击） */}
             <div className="absolute -bottom-5 left-1/2 flex -translate-x-1/2 gap-2 px-2">
                 {slides.map((_, idx) => (
-                    <div
-                        key={idx}
-                        onClick={() => scrollToIndex(idx)}
-                        className="bg-accent h-2 w-9 cursor-pointer overflow-hidden rounded-xs">
+                    <div key={idx} onClick={() => scrollToIndex(idx)} className="bg-accent h-2 w-9 cursor-pointer overflow-hidden rounded-xs">
                         {idx === current && (
                             <div
                                 className="bg-accent-foreground/70 h-full transition-all duration-100 ease-linear"
