@@ -75,6 +75,8 @@ export {
     InputGroupTextarea,
     Input,
     Label,
+    RadioGroup,
+    RadioGroupItem,
     Select,
     SelectContent,
     SelectGroup,
@@ -88,6 +90,7 @@ export {
     Separator,
     Skeleton,
     Textarea,
+    Typography,
     TypographyH1,
     TypographyH2,
     TypographyH3,
@@ -111,6 +114,7 @@ export {
 // Prime-Light Components Lib
 export { Footer, Navbar, ThemeToggle, Captcha, Carousel } from "./@prime-light/basic";
 export { LoginForm, SignupForm } from "./@prime-light/auth";
+export { SchematicFeed } from "./@prime-light/schematics";
 
 // React-Bits Components Lib
-export { default as TextType } from "./@react-bits/TextType";
+export { TextType, AnimatedList, AnimatedItem } from "./@react-bits";

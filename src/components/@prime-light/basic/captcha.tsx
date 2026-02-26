@@ -36,6 +36,7 @@ export function Captcha({ onSolve }: { onSolve: (solved: boolean) => void }) {
         <cap-widget
             ref={captchaRef}
             id="cap"
+            suppressHydrationWarning
             data-cap-api-endpoint="https://primelight-host.yuns-lab.tech:54813/2e988fc0fa"
             data-cap-i18n-verifying-label={t("Verifying")}
             data-cap-i18n-initial-state={t("Initial")}

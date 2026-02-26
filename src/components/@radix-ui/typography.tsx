@@ -88,3 +88,24 @@ export function TypographySmall({ children, className }: Props) {
 export function TypographyMuted({ children, className }: Props) {
     return <p className={`text-muted-foreground text-sm ${className}`}>{children}</p>;
 }
+
+export const Typography = {
+    H1: TypographyH1,
+    H2: TypographyH2,
+    H3: TypographyH3,
+    H4: TypographyH4,
+    P: TypographyP,
+    Blockquote: TypographyBlockquote,
+    Table: TypographyTable,
+    Thead: TypographyThead,
+    Tbody: TypographyTbody,
+    Th: TypographyTh,
+    Tr: TypographyTr,
+    Td: TypographyTd,
+    List: TypographyList,
+    InlineCode: TypographyInlineCode,
+    Lead: TypographyLead,
+    Large: TypographyLarge,
+    Small: TypographySmall,
+    Muted: TypographyMuted,
+}

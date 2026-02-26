@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Carousel, Skeleton, TextType, TypographyH1, TypographyH4, TypographyP } from "@/components";
+import { Button, Carousel, SchematicFeed, Skeleton, TextType, Typography } from "@/components";
 import { FileUp, PackageOpen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -37,17 +37,17 @@ export default function SchematicsIndex() {
             {HAS_EVENT && (
                 <section className="relative h-[calc(100vh*0.8)] object-cover">
                     <div className="absolute top-1/3 z-3 flex w-full -translate-x-2 -translate-y-1/4 flex-col items-center">
-                        <TypographyH1 className="atext-4xl translate-x-1 leading-tight font-bold text-red-600 text-shadow-[0_0_2px,0_0_6px,0_0_12px,0_0_24px] text-shadow-red-900 sm:text-5xl lg:text-6xl">
+                        <Typography.H1 className="atext-4xl translate-x-1 leading-tight font-bold text-red-600 text-shadow-[0_0_2px,0_0_6px,0_0_12px,0_0_24px] text-shadow-red-900 sm:text-5xl lg:text-6xl">
                             <TextType loop={false} cursorCharacter="" className="tracking-widest!" text={EVENT.title} />
-                        </TypographyH1>
-                        <TypographyP className="text-center text-base leading-relaxed sm:text-lg">
+                        </Typography.H1>
+                        <Typography.P className="text-center text-base leading-relaxed sm:text-lg">
                             {EVENT.description.map((item, index) => (
                                 <Fragment key={index}>
                                     {item}
                                     <br />
                                 </Fragment>
                             ))}
-                        </TypographyP>
+                        </Typography.P>
                         <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
                             {EVENT.buttons.map((button, index) => (
                                 <Fragment key={index}>{button}</Fragment>
@@ -58,19 +58,18 @@ export default function SchematicsIndex() {
                     <Image src="/assets/image/launching-banner.webp" layout="fill" style={{ objectFit: "cover" }} alt="Launching Banner" />
                 </section>
             )}
-            <section className="mx-auto max-w-2/3">
-                <TypographyH4 className="">最新资源</TypographyH4>
-                <Carousel interval={3000} className="mt-4 max-w-11/12">
+            <section className="mx-auto mb-12 max-w-3/4">
+                <Typography.H4 className="">最新资源</Typography.H4>
+                <Carousel interval={5000} className="mt-4 max-w-11/12">
                     <Skeleton className="h-full w-full" />
                     <Skeleton className="h-full w-full" />
                     <Skeleton className="h-full w-full" />
                 </Carousel>
+                <section className="h-[calc(100vh-112px)]">
+                    <Typography.H4 className="my-4">浏览全部</Typography.H4>
+                    <SchematicFeed />
+                </section>
             </section>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
         </main>
     );
 }

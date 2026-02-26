@@ -56,6 +56,7 @@ export { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from 
 export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupInput, InputGroupTextarea } from "./input-group";
 export { Input } from "./input";
 export { Label } from "./label";
+export { RadioGroup, RadioGroupItem } from "./radio-group";
 export {
     Select,
     SelectContent,
@@ -72,6 +73,7 @@ export { Separator } from "./separator";
 export { Skeleton } from "./skeleton";
 export { Textarea } from "./textarea";
 export {
+    Typography,
     TypographyH1,
     TypographyH2,
     TypographyH3,

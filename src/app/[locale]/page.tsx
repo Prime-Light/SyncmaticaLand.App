@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Footer, TextType, TypographyH1, TypographyP } from "@/components";
+import { Button, Footer, TextType, Typography } from "@/components";
 import gsap from "gsap";
 import { Compass, FileText, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -134,13 +134,13 @@ export default function Index() {
                 ref={heroRef}
                 className="relative z-10 mx-auto flex h-[calc(100vh-56px-86px)] max-w-4xl items-center justify-center px-6 py-14 text-center md:px-10">
                 <div className="w-full space-y-6">
-                    <TypographyP
+                    <Typography.P
                         data-hero-item
                         className="border-primary/30 bg-primary/10 text-primary inline-flex rounded-full border px-3 text-xs tracking-[0.12em]">
                         {t("BetaAvailable")}
-                    </TypographyP>
+                    </Typography.P>
 
-                    <TypographyH1
+                    <Typography.H1
                         data-hero-item
                         className="mx-auto max-w-3xl text-4xl leading-tight font-bold tracking-tight sm:text-5xl lg:text-6xl">
                         <TextType
@@ -150,11 +150,11 @@ export default function Index() {
                             pauseDuration={1400}
                             deletingSpeed={65}
                             cursorCharacter="|"></TextType>
-                    </TypographyH1>
+                    </Typography.H1>
 
-                    <TypographyP className="text-muted-foreground mx-auto max-w-2xl text-base leading-relaxed sm:text-lg">
+                    <Typography.P className="text-muted-foreground mx-auto max-w-2xl text-base leading-relaxed sm:text-lg">
                         {t("Description")}
-                    </TypographyP>
+                    </Typography.P>
 
                     <div className="flex flex-wrap items-center justify-center gap-3">
                         <Button asChild size="lg">
