@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Stone, Home, Box, Book, LogIn, UserPlus, Sparkles, ShieldUser, LogOut, MailWarning, MailCheck, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutAction, resendEmailVerificationAction } from "@/lib/auth/session";
-import { Badge, ThemeToggle } from "@/components";
+import { Radix, PrimeLight } from "@/components";
 import { Avatar, AvatarFallback } from "@/components/@radix-ui/avatar";
 import { Button } from "@/components/@radix-ui/button";
 import {
@@ -143,10 +143,10 @@ export function Navbar() {
                                     </Avatar>
                                     <span className="hidden sm:inline">{user.name || t("User")}</span>
                                     {!user.emailVerification && (
-                                        <Badge variant="destructive" className="gap-1">
+                                        <Radix.Badge variant="destructive" className="gap-1">
                                             <MailWarning className="h-3 w-3" />
                                             {t("Unverified")}
-                                        </Badge>
+                                        </Radix.Badge>
                                     )}
                                 </Button>
                             </DropdownMenuTrigger>
@@ -155,16 +155,16 @@ export function Navbar() {
                                     <div className="truncate text-sm font-medium flex gap-1">
                                         {user.name || t("User")}
                                         {user.labels.includes("admin") && (
-                                            <Badge variant="orange">
+                                            <Radix.Badge variant="orange">
                                                 <ShieldUser className="h-3 w-3" />
                                                 {t("Admin")}
-                                            </Badge>
+                                            </Radix.Badge>
                                         )}
                                         {user.labels.includes("premium") && (
-                                            <Badge variant="purple">
+                                            <Radix.Badge variant="purple">
                                                 <Sparkles className="h-3 w-3" />
                                                 {t("Premium")}
-                                            </Badge>
+                                            </Radix.Badge>
                                         )}
                                     </div>
                                     <div className="text-muted-foreground truncate text-xs">{user.email}</div>
@@ -247,7 +247,7 @@ export function Navbar() {
 
                 {/* 右侧 - Theme Toggle */}
                 <div className="flex items-center ml-2">
-                    <ThemeToggle />
+                    <PrimeLight.ThemeToggle />
                 </div>
             </div>
         </header>

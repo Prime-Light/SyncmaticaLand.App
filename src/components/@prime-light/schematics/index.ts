@@ -1,1 +1,0 @@
-export { SchematicFeed } from "./feed";

@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, RadioGroup, RadioGroupItem } from "@/components";
+import { Radix } from "@/components";
 import { cn } from "@/lib/utils";
 import { LayoutGrid, List } from "lucide-react";
 import { useState } from "react";
@@ -15,43 +15,43 @@ export function SchematicFeed({ className, ...props }: SchematicFeedProps) {
 
     return (
         <div className={cn("h-full w-full", className)} {...props}>
-            <Card size="sm">
+            <Radix.Card size="sm">
                 <section className="w-ful flex h-full">
                     <div className="flex h-full items-center px-4">
                         <span className="text-foreground translate-y-px text-sm font-medium">视图</span>
-                        <RadioGroup className="ml-4 flex w-32" value={view}>
-                            <RadioGroupItem variant="button" value="list" onClick={() => setView("list")}>
+                        <Radix.RadioGroup className="ml-4 flex w-32" value={view}>
+                            <Radix.RadioGroupItem variant="button" value="list" onClick={() => setView("list")}>
                                 <List className="h-4 w-4" />
-                            </RadioGroupItem>
-                            <RadioGroupItem variant="button" value="grid" onClick={() => setView("grid")}>
+                            </Radix.RadioGroupItem>
+                            <Radix.RadioGroupItem variant="button" value="grid" onClick={() => setView("grid")}>
                                 <LayoutGrid className="h-4 w-4" />
-                            </RadioGroupItem>
-                        </RadioGroup>
+                            </Radix.RadioGroupItem>
+                        </Radix.RadioGroup>
                     </div>
                     <div className="mr-4 ml-auto">
-                        <RadioGroup className="flex w-full" value={sort}>
-                            <RadioGroupItem variant="buttonPrimary" value="all" onClick={() => setSort("all")}>
+                        <Radix.RadioGroup className="flex w-full" value={sort}>
+                            <Radix.RadioGroupItem variant="buttonPrimary" value="all" onClick={() => setSort("all")}>
                                 全部内容
-                            </RadioGroupItem>
-                            <RadioGroupItem variant="buttonPrimary" value="event" onClick={() => setSort("event")}>
+                            </Radix.RadioGroupItem>
+                            <Radix.RadioGroupItem variant="buttonPrimary" value="event" onClick={() => setSort("event")}>
                                 限时热推
-                            </RadioGroupItem>
-                            <RadioGroupItem variant="buttonPrimary" value="new" onClick={() => setSort("new")}>
+                            </Radix.RadioGroupItem>
+                            <Radix.RadioGroupItem variant="buttonPrimary" value="new" onClick={() => setSort("new")}>
                                 新品与热门
-                            </RadioGroupItem>
-                            <RadioGroupItem variant="buttonPrimary" value="popular" onClick={() => setSort("popular")}>
+                            </Radix.RadioGroupItem>
+                            <Radix.RadioGroupItem variant="buttonPrimary" value="popular" onClick={() => setSort("popular")}>
                                 最受欢迎
-                            </RadioGroupItem>
-                            <RadioGroupItem variant="buttonPrimary" value="prerelease" onClick={() => setSort("prerelease")}>
+                            </Radix.RadioGroupItem>
+                            <Radix.RadioGroupItem variant="buttonPrimary" value="prerelease" onClick={() => setSort("prerelease")}>
                                 即将推出
-                            </RadioGroupItem>
-                            <RadioGroupItem variant="buttonPrimary" value="stared" onClick={() => setSort("stared")}>
+                            </Radix.RadioGroupItem>
+                            <Radix.RadioGroupItem variant="buttonPrimary" value="stared" onClick={() => setSort("stared")}>
                                 心愿单
-                            </RadioGroupItem>
-                        </RadioGroup>
+                            </Radix.RadioGroupItem>
+                        </Radix.RadioGroup>
                     </div>
                 </section>
-            </Card>
+            </Radix.Card>
         </div>
     );
 }

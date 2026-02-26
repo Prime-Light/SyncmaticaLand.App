@@ -72,24 +72,4 @@ export {
 export { Separator } from "./separator";
 export { Skeleton } from "./skeleton";
 export { Textarea } from "./textarea";
-export {
-    Typography,
-    TypographyH1,
-    TypographyH2,
-    TypographyH3,
-    TypographyH4,
-    TypographyP,
-    TypographyBlockquote,
-    TypographyTable,
-    TypographyThead,
-    TypographyTbody,
-    TypographyTh,
-    TypographyTr,
-    TypographyTd,
-    TypographyList,
-    TypographyInlineCode,
-    TypographyLead,
-    TypographyLarge,
-    TypographySmall,
-    TypographyMuted,
-} from "./typography";
+export { Typography } from "./typography";
