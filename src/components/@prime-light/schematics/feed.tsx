@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, RadioGroup, RadioGroupItem } from "@/components";
+import { Card, RadioGroup, RadioGroupItem } from "@/components";
 import { cn } from "@/lib/utils";
 import { LayoutGrid, List } from "lucide-react";
 import { useState } from "react";

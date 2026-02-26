@@ -112,7 +112,7 @@ export {
 } from "./@radix-ui";
 
 // Prime-Light Components Lib
-export { Footer, Navbar, ThemeToggle, Captcha, Carousel } from "./@prime-light/basic";
+export { Footer, Navbar, ThemeToggle, Captcha, Carousel, ThemedImage } from "./@prime-light/basic";
 export { LoginForm, SignupForm } from "./@prime-light/auth";
 export { SchematicFeed } from "./@prime-light/schematics";
 
