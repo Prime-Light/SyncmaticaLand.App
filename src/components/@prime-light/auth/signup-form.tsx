@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Alert, AlertDescription, AlertTitle, Button, Captcha, Field, FieldDescription, FieldGroup, FieldLabel, Input } from "@/components";
+import { Radix, PrimeLight } from "@/components";
 import { signupAction, type SignupActionState } from "@/lib/auth/signup";
 import { AlertCircle, CheckCircle2, Stone } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -42,7 +42,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <form action={formAction}>
-                <FieldGroup>
+                <Radix.FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
                         <a href="#" className="flex flex-col items-center gap-2 font-medium">
                             <div className="flex size-8 items-center justify-center rounded-md">
@@ -50,49 +50,51 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                             </div>
                         </a>
                         <h1 className="text-xl font-bold">{t("Title")}</h1>
-                        <FieldDescription>
+                        <Radix.FieldDescription>
                             {t("AlreadyHaveAccount")} <Link href="/auth/login">{t("Login")}</Link>
-                        </FieldDescription>
+                        </Radix.FieldDescription>
                     </div>
-                    <Field>
-                        <FieldLabel htmlFor="name">{tx("Name", "Name")}</FieldLabel>
-                        <Input id="name" name="name" type="text" placeholder={tx("NamePlaceholder", "Your name")} required />
-                    </Field>
-                    <Field>
-                        <FieldLabel htmlFor="email">{t("Email")}</FieldLabel>
-                        <Input id="email" name="email" type="email" placeholder="me@example.com" required />
-                    </Field>
-                    <Field>
-                        <FieldLabel htmlFor="password">{t("Password")}</FieldLabel>
-                        <Input id="password" name="password" type="password" required />
-                    </Field>
-                    <Field>
-                        <FieldLabel htmlFor="captcha">{t("Captcha")}</FieldLabel>
-                        <Captcha onSolve={setCaptchaSolved} />
-                    </Field>
+                    <Radix.Field>
+                        <Radix.FieldLabel htmlFor="name">{tx("Name", "Name")}</Radix.FieldLabel>
+                        <Radix.Input id="name" name="name" type="text" placeholder={tx("NamePlaceholder", "Your name")} required />
+                    </Radix.Field>
+                    <Radix.Field>
+                        <Radix.FieldLabel htmlFor="email">{t("Email")}</Radix.FieldLabel>
+                        <Radix.Input id="email" name="email" type="email" placeholder="me@example.com" required />
+                    </Radix.Field>
+                    <Radix.Field>
+                        <Radix.FieldLabel htmlFor="password">{t("Password")}</Radix.FieldLabel>
+                        <Radix.Input id="password" name="password" type="password" required />
+                    </Radix.Field>
+                    <Radix.Field>
+                        <Radix.FieldLabel htmlFor="captcha">{t("Captcha")}</Radix.FieldLabel>
+                        <PrimeLight.Captcha onSolve={setCaptchaSolved} />
+                    </Radix.Field>
                     {messageText ? (
-                        <Alert
+                        <Radix.Alert
                             variant={state.success ? "default" : "destructive"}
                             className={state.success ? "border-green-500/50 text-green-700" : ""}>
                             {state.success ? <CheckCircle2 /> : <AlertCircle />}
-                            <AlertTitle>{state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}</AlertTitle>
-                            <AlertDescription className={state.success ? "text-green-700/90" : ""}>
+                            <Radix.AlertTitle>
+                                {state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}
+                            </Radix.AlertTitle>
+                            <Radix.AlertDescription className={state.success ? "text-green-700/90" : ""}>
                                 {messageText}
                                 {state.success && <span className="ml-1">({t("RedirectingIn", { countdown })})</span>}
-                            </AlertDescription>
-                        </Alert>
+                            </Radix.AlertDescription>
+                        </Radix.Alert>
                     ) : null}
-                    <Field>
-                        <Button type="submit" disabled={isPending || !captchaSolved}>
+                    <Radix.Field>
+                        <Radix.Button type="submit" disabled={isPending || !captchaSolved}>
                             {isPending ? tx("Submitting", "Signing up...") : t("SignUp")}
-                        </Button>
-                    </Field>
-                </FieldGroup>
+                        </Radix.Button>
+                    </Radix.Field>
+                </Radix.FieldGroup>
             </form>
-            <FieldDescription className="px-6 text-center">
+            <Radix.FieldDescription className="px-6 text-center">
                 {t("ByClickingContinue")} <Link href="/docs/terms-of-service">{t("TermsOfService")}</Link> {t("And")}{" "}
                 <Link href="/docs/privacy-policy">{t("PrivacyPolicy")}</Link>
-            </FieldDescription>
+            </Radix.FieldDescription>
         </div>
     );
 }

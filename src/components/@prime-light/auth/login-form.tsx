@@ -1,23 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-    Alert,
-    AlertDescription,
-    AlertTitle,
-    Button,
-    Captcha,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    Field,
-    FieldDescription,
-    FieldGroup,
-    FieldLabel,
-    FieldSeparator,
-    Input,
-} from "@/components";
+import { PrimeLight, Radix } from "@/components";
 import { LogosMicrosoftIcon, LogosGoogleIcon, LogosGithubIcon, LogosDiscordIcon } from "@/components/icons";
 import { loginAction } from "@/lib/auth/login";
 import { AlertCircle, CheckCircle2, ChevronDown, Stone } from "lucide-react";
@@ -60,7 +44,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <form action={formAction}>
-                <FieldGroup>
+                <Radix.FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
                         <a href="#" className="flex flex-col items-center gap-2 font-medium">
                             <div className="flex size-8 items-center justify-center rounded-md">
@@ -68,81 +52,83 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                             </div>
                         </a>
                         <h1 className="text-xl font-bold">{t("Title")}</h1>
-                        <FieldDescription>
+                        <Radix.FieldDescription>
                             {t("NoAccount")} <Link href="/auth/signup">{t("SignUp")}</Link>
-                        </FieldDescription>
+                        </Radix.FieldDescription>
                     </div>
-                    <Field>
-                        <FieldLabel htmlFor="email">{t("Email")}</FieldLabel>
-                        <Input id="email" name="email" type="email" placeholder="me@example.com" required />
-                    </Field>
-                    <Field>
+                    <Radix.Field>
+                        <Radix.FieldLabel htmlFor="email">{t("Email")}</Radix.FieldLabel>
+                        <Radix.Input id="email" name="email" type="email" placeholder="me@example.com" required />
+                    </Radix.Field>
+                    <Radix.Field>
                         <div className="flex items-center justify-between">
-                            <FieldLabel htmlFor="password">{t("Password")}</FieldLabel>
+                            <Radix.FieldLabel htmlFor="password">{t("Password")}</Radix.FieldLabel>
                             <Link href="/auth/recover" className="text-muted-foreground text-sm underline-offset-4 hover:underline">
                                 {t("ForgotPassword")}
                             </Link>
                         </div>
-                        <Input id="password" name="password" type="password" autoComplete="current-password" required />
-                    </Field>
-                    <Field>
-                        <FieldLabel htmlFor="cap">{t("Captcha")}</FieldLabel>
-                        <Captcha onSolve={setCaptchaSolved} />
-                    </Field>
+                        <Radix.Input id="password" name="password" type="password" autoComplete="current-password" required />
+                    </Radix.Field>
+                    <Radix.Field>
+                        <Radix.FieldLabel htmlFor="cap">{t("Captcha")}</Radix.FieldLabel>
+                        <PrimeLight.Captcha onSolve={setCaptchaSolved} />
+                    </Radix.Field>
                     {messageText ? (
-                        <Alert
+                        <Radix.Alert
                             variant={state.success ? "default" : "destructive"}
                             className={state.success ? "border-green-500/50 text-green-600" : ""}>
                             {state.success ? <CheckCircle2 /> : <AlertCircle />}
-                            <AlertTitle>{state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}</AlertTitle>
-                            <AlertDescription className={state.success ? "text-green-600/90" : ""}>
+                            <Radix.AlertTitle>
+                                {state.success ? tx("AlertSuccessTitle", "Success") : tx("AlertErrorTitle", "Error")}
+                            </Radix.AlertTitle>
+                            <Radix.AlertDescription className={state.success ? "text-green-600/90" : ""}>
                                 {messageText}
                                 {state.success && <span className="ml-1">({t("RedirectingIn", { countdown })})</span>}
-                            </AlertDescription>
-                        </Alert>
+                            </Radix.AlertDescription>
+                        </Radix.Alert>
                     ) : null}
-                    <Field>
-                        <Button type="submit" disabled={isPending || !captchaSolved}>
+                    <Radix.Field>
+                        <Radix.Button type="submit" disabled={isPending || !captchaSolved}>
                             {isPending ? tx("Submitting", "Logging in...") : t("Login")}
-                        </Button>
-                    </Field>
-                    <FieldSeparator>{t("Or")}</FieldSeparator>
-                    <Field className="grid gap-4 sm:grid-cols-2">
-                        <Button variant="outline" type="button">
+                        </Radix.Button>
+                    </Radix.Field>
+                    <Radix.FieldSeparator>{t("Or")}</Radix.FieldSeparator>
+                    <Radix.Field className="grid gap-4 sm:grid-cols-2">
+                        <Radix.Button variant="outline" type="button">
                             <LogosMicrosoftIcon className="size-4" />
                             <span className="translate-y-px">{t("LoginWithMicrosoft")}</span>
-                        </Button>
-                        <Button variant="outline" type="button">
+                        </Radix.Button>
+                        <Radix.Button variant="outline" type="button">
                             <LogosGoogleIcon className="size-4" />
                             <span className="translate-y-px">{t("LoginWithGoogle")}</span>
-                        </Button>
-                    </Field>
-                    <Field className="items-center">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" type="button" className="w-full justify-center gap-2">
+                        </Radix.Button>
+                    </Radix.Field>
+                    <Radix.Field className="items-center">
+                        <Radix.DropdownMenu>
+                            <Radix.DropdownMenuTrigger asChild>
+                                <Radix.Button variant="outline" type="button" className="w-full justify-center gap-2">
                                     <span>{t("MoreLoginMethods")}</span>
                                     <ChevronDown className="size-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="center">
-                                <DropdownMenuItem className="justify-center gap-2 text-center">
+                                </Radix.Button>
+                            </Radix.DropdownMenuTrigger>
+                            <Radix.DropdownMenuContent align="center">
+                                <Radix.DropdownMenuItem className="justify-center gap-2 text-center">
                                     <LogosGithubIcon className="size-4" />
                                     <span className="translate-y-px">{t("LoginWithGithub")}</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="justify-center gap-2 text-center">
+                                </Radix.DropdownMenuItem>
+                                <Radix.DropdownMenuItem className="justify-center gap-2 text-center">
                                     <LogosDiscordIcon className="size-4" />
                                     <span className="translate-y-px">{t("LoginWithDiscord")}</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </Field>
-                </FieldGroup>
+                                </Radix.DropdownMenuItem>
+                            </Radix.DropdownMenuContent>
+                        </Radix.DropdownMenu>
+                    </Radix.Field>
+                </Radix.FieldGroup>
             </form>
-            <FieldDescription className="px-6 text-center">
+            <Radix.FieldDescription className="px-6 text-center">
                 {t("ByClickingContinue")} <Link href="/docs/terms-of-service">{t("TermsOfService")}</Link> {t("And")}{" "}
                 <Link href="/docs/privacy-policy">{t("PrivacyPolicy")}</Link>
-            </FieldDescription>
+            </Radix.FieldDescription>
         </div>
     );
 }

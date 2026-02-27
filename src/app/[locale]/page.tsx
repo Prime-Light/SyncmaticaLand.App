@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Footer, TextType, TypographyH1, TypographyP } from "@/components";
+import { PrimeLight, Radix, ReactBits } from "@/components";
 import gsap from "gsap";
 import { Compass, FileText, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -134,52 +134,52 @@ export default function Index() {
                 ref={heroRef}
                 className="relative z-10 mx-auto flex h-[calc(100vh-56px-86px)] max-w-4xl items-center justify-center px-6 py-14 text-center md:px-10">
                 <div className="w-full space-y-6">
-                    <TypographyP
+                    <Radix.Typography.P
                         data-hero-item
                         className="border-primary/30 bg-primary/10 text-primary inline-flex rounded-full border px-3 text-xs tracking-[0.12em]">
                         {t("BetaAvailable")}
-                    </TypographyP>
+                    </Radix.Typography.P>
 
-                    <TypographyH1
+                    <Radix.Typography.H1
                         data-hero-item
                         className="mx-auto max-w-3xl text-4xl leading-tight font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                        <TextType
+                        <ReactBits.TextType
                             text={[t("Title1"), t("Title2")]}
                             loop={true}
                             typingSpeed={110}
                             pauseDuration={1400}
                             deletingSpeed={65}
-                            cursorCharacter="|"></TextType>
-                    </TypographyH1>
+                            cursorCharacter="|"></ReactBits.TextType>
+                    </Radix.Typography.H1>
 
-                    <TypographyP className="text-muted-foreground mx-auto max-w-2xl text-base leading-relaxed sm:text-lg">
+                    <Radix.Typography.P className="text-muted-foreground mx-auto max-w-2xl text-base leading-relaxed sm:text-lg">
                         {t("Description")}
-                    </TypographyP>
+                    </Radix.Typography.P>
 
                     <div className="flex flex-wrap items-center justify-center gap-3">
-                        <Button asChild size="lg">
+                        <Radix.Button asChild size="lg">
                             <Link href="/schematics" className="inline-flex items-center gap-2">
                                 <Compass className="h-4 w-4" />
                                 {t("BtnStartBrowse")}
                             </Link>
-                        </Button>
-                        <Button asChild size="lg" variant="outline">
+                        </Radix.Button>
+                        <Radix.Button asChild size="lg" variant="outline">
                             <Link href="/api-docs" className="inline-flex items-center gap-2">
                                 <FileText className="h-4 w-4" />
                                 {t("BtnApiDocs")}
                             </Link>
-                        </Button>
-                        <Button asChild size="lg" variant="outline">
+                        </Radix.Button>
+                        <Radix.Button asChild size="lg" variant="outline">
                             <Link href="/about" className="inline-flex items-center gap-2">
                                 <Users className="h-4 w-4" />
                                 {t("BtnAboutUs")}
                             </Link>
-                        </Button>
+                        </Radix.Button>
                     </div>
                 </div>
             </section>
 
-            <Footer />
+            <PrimeLight.Footer />
         </main>
     );
 }
