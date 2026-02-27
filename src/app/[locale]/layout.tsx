@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Figtree } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
-import { ThemeProvider, PrimeLight } from "@/components";
+import { ThemeProvider, PrimeLight, Radix } from "@/components";
 import { routing } from "@/i18n/routing";
 import "./globals.css";
 
@@ -40,8 +40,10 @@ export default async function RootLayout({ children, params }: Readonly<Props>) 
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <NextIntlClientProvider>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                        <PrimeLight.Navbar />
-                        {children}
+                        <Radix.TooltipProvider>
+                            <PrimeLight.Navbar />
+                            {children}
+                        </Radix.TooltipProvider>
                     </ThemeProvider>
                 </NextIntlClientProvider>
             </body>
