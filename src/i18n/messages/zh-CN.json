@@ -111,10 +111,8 @@
                 "Inbox": "收件箱",
                 "NavMain": {
                     "Dashboard": "仪表盘",
-                    "Lifecycle": "生命周期",
-                    "Analytics": "数据分析",
-                    "Projects": "项目",
-                    "Team": "团队"
+                    "Analytics": "作品数据",
+                    "Projects": "作品管理"
                 },
                 "Documents": {
                     "Label": "文档",

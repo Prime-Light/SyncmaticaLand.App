@@ -7,10 +7,8 @@ import {
     FolderIcon,
     HouseIcon,
     LayoutDashboardIcon,
-    ListIcon,
     Settings2Icon,
     Stone,
-    UsersIcon,
 } from "lucide-react";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
@@ -36,10 +34,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     const navMain = [
         { title: t("NavMain.Dashboard"), url: "#", icon: <LayoutDashboardIcon /> },
-        { title: t("NavMain.Lifecycle"), url: "#", icon: <ListIcon /> },
         { title: t("NavMain.Analytics"), url: "#", icon: <ChartBarIcon /> },
         { title: t("NavMain.Projects"), url: "#", icon: <FolderIcon /> },
-        { title: t("NavMain.Team"), url: "#", icon: <UsersIcon /> },
     ];
 
     const navSecondary = [
