@@ -1,8 +1,17 @@
 "use client";
 
 import * as React from "react";
-
-import { NavDocuments } from "./nav-documents";
+import { useTranslations } from "next-intl";
+import {
+    ChartBarIcon,
+    FolderIcon,
+    HouseIcon,
+    LayoutDashboardIcon,
+    ListIcon,
+    Settings2Icon,
+    Stone,
+    UsersIcon,
+} from "lucide-react";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
@@ -15,141 +24,29 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/@radix-ui/sidebar";
-import {
-    LayoutDashboardIcon,
-    ListIcon,
-    ChartBarIcon,
-    FolderIcon,
-    UsersIcon,
-    CameraIcon,
-    FileTextIcon,
-    Settings2Icon,
-    CircleHelpIcon,
-    SearchIcon,
-    DatabaseIcon,
-    FileChartColumnIcon,
-    FileIcon,
-    CommandIcon,
-} from "lucide-react";
 
-const data = {
-    user: {
-        name: "shadcn",
-        email: "m@example.com",
-        avatar: "/avatars/shadcn.jpg",
-    },
-    navMain: [
-        {
-            title: "Dashboard",
-            url: "#",
-            icon: <LayoutDashboardIcon />,
-        },
-        {
-            title: "Lifecycle",
-            url: "#",
-            icon: <ListIcon />,
-        },
-        {
-            title: "Analytics",
-            url: "#",
-            icon: <ChartBarIcon />,
-        },
-        {
-            title: "Projects",
-            url: "#",
-            icon: <FolderIcon />,
-        },
-        {
-            title: "Team",
-            url: "#",
-            icon: <UsersIcon />,
-        },
-    ],
-    navClouds: [
-        {
-            title: "Capture",
-            icon: <CameraIcon />,
-            isActive: true,
-            url: "#",
-            items: [
-                {
-                    title: "Active Proposals",
-                    url: "#",
-                },
-                {
-                    title: "Archived",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Proposal",
-            icon: <FileTextIcon />,
-            url: "#",
-            items: [
-                {
-                    title: "Active Proposals",
-                    url: "#",
-                },
-                {
-                    title: "Archived",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Prompts",
-            icon: <FileTextIcon />,
-            url: "#",
-            items: [
-                {
-                    title: "Active Proposals",
-                    url: "#",
-                },
-                {
-                    title: "Archived",
-                    url: "#",
-                },
-            ],
-        },
-    ],
-    navSecondary: [
-        {
-            title: "Settings",
-            url: "#",
-            icon: <Settings2Icon />,
-        },
-        {
-            title: "Get Help",
-            url: "#",
-            icon: <CircleHelpIcon />,
-        },
-        {
-            title: "Search",
-            url: "#",
-            icon: <SearchIcon />,
-        },
-    ],
-    documents: [
-        {
-            name: "Data Library",
-            url: "#",
-            icon: <DatabaseIcon />,
-        },
-        {
-            name: "Reports",
-            url: "#",
-            icon: <FileChartColumnIcon />,
-        },
-        {
-            name: "Word Assistant",
-            url: "#",
-            icon: <FileIcon />,
-        },
-    ],
+const sidebarUser = {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const t = useTranslations("Pages.Dashboard.Sidebar");
+
+    const navMain = [
+        { title: t("NavMain.Dashboard"), url: "#", icon: <LayoutDashboardIcon /> },
+        { title: t("NavMain.Lifecycle"), url: "#", icon: <ListIcon /> },
+        { title: t("NavMain.Analytics"), url: "#", icon: <ChartBarIcon /> },
+        { title: t("NavMain.Projects"), url: "#", icon: <FolderIcon /> },
+        { title: t("NavMain.Team"), url: "#", icon: <UsersIcon /> },
+    ];
+
+    const navSecondary = [
+        { title: t("Secondary.BackToHome"), url: "/", icon: <HouseIcon /> },
+        { title: t("Secondary.Settings"), url: "#", icon: <Settings2Icon /> },
+    ];
+
     return (
         <Sidebar collapsible="offcanvas" {...props}>
             <SidebarHeader>
@@ -157,20 +54,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
                             <a href="#">
-                                <CommandIcon className="size-5!" />
-                                <span className="text-base font-semibold">Acme Inc.</span>
+                                <Stone className="size-5!" />
+                                <span className="text-base font-semibold">{t("CreatorPanel")}</span>
                             </a>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={data.navMain} />
-                <NavDocuments items={data.documents} />
-                <NavSecondary items={data.navSecondary} className="mt-auto" />
+                <NavMain items={navMain} />
+                <NavSecondary items={navSecondary} className="mt-auto" />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={data.user} />
+                <NavUser user={sidebarUser} />
             </SidebarFooter>
         </Sidebar>
     );

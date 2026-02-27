@@ -17,6 +17,7 @@ import {
     useSidebar,
 } from "@/components/@radix-ui/sidebar";
 import { MoreHorizontalIcon, FolderIcon, ShareIcon, Trash2Icon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function NavDocuments({
     items,
@@ -27,11 +28,12 @@ export function NavDocuments({
         icon: React.ReactNode;
     }[];
 }) {
+    const t = useTranslations("Pages.Dashboard.Sidebar");
     const { isMobile } = useSidebar();
 
     return (
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel>Documents</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("Documents.Label")}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => (
                     <SidebarMenuItem key={item.name}>
@@ -45,7 +47,7 @@ export function NavDocuments({
                             <DropdownMenuTrigger asChild>
                                 <SidebarMenuAction showOnHover className="data-[state=open]:bg-accent rounded-sm">
                                     <MoreHorizontalIcon />
-                                    <span className="sr-only">More</span>
+                                    <span className="sr-only">{t("Documents.More")}</span>
                                 </SidebarMenuAction>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
@@ -54,16 +56,16 @@ export function NavDocuments({
                                 align={isMobile ? "end" : "start"}>
                                 <DropdownMenuItem>
                                     <FolderIcon />
-                                    <span>Open</span>
+                                    <span>{t("Documents.Open")}</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
                                     <ShareIcon />
-                                    <span>Share</span>
+                                    <span>{t("Documents.Share")}</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem variant="destructive">
                                     <Trash2Icon />
-                                    <span>Delete</span>
+                                    <span>{t("Documents.Delete")}</span>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -72,7 +74,7 @@ export function NavDocuments({
                 <SidebarMenuItem>
                     <SidebarMenuButton className="text-sidebar-foreground/70">
                         <MoreHorizontalIcon className="text-sidebar-foreground/70" />
-                        <span>More</span>
+                        <span>{t("Documents.More")}</span>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>
