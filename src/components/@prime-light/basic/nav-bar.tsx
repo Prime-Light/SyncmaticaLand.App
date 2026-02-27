@@ -95,6 +95,14 @@ export function Navbar() {
         });
     };
 
+    const segments = pathname.split("/").filter(Boolean);
+    const normalizedPath = segments.length > 1 ? `/${segments.slice(1).join("/")}` : "/";
+    const isDashboardRoute = normalizedPath === "/dashboard" || normalizedPath.startsWith("/dashboard/");
+
+    if (isDashboardRoute) {
+        return null;
+    }
+
     return (
         <header className="border-border/40 bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
             <div className="container mx-auto flex h-14 max-w-screen-2xl items-center px-4 sm:px-6 lg:px-8">
