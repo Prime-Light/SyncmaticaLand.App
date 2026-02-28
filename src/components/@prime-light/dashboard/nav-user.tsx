@@ -12,6 +12,7 @@ import {
 } from "@/components/@radix-ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/@radix-ui/sidebar";
 import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function NavUser({
     user,
@@ -22,6 +23,7 @@ export function NavUser({
         avatar: string;
     };
 }) {
+    const t = useTranslations("Pages.Dashboard.Sidebar.UserMenu");
     const { isMobile } = useSidebar();
 
     return (
@@ -64,21 +66,21 @@ export function NavUser({
                         <DropdownMenuGroup>
                             <DropdownMenuItem>
                                 <CircleUserRoundIcon />
-                                Account
+                                {t("Account")}
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 <CreditCardIcon />
-                                Billing
+                                {t("Billing")}
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 <BellIcon />
-                                Notifications
+                                {t("Notifications")}
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
                             <LogOutIcon />
-                            Log out
+                            {t("Logout")}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
