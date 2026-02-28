@@ -149,6 +149,10 @@ The app uses Appwrite for authentication with the following features:
 2. Use `useTranslations()` hook in components
 3. Access nested keys with dot notation (e.g., `t("Pages.Auth.Login.Title")`)
 
+### Important Note
+
+**Only edit `zh-CN.json` for translations.** The project uses Crowdin for collaborative translation management - other language files (`zh-TW.json`, `en-US.json`, `en-GB.json`, `en-UD.json`) are automatically synchronized from Crowdin. Do not manually edit these files as they will be overwritten by Crowdin sync.
+
 ## Environment Variables
 
 Required environment variables (see `.env`):

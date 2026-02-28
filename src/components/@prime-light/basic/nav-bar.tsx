@@ -3,7 +3,21 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Stone, Home, Box, Book, LogIn, UserPlus, Sparkles, ShieldUser, LogOut, MailWarning, MailCheck, Loader2 } from "lucide-react";
+import {
+    Stone,
+    Home,
+    Box,
+    Book,
+    LogIn,
+    UserPlus,
+    Sparkles,
+    ShieldUser,
+    LogOut,
+    MailWarning,
+    MailCheck,
+    Loader2,
+    LayoutDashboard,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutAction, resendEmailVerificationAction } from "@/lib/auth/session";
 import { Radix, PrimeLight } from "@/components";
@@ -223,6 +237,13 @@ export function Navbar() {
                                         </div>
                                     </>
                                 )}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <Link href="/dashboard">
+                                        <LayoutDashboard className="h-4 w-4" />
+                                        {t("Dashboard")}
+                                    </Link>
+                                </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem variant="destructive" onClick={handleLogout}>
                                     <LogOut className="h-4 w-4" />
