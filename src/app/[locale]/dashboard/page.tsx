@@ -4,10 +4,23 @@ import { DataTable } from "@/components/@prime-light/dashboard/data-table";
 import { SectionCards } from "@/components/@prime-light/dashboard/section-cards";
 import { SiteHeader } from "@/components/@prime-light/dashboard/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/@radix-ui/sidebar";
+import { getCurrentUser } from "@/lib/auth/session";
 
 import data from "./data.json";
 
-export default function Page() {
+export default async function Page() {
+    const user = await getCurrentUser();
+
+    // 将 Appwrite User 对象转换为普通对象，以便传递给客户端组件
+    const plainUser = user
+        ? {
+              $id: user.$id,
+              name: user.name,
+              email: user.email,
+              emailVerification: user.emailVerification,
+          }
+        : null;
+
     return (
         <SidebarProvider
             style={
@@ -16,7 +29,7 @@ export default function Page() {
                     "--header-height": "calc(var(--spacing) * 12)",
                 } as React.CSSProperties
             }>
-            <AppSidebar variant="inset" />
+            <AppSidebar variant="inset" user={plainUser} />
             <SidebarInset>
                 <SiteHeader />
                 <div className="flex flex-1 flex-col">

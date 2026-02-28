@@ -2,14 +2,7 @@
 
 import * as React from "react";
 import { useTranslations } from "next-intl";
-import {
-    ChartBarIcon,
-    FolderIcon,
-    HouseIcon,
-    LayoutDashboardIcon,
-    Settings2Icon,
-    Stone,
-} from "lucide-react";
+import { ChartBarIcon, FolderIcon, HouseIcon, LayoutDashboardIcon, Settings2Icon, Stone } from "lucide-react";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
@@ -23,14 +16,32 @@ import {
     SidebarMenuItem,
 } from "@/components/@radix-ui/sidebar";
 
-const sidebarUser = {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-};
+interface DashboardUser {
+    $id: string;
+    name: string;
+    email: string;
+    emailVerification: boolean;
+}
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+    user,
+    ...props
+}: React.ComponentProps<typeof Sidebar> & {
+    user: DashboardUser | null;
+}) {
     const t = useTranslations("Pages.Dashboard.Sidebar");
+
+    const sidebarUser = user
+        ? {
+              name: user.name,
+              email: user.email,
+              avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${user.name}`,
+          }
+        : {
+              name: t("UserMenu.GuestUser") || "Guest",
+              email: t("UserMenu.GuestEmail") || "Not logged in",
+              avatar: "",
+          };
 
     const navMain = [
         { title: t("NavMain.Dashboard"), url: "#", icon: <LayoutDashboardIcon /> },

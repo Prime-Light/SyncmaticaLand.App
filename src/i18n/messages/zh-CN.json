@@ -133,7 +133,11 @@
                     "Account": "账户",
                     "Billing": "账单",
                     "Notifications": "通知",
-                    "Logout": "退出登录"
+                    "Logout": "退出登录",
+                    "Login": "登录",
+                    "LoggingOut": "退出中...",
+                    "GuestUser": "访客",
+                    "GuestEmail": "未登录"
                 }
             }
         }
