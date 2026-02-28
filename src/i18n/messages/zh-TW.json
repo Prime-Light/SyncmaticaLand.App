@@ -103,6 +103,38 @@
                     "SignupFailed": "注册失败，请稍后重试。"
                 }
             }
+        },
+        "Dashboard": {
+            "Sidebar": {
+                "CreatorPanel": "创作者面板",
+                "QuickCreate": "上传原理图",
+                "Inbox": "收件箱",
+                "NavMain": {
+                    "Dashboard": "仪表盘",
+                    "Analytics": "作品数据",
+                    "Projects": "作品管理"
+                },
+                "Documents": {
+                    "Label": "文档",
+                    "DataLibrary": "数据库",
+                    "Reports": "报表",
+                    "WordAssistant": "文案助手",
+                    "More": "更多",
+                    "Open": "打开",
+                    "Share": "分享",
+                    "Delete": "删除"
+                },
+                "Secondary": {
+                    "BackToHome": "返回首页",
+                    "Settings": "设置"
+                },
+                "UserMenu": {
+                    "Account": "账户",
+                    "Billing": "账单",
+                    "Notifications": "通知",
+                    "Logout": "退出登录"
+                }
+            }
         }
     }
 }
