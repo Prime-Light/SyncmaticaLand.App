@@ -12,7 +12,7 @@ import {
 } from "@/components/@radix-ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/@radix-ui/sidebar";
 import { logoutAction } from "@/lib/auth/session";
-import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon, LogInIcon } from "lucide-react";
+import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon, LogInIcon, UserPlusIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -97,10 +97,16 @@ export function NavUser({ user }: NavUserProps) {
                         )}
                         {!isGuest && <DropdownMenuSeparator />}
                         {isGuest ? (
-                            <DropdownMenuItem onClick={() => router.push("/auth/login")}>
-                                <LogInIcon />
-                                {t("Login")}
-                            </DropdownMenuItem>
+                            <>
+                                <DropdownMenuItem onClick={() => router.push("/auth/login")}>
+                                    <LogInIcon />
+                                    {t("Login")}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => router.push("/auth/signup")}>
+                                    <UserPlusIcon />
+                                    {t("Signup")}
+                                </DropdownMenuItem>
+                            </>
                         ) : (
                             <DropdownMenuItem onClick={handleLogout} disabled={isLoggingOut} variant="destructive">
                                 <LogOutIcon />

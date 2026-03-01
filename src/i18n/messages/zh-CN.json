@@ -135,9 +135,16 @@
                     "Notifications": "通知",
                     "Logout": "退出登录",
                     "Login": "登录",
+                    "Signup": "注册",
                     "LoggingOut": "退出中...",
                     "GuestUser": "访客",
                     "GuestEmail": "未登录"
+                },
+                "GuestCard": {
+                    "Title": "功能受限",
+                    "Description": "登录后可使用创作者面板的所有功能",
+                    "Login": "登录",
+                    "Signup": "注册账号"
                 }
             }
         }

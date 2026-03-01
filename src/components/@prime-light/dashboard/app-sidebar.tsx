@@ -2,7 +2,17 @@
 
 import * as React from "react";
 import { useTranslations } from "next-intl";
-import { ChartBarIcon, FolderIcon, HouseIcon, LayoutDashboardIcon, Settings2Icon, Stone } from "lucide-react";
+import {
+    ChartBarIcon,
+    FolderIcon,
+    HouseIcon,
+    LayoutDashboardIcon,
+    LockIcon,
+    LogInIcon,
+    Settings2Icon,
+    Stone,
+    UserPlusIcon,
+} from "lucide-react";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
@@ -15,6 +25,9 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/@radix-ui/sidebar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/@radix-ui/card";
+import { Button } from "@/components/@radix-ui/button";
+import { useRouter } from "next/navigation";
 
 interface DashboardUser {
     $id: string;
@@ -30,6 +43,7 @@ export function AppSidebar({
     user: DashboardUser | null;
 }) {
     const t = useTranslations("Pages.Dashboard.Sidebar");
+    const router = useRouter();
 
     const sidebarUser = user
         ? {
@@ -69,7 +83,33 @@ export function AppSidebar({
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={navMain} />
+                {user ? (
+                    <NavMain items={navMain} />
+                ) : (
+                    <Card size="sm" className="mx-2 mt-2 border-dashed">
+                        <CardHeader className="pb-0">
+                            <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
+                                <LockIcon className="text-muted-foreground size-5" />
+                            </div>
+                            <CardTitle className="text-sm">{t("GuestCard.Title")}</CardTitle>
+                            <CardDescription className="text-xs">{t("GuestCard.Description")}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex flex-col gap-1 pt-0">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full justify-start gap-2"
+                                onClick={() => router.push("/auth/login")}>
+                                <LogInIcon className="size-4" />
+                                {t("GuestCard.Login")}
+                            </Button>
+                            <Button size="sm" className="w-full justify-start gap-2" onClick={() => router.push("/auth/signup")}>
+                                <UserPlusIcon className="size-4" />
+                                {t("GuestCard.Signup")}
+                            </Button>
+                        </CardContent>
+                    </Card>
+                )}
                 <NavSecondary items={navSecondary} className="mt-auto" />
             </SidebarContent>
             <SidebarFooter>
