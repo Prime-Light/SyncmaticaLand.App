@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { BookOpen, Home, Sparkles, Stone, Users } from "lucide-react"
+import { Code, Grid3X3, Home, Stone } from "lucide-react"
 
 import { Radix } from "@/components"
 
@@ -13,9 +13,8 @@ interface NavbarProps {
 
 const navItems = [
     { label: "首页", href: "/", icon: Home },
-    { label: "功能", href: "/features", icon: Sparkles },
-    { label: "文档", href: "/docs", icon: BookOpen },
-    { label: "关于", href: "/about", icon: Users },
+    { label: "原理图", href: "/schematics", icon: Grid3X3 },
+    { label: "API 文档", href: "/api-docs", icon: Code },
 ]
 
 export function Navbar({ className }: NavbarProps) {
