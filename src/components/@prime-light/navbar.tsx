@@ -12,7 +12,7 @@ interface NavbarProps {
 const navItems = [
     { label: "首页", href: "/", icon: Home },
     { label: "原理图", href: "/schematics", icon: Grid3X3 },
-    { label: "API 文档", href: "/api-docs", icon: Code },
+    { label: "API 文档", href: "/docs", icon: Code },
 ]
 
 export function Navbar({ className }: NavbarProps) {
@@ -37,7 +37,7 @@ export function Navbar({ className }: NavbarProps) {
                 </Link>
 
                 {/* 右侧：导航菜单 */}
-                <Radix.NavigationMenu className="hidden md:flex">
+                <Radix.NavigationMenu>
                     <Radix.NavigationMenuList className="gap-1">
                         {navItems.map((item) => {
                             const Icon = item.icon
@@ -61,28 +61,6 @@ export function Navbar({ className }: NavbarProps) {
                         })}
                     </Radix.NavigationMenuList>
                 </Radix.NavigationMenu>
-
-                {/* 移动端菜单按钮 */}
-                <button
-                    type="button"
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none md:hidden"
-                    aria-label="打开菜单">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="size-5">
-                        <line x1="4" x2="20" y1="12" y2="12" />
-                        <line x1="4" x2="20" y1="6" y2="6" />
-                        <line x1="4" x2="20" y1="18" y2="18" />
-                    </svg>
-                </button>
             </div>
         </header>
     )
