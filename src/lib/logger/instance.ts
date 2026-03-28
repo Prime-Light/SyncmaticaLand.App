@@ -31,8 +31,12 @@ export class Logger {
         console.warn(this.format("warn", message, meta));
     }
 
-    error(message: string, meta?: LogMeta) {
+    error(message: string, meta?: LogMeta, rethrow: boolean = true) {
         console.error(this.format("error", message, meta));
+        if (rethrow) {
+            const receivedErr = meta ? meta["err"] || meta["error"] || null : null;
+            throw receivedErr || new Error(message);
+        }
     }
 
     debug(message: string, meta?: LogMeta) {

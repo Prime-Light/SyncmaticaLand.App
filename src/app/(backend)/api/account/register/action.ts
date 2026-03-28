@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { createAdminClient, getSessionCookieName } from "@/lib/appwrite/server";
 import { BackendApiActionLogger } from "@/lib/logger";
 
-type RegisterActionState = {
+export type RegisterActionState = {
     success: boolean;
     messageKey: "missing_fields" | "email_invalid" | "password_short" | "register_success" | "register_failed" | "";
 };

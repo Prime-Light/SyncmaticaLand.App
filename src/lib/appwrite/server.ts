@@ -1,7 +1,7 @@
 import AppwriteClient from "./index";
 
 export function createAdminClient() {
-    const appwriteClient = AppwriteClient.getInstance(process.env.APPWRITE_API_KEY!);
+    const appwriteClient = AppwriteClient.getInstance(process.env.APPWRITE_SECRET!);
 
     return {
         client: appwriteClient.getClient(),
