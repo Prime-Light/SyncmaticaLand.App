@@ -1,3 +1,56 @@
+/**
+ * @openapi
+ * /api/account/register:
+ *   post:
+ *     summary: 用户注册
+ *     description: 创建新用户账户并自动登录
+ *     tags:
+ *       - Account
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *     responses:
+ *       201:
+ *         description: 注册成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 messageKey:
+ *                   type: string
+ *                   example: register_success
+ *       400:
+ *         description: 请求参数错误
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 messageKey:
+ *                   type: string
+ *                   enum: [missing_fields, email_invalid, password_short, register_failed]
+ *                   example: missing_fields
+ */
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { createAdminClient, getSessionCookieName } from "@/lib/appwrite/server";

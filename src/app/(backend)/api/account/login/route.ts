@@ -1,3 +1,65 @@
+/**
+ * @openapi
+ * /api/account/login:
+ *   post:
+ *     summary: 用户登录
+ *     description: 使用邮箱和密码登录用户账户
+ *     tags:
+ *       - Account
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       200:
+ *         description: 登录成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 messageKey:
+ *                   type: string
+ *                   example: login_success
+ *       400:
+ *         description: 请求参数缺失
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 messageKey:
+ *                   type: string
+ *                   example: missing_fields
+ *       401:
+ *         description: 登录失败
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 messageKey:
+ *                   type: string
+ *                   example: login_failed
+ */
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { createAdminClient, getSessionCookieName } from "@/lib/appwrite/server";

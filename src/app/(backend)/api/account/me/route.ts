@@ -1,3 +1,52 @@
+/**
+ * @openapi
+ * /api/account/me:
+ *   get:
+ *     summary: 获取当前用户信息
+ *     description: 获取已登录用户的详细信息
+ *     tags:
+ *       - Account
+ *     responses:
+ *       200:
+ *         description: 成功返回用户信息
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 66d5b45e3d55c0001f40c78b
+ *                     name:
+ *                       type: string
+ *                       example: John Doe
+ *                     email:
+ *                       type: string
+ *                       example: user@example.com
+ *                     emailVerification:
+ *                       type: boolean
+ *                       example: true
+ *                     labels:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: []
+ *       500:
+ *         description: 服务器错误
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   nullable: true
+ *                   example: null
+ */
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createSessionClient, getSessionCookieName } from "@/lib/appwrite/server";
@@ -28,6 +77,6 @@ export async function GET() {
             { status: 200 }
         );
     } catch {
-        return NextResponse.json({ user: null }, { status: 500 });
+        return NextResponse.json({ user: null }, { status: 401 });
     }
 }

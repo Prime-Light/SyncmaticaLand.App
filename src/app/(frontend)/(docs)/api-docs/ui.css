@@ -1,0 +1,18 @@
+.swagger-ui * {
+    color: var(--color-foreground) !important;
+}
+
+.opblock-section-header {
+    background-color: var(--bg-color) !important;
+}
+
+h4.required::after {
+    color: var(--color-destructive) !important;
+}
+
+select,
+pre.microlight,
+input,
+textarea {
+    background-color: var(--bg-color) !important;
+}

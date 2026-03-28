@@ -38,7 +38,7 @@ interface CurrentUser {
 const navItems = [
     { label: "首页", href: "/", icon: HomeIcon },
     { label: "原理图", href: "/schematics", icon: Grid3X3Icon },
-    { label: "API 文档", href: "/docs", icon: CodeIcon },
+    { label: "API 文档", href: "/api-docs", icon: CodeIcon },
 ];
 
 export function Navbar({ className }: NavbarProps) {
