@@ -2,9 +2,7 @@
 
 import Link from "next/link"
 import { Code, Grid3X3, Home, Stone } from "lucide-react"
-
 import { Radix } from "@/components"
-
 import { cn } from "@/lib/utils"
 
 interface NavbarProps {
