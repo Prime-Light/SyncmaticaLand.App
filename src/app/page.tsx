@@ -1,10 +1,9 @@
-import { Navbar } from "@/components/@prime-light/navbar"
-import { Radix } from "@/components"
+import { Radix, Prime } from "@/components"
 
 export default function Page() {
     return (
         <div className="flex min-h-svh flex-col">
-            <Navbar />
+            <Prime.Navbar />
             <main className="flex flex-1 flex-col items-center justify-center p-6">
                 <div className="flex max-w-md min-w-0 flex-col gap-4 text-center text-sm leading-loose">
                     <div>
