@@ -1,3 +1,9 @@
-// 此文件由 generate_index_ts.py 自动生成，请勿手动修改
+// AUTO-GENERATED FILE. DO NOT EDIT
 
-export { Navbar } from "./navbar"
+export { default as ParticleBackground } from "./decoration/ParticleBackground";
+
+export { Footer } from "./layout/footer";
+export { Navbar } from "./layout/navbar";
+
+export { ThemeToggle } from "./utils/theme-toggle";
+export { ThemeProvider } from "./utils/theme-provider";
