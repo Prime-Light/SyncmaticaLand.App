@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Code, Grid3X3, Home, Stone } from "lucide-react"
+import { Code, Grid3X3, Home, Menu, Stone } from "lucide-react"
 import { Radix } from "@/components"
 import { cn } from "@/lib/utils"
 
@@ -36,31 +36,71 @@ export function Navbar({ className }: NavbarProps) {
                     </div>
                 </Link>
 
-                {/* 右侧：导航菜单 */}
-                <Radix.NavigationMenu>
-                    <Radix.NavigationMenuList className="gap-1">
-                        {navItems.map((item) => {
-                            const Icon = item.icon
-                            return (
-                                <Radix.NavigationMenuItem key={item.href}>
-                                    <Radix.NavigationMenuLink asChild>
+                {/* 桌面端：导航菜单 */}
+                <div className="hidden md:flex">
+                    <Radix.NavigationMenu>
+                        <Radix.NavigationMenuList className="gap-1">
+                            {navItems.map((item) => {
+                                const Icon = item.icon
+                                return (
+                                    <Radix.NavigationMenuItem key={item.href}>
+                                        <Radix.NavigationMenuLink asChild>
+                                            <Link
+                                                href={item.href}
+                                                className={cn(
+                                                    "inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-colors",
+                                                    "hover:bg-accent hover:text-accent-foreground",
+                                                    "focus:bg-accent focus:text-accent-foreground focus:outline-none",
+                                                    "disabled:pointer-events-none disabled:opacity-50"
+                                                )}>
+                                                <Icon className="size-3.5" strokeWidth={2} />
+                                                {item.label}
+                                            </Link>
+                                        </Radix.NavigationMenuLink>
+                                    </Radix.NavigationMenuItem>
+                                )
+                            })}
+                        </Radix.NavigationMenuList>
+                    </Radix.NavigationMenu>
+                </div>
+
+                {/* 移动端：下拉菜单 */}
+                <div className="md:hidden">
+                    <Radix.DropdownMenu>
+                        <Radix.DropdownMenuTrigger asChild>
+                            <button
+                                className={cn(
+                                    "inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-colors",
+                                    "hover:bg-accent hover:text-accent-foreground",
+                                    "focus:bg-accent focus:text-accent-foreground focus:outline-none",
+                                    "disabled:pointer-events-none disabled:opacity-50"
+                                )}>
+                                <Menu className="size-4" strokeWidth={2} />
+                            </button>
+                        </Radix.DropdownMenuTrigger>
+                        <Radix.DropdownMenuContent
+                            className="w-48 rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none"
+                            align="end">
+                            {navItems.map((item) => {
+                                const Icon = item.icon
+                                return (
+                                    <Radix.DropdownMenuItem key={item.href} asChild>
                                         <Link
                                             href={item.href}
                                             className={cn(
-                                                "inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-colors",
+                                                "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium",
                                                 "hover:bg-accent hover:text-accent-foreground",
-                                                "focus:bg-accent focus:text-accent-foreground focus:outline-none",
-                                                "disabled:pointer-events-none disabled:opacity-50"
+                                                "focus:bg-accent focus:text-accent-foreground focus:outline-none"
                                             )}>
-                                            <Icon className="size-3.5" strokeWidth={2} />
+                                            <Icon className="size-4" strokeWidth={2} />
                                             {item.label}
                                         </Link>
-                                    </Radix.NavigationMenuLink>
-                                </Radix.NavigationMenuItem>
-                            )
-                        })}
-                    </Radix.NavigationMenuList>
-                </Radix.NavigationMenu>
+                                    </Radix.DropdownMenuItem>
+                                )
+                            })}
+                        </Radix.DropdownMenuContent>
+                    </Radix.DropdownMenu>
+                </div>
             </div>
         </header>
     )
