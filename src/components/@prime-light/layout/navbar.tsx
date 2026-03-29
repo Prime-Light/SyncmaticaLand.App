@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
     CodeIcon,
     Grid3X3Icon,
@@ -25,6 +25,7 @@ import { logoutAction, resendEmailVerificationAction } from "@/lib/auth/session"
 
 interface NavbarProps {
     className?: string;
+    initialUser: CurrentUser | null;
 }
 
 interface CurrentUser {
@@ -132,26 +133,17 @@ function LogoutItem({ onLogout }: { onLogout: () => void }) {
 }
 
 // 导航栏组件
-export function Navbar({ className }: NavbarProps) {
-    const pathname = usePathname();
-    const [user, setUser] = useState<CurrentUser | null>(null);
+export function Navbar({ initialUser, className }: NavbarProps) {
+    const $pathname = usePathname();
+    const $router = useRouter();
+
+    const [user, setUser] = useState<CurrentUser | null>(initialUser);
     const [verificationNotice, setVerificationNotice] = useState<"" | "sent" | "failed">("");
     const [isResending, setIsResending] = useState(false);
     const [, startTransition] = useTransition();
 
     useEffect(() => {
         let mounted = true;
-
-        // 从本地存储中获取用户信息
-        const cachedUser = Cookies.get("sl-data-session");
-        if (cachedUser) {
-            try {
-                setUser(JSON.parse(cachedUser));
-            } catch {
-                setUser(null);
-                Cookies.set("sl-data-session", JSON.stringify(null), { expires: 1 });
-            }
-        }
 
         fetch("/api/account/me", { method: "GET", cache: "no-store" })
             .then(async (res) => {
@@ -161,12 +153,10 @@ export function Navbar({ className }: NavbarProps) {
             .then((data) => {
                 if (!mounted) return;
                 setUser(data?.user ?? null);
-                Cookies.set("sl-data-session", JSON.stringify(data?.user ?? null), { expires: 1 });
             })
             .catch(() => {
                 if (!mounted) return;
                 setUser(null);
-                Cookies.set("sl-data-session", JSON.stringify(null), { expires: 1 });
             });
 
         return () => {
@@ -186,8 +176,8 @@ export function Navbar({ className }: NavbarProps) {
             setUser(null);
             setVerificationNotice("");
             setIsResending(false);
-            Cookies.remove("sl-data-session");
-            window.location.assign("/");
+            $router.refresh();
+            // $router.push("/");
         });
     };
 
@@ -227,7 +217,7 @@ export function Navbar({ className }: NavbarProps) {
                         <Shadcn.NavigationMenuList className="gap-1">
                             {navItems.map((item) => {
                                 const Icon = item.icon;
-                                const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+                                const isActive = item.href === "/" ? $pathname === "/" : $pathname.startsWith(item.href);
                                 return (
                                     <Shadcn.NavigationMenuItem key={item.href}>
                                         <Shadcn.NavigationMenuLink asChild>
@@ -337,7 +327,7 @@ export function Navbar({ className }: NavbarProps) {
                             <Shadcn.DropdownMenuGroup>
                                 {navItems.map((item) => {
                                     const Icon = item.icon;
-                                    const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+                                    const isActive = item.href === "/" ? $pathname === "/" : $pathname.startsWith(item.href);
                                     return (
                                         <Shadcn.DropdownMenuItem key={item.href} asChild>
                                             <Link href={item.href} className={cn(isActive && "bg-accent text-accent-foreground")}>
