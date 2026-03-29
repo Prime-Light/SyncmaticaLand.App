@@ -256,7 +256,7 @@ export function Navbar({ className }: NavbarProps) {
                                     <Shadcn.NavigationMenuItem>
                                         <Shadcn.NavigationMenuLink asChild>
                                             <Link
-                                                href="/auth/register"
+                                                href="/auth/signup"
                                                 className={cn(
                                                     "inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-colors",
                                                     "hover:bg-accent hover:text-accent-foreground",
@@ -357,7 +357,7 @@ export function Navbar({ className }: NavbarProps) {
                                         </Link>
                                     </Shadcn.DropdownMenuItem>
                                     <Shadcn.DropdownMenuItem asChild>
-                                        <Link href="/auth/register">
+                                        <Link href="/auth/signup">
                                             <UserPlusIcon />
                                             注册
                                         </Link>
