@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 
 type Point2D = {
@@ -124,5 +125,16 @@ export default function ParticleBackground({
         };
     }, [density, particleColor, lineColor, connectionDistance]);
 
-    return <canvas ref={canvasRef} className={`pointer-events-none fixed inset-0 z-0 ${className}`} style={{ opacity }} />;
+    return (
+        <>
+            <canvas ref={canvasRef} className={cn("pointer-events-none fixed inset-0 z-0", className)} style={{ opacity }} />
+            <div
+                className={cn(
+                    "pointer-events-none fixed inset-0 z-0",
+                    "bg-[radial-gradient(circle_at_18%_24%,rgba(59,130,246,0.12),transparent_45%),radial-gradient(circle_at_78%_30%,rgba(14,165,233,0.08),transparent_46%),radial-gradient(circle_at_55%_84%,rgba(59,130,246,0.08),transparent_50%)]",
+                    "dark:bg-[radial-gradient(circle_at_18%_24%,rgba(37,99,235,0.16),transparent_42%),radial-gradient(circle_at_78%_30%,rgba(14,165,233,0.12),transparent_44%),radial-gradient(circle_at_55%_84%,rgba(59,130,246,0.1),transparent_48%)]"
+                )}
+            />
+        </>
+    );
 }

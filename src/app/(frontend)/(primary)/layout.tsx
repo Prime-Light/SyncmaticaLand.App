@@ -1,37 +1,23 @@
-import { Geist_Mono, Inter, Noto_Sans } from "next/font/google";
-
-import "@/app/globals.css";
-import { cn } from "@/lib/utils";
 import { Prime } from "@/components";
+import { getUser } from "@/lib/auth/me";
 
-const notoSansHeading = Noto_Sans({ subsets: ["latin"], variable: "--font-heading" });
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-
-const fontMono = Geist_Mono({
-    subsets: ["latin"],
-    variable: "--font-mono",
-});
-
-export default function RootLayout({
+export default async function PrimaryLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return (
-        <html
-            lang="zh-CN"
-            suppressHydrationWarning
-            className={cn("antialiased", fontMono.variable, "font-sans", inter.variable, notoSansHeading.variable)}>
-            <body>
-                <Prime.ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    {/* 导航栏 */}
-                    <Prime.Navbar />
+    const user = await getUser();
 
-                    {/* 主内容 */}
-                    {children}
-                </Prime.ThemeProvider>
-            </body>
-        </html>
+    return (
+        <>
+            {/* 导航栏 */}
+            <Prime.Navbar initialUser={user} />
+
+            {/* 主内容  */}
+            {children}
+
+            {/* 脚部 */}
+            <Prime.Footer />
+        </>
     );
 }

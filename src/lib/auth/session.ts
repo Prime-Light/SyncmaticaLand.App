@@ -32,7 +32,7 @@ export async function resendEmailVerificationAction() {
         }
 
         const { account } = createSessionClient(sessionSecret);
-        await account.createVerification({ url: `${process.env.NEXT_PUBLIC_APP_URL}/api/account/verify-email` });
+        await account.createVerification({ url: `${process.env.HOST_URL}/api/account/verify-email` });
 
         return { success: true };
     } catch {
