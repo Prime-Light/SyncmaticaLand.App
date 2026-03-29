@@ -145,7 +145,12 @@ export function Navbar({ className }: NavbarProps) {
         // 从本地存储中获取用户信息
         const cachedUser = Cookies.get("sl-data-session");
         if (cachedUser) {
-            setUser(JSON.parse(cachedUser));
+            try {
+                setUser(JSON.parse(cachedUser));
+            } catch {
+                setUser(null);
+                Cookies.set("sl-data-session", JSON.stringify(null), { expires: 1 });
+            }
         }
 
         fetch("/api/account/me", { method: "GET", cache: "no-store" })
@@ -197,7 +202,7 @@ export function Navbar({ className }: NavbarProps) {
     return (
         <header
             className={cn(
-                "sticky top-0 z-50 w-full border-b h-14 max-h-14 border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60",
+                "sticky top-0 z-50 h-14 max-h-14 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60",
                 className
             )}>
             <div className="container mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4 md:px-6">

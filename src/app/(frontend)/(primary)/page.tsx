@@ -5,7 +5,7 @@ import { Shadcn, Prime, RBits } from "@/components";
 
 export default function Page() {
     return (
-        <div className="relative flex h-full flex-col justify-center">
+        <div className="relative flex flex-1 flex-col justify-center">
             {/* 背景效果 */}
             <Prime.ParticleBackground opacity={0.55} />
 
@@ -56,9 +56,6 @@ export default function Page() {
                     </div>
                 </div>
             </section>
-
-            {/* 脚部 */}
-            <Prime.Footer />
         </div>
     );
 }
