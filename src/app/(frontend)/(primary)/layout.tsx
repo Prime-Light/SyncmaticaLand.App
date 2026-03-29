@@ -23,15 +23,13 @@ export default function RootLayout({
             lang="zh-CN"
             suppressHydrationWarning
             className={cn("antialiased", fontMono.variable, "font-sans", inter.variable, notoSansHeading.variable)}>
-            <body>
+            <body className="min-h-svh">
                 <Prime.ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    {/* 导航栏 - 固定定位 */}
+                    {/* 导航栏 */}
                     <Prime.Navbar />
 
-                    {/* 主内容 - 为固定导航栏预留空间 pt-14 (56px) */}
-                    <div className="pt-14">
-                        {children}
-                    </div>
+                    {/* 主内容  */}
+                    <div className="h-[calc(100vh-56px)]">{children}</div>
                 </Prime.ThemeProvider>
             </body>
         </html>

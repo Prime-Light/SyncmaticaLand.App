@@ -5,13 +5,12 @@ import { Shadcn, Prime, RBits } from "@/components";
 
 export default function Page() {
     return (
-        <div className="relative flex min-h-svh flex-col justify-center">
+        <div className="relative flex h-full flex-col justify-center">
             {/* 背景效果 */}
             <Prime.ParticleBackground opacity={0.55} />
-            <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_18%_24%,rgba(59,130,246,0.12),transparent_45%),radial-gradient(circle_at_78%_30%,rgba(14,165,233,0.08),transparent_46%),radial-gradient(circle_at_55%_84%,rgba(59,130,246,0.08),transparent_50%)] dark:bg-[radial-gradient(circle_at_18%_24%,rgba(37,99,235,0.16),transparent_42%),radial-gradient(circle_at_78%_30%,rgba(14,165,233,0.12),transparent_44%),radial-gradient(circle_at_55%_84%,rgba(59,130,246,0.1),transparent_48%)]" />
 
             {/* 主内容 */}
-            <section className="relative z-10 mx-auto flex h-[calc(100vh-56px-86px)] max-w-4xl items-center justify-center px-6 py-14 text-center md:px-10 pt-0">
+            <section className="relative z-10 mx-auto flex h-full max-w-4xl items-center justify-center px-6 py-14 pt-0 text-center md:px-10">
                 <div className="w-full space-y-6">
                     <Shadcn.Badge
                         variant="outline"
@@ -59,7 +58,7 @@ export default function Page() {
             </section>
 
             {/* 脚部 */}
-            <Prime.Footer className="absolute right-0 bottom-0 left-0" />
+            <Prime.Footer />
         </div>
     );
 }
