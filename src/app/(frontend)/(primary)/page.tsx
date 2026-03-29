@@ -11,7 +11,7 @@ export default function Page() {
             <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_18%_24%,rgba(59,130,246,0.12),transparent_45%),radial-gradient(circle_at_78%_30%,rgba(14,165,233,0.08),transparent_46%),radial-gradient(circle_at_55%_84%,rgba(59,130,246,0.08),transparent_50%)] dark:bg-[radial-gradient(circle_at_18%_24%,rgba(37,99,235,0.16),transparent_42%),radial-gradient(circle_at_78%_30%,rgba(14,165,233,0.12),transparent_44%),radial-gradient(circle_at_55%_84%,rgba(59,130,246,0.1),transparent_48%)]" />
 
             {/* 主内容 */}
-            <section className="relative z-10 mx-auto flex h-[calc(100vh-56px-86px)] max-w-4xl items-center justify-center px-6 py-14 text-center md:px-10">
+            <section className="relative z-10 mx-auto flex h-[calc(100vh-56px-86px)] max-w-4xl items-center justify-center px-6 py-14 text-center md:px-10 pt-0">
                 <div className="w-full space-y-6">
                     <Shadcn.Badge
                         variant="outline"

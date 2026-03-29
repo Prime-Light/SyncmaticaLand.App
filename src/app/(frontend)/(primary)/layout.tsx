@@ -25,11 +25,13 @@ export default function RootLayout({
             className={cn("antialiased", fontMono.variable, "font-sans", inter.variable, notoSansHeading.variable)}>
             <body>
                 <Prime.ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    {/* 导航栏 */}
+                    {/* 导航栏 - 固定定位 */}
                     <Prime.Navbar />
 
-                    {/* 主内容 */}
-                    {children}
+                    {/* 主内容 - 为固定导航栏预留空间 pt-14 (56px) */}
+                    <div className="pt-14">
+                        {children}
+                    </div>
                 </Prime.ThemeProvider>
             </body>
         </html>
