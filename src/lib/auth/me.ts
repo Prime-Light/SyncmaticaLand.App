@@ -1,3 +1,5 @@
+"use server";
+
 import { cookies } from "next/headers";
 
 /**
@@ -5,7 +7,7 @@ import { cookies } from "next/headers";
  * @returns 当前登录用户
  */
 export async function getUser() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_HOST_URL}/api/account/me`, {
+    const res = await fetch(`${process.env.HOST_URL}/api/account/me`, {
         headers: {
             cookie: (await cookies()).toString(), // 带上 session
         },
