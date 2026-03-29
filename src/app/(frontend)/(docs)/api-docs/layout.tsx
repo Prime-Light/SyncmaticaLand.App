@@ -1,4 +1,5 @@
 import { Prime } from "@/components";
+import "./ui.css";
 
 export default function DocsLayout({
     children,
@@ -11,7 +12,7 @@ export default function DocsLayout({
             <Prime.Navbar />
 
             {/* 主内容 */}
-            <div className="mt-8 text-foreground!">{children}</div>
+            <div className="mt-8">{children}</div>
         </>
     );
 }

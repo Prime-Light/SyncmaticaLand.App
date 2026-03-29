@@ -183,6 +183,10 @@ export function Navbar({ className }: NavbarProps) {
     const handleLogout = () => {
         startTransition(async () => {
             await logoutAction();
+            setUser(null);
+            setVerificationNotice("");
+            setIsResending(false);
+            Cookies.remove("sl-data-session");
             window.location.assign("/");
         });
     };
