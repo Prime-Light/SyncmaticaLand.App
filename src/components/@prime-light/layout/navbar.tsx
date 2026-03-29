@@ -22,6 +22,7 @@ import { Prime, Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
 import { logoutAction, resendEmailVerificationAction } from "@/lib/auth/session";
 import { Avatar, AvatarFallback } from "@/components/@shadcn-ui/avatar";
+import { Button } from "@/components/@shadcn-ui/button";
 
 interface NavbarProps {
     className?: string;
@@ -152,23 +153,18 @@ export function Navbar({ className }: NavbarProps) {
                             {user ? (
                                 <Shadcn.DropdownMenu>
                                     <Shadcn.DropdownMenuTrigger asChild>
-                                        <button
-                                            className={cn(
-                                                "inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-colors",
-                                                "hover:bg-accent hover:text-accent-foreground",
-                                                "focus:bg-accent focus:text-accent-foreground focus:outline-none"
-                                            )}>
+                                        <Button variant="ghost" className="gap-2 px-3">
                                             <Avatar size="sm">
                                                 <AvatarFallback>{userInitials}</AvatarFallback>
                                             </Avatar>
                                             <span className="hidden lg:inline">{user.name || "用户"}</span>
                                             {!user.emailVerification && (
                                                 <Shadcn.Badge variant="destructive" className="gap-1">
-                                                    <MailWarningIcon className="h-3 w-3" />
+                                                    <MailWarningIcon />
                                                     未验证
                                                 </Shadcn.Badge>
                                             )}
-                                        </button>
+                                        </Button>
                                     </Shadcn.DropdownMenuTrigger>
                                     <Shadcn.DropdownMenuContent align="end" className="w-64">
                                         <Shadcn.DropdownMenuLabel className="space-y-0.5">
@@ -235,7 +231,7 @@ export function Navbar({ className }: NavbarProps) {
                                         )}
                                         <Shadcn.DropdownMenuSeparator />
                                         <Shadcn.DropdownMenuItem variant="destructive" onClick={handleLogout}>
-                                            <LogOutIcon className="h-4 w-4" />
+                                            <LogOutIcon />
                                             退出登录
                                         </Shadcn.DropdownMenuItem>
                                     </Shadcn.DropdownMenuContent>
@@ -284,37 +280,23 @@ export function Navbar({ className }: NavbarProps) {
                 <div className="md:hidden">
                     <Shadcn.DropdownMenu>
                         <Shadcn.DropdownMenuTrigger asChild>
-                            <button
-                                className={cn(
-                                    "inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-colors",
-                                    "hover:bg-accent hover:text-accent-foreground",
-                                    "focus:bg-accent focus:text-accent-foreground focus:outline-none",
-                                    "disabled:pointer-events-none disabled:opacity-50"
-                                )}>
-                                <MenuIcon className="size-4" strokeWidth={2} />
-                            </button>
+                            <Button variant="ghost" size="icon">
+                                <MenuIcon />
+                            </Button>
                         </Shadcn.DropdownMenuTrigger>
-                        <Shadcn.DropdownMenuContent
-                            className="w-48 rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none"
-                            align="end">
+                        <Shadcn.DropdownMenuContent align="end">
                             {navItems.map((item) => {
                                 const Icon = item.icon;
                                 return (
                                     <Shadcn.DropdownMenuItem key={item.href} asChild>
-                                        <Link
-                                            href={item.href}
-                                            className={cn(
-                                                "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium",
-                                                "hover:bg-accent hover:text-accent-foreground",
-                                                "focus:bg-accent focus:text-accent-foreground focus:outline-none"
-                                            )}>
-                                            <Icon className="size-4" strokeWidth={2} />
+                                        <Link href={item.href}>
+                                            <Icon />
                                             {item.label}
                                         </Link>
                                     </Shadcn.DropdownMenuItem>
                                 );
                             })}
-                            <Shadcn.Separator className="mx-auto my-2 w-3/4" />
+                            <Shadcn.DropdownMenuSeparator />
                             {user ? (
                                 <>
                                     <Shadcn.DropdownMenuLabel className="space-y-0.5 px-2 py-1.5">
@@ -369,26 +351,14 @@ export function Navbar({ className }: NavbarProps) {
                             ) : (
                                 <>
                                     <Shadcn.DropdownMenuItem asChild>
-                                        <Link
-                                            href="/auth/login"
-                                            className={cn(
-                                                "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium",
-                                                "hover:bg-accent hover:text-accent-foreground",
-                                                "focus:bg-accent focus:text-accent-foreground focus:outline-none"
-                                            )}>
-                                            <UserKeyIcon className="size-3.5" strokeWidth={2} />
+                                        <Link href="/auth/login">
+                                            <UserKeyIcon />
                                             登录
                                         </Link>
                                     </Shadcn.DropdownMenuItem>
                                     <Shadcn.DropdownMenuItem asChild>
-                                        <Link
-                                            href="/auth/register"
-                                            className={cn(
-                                                "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium",
-                                                "hover:bg-accent hover:text-accent-foreground",
-                                                "focus:bg-accent focus:text-accent-foreground focus:outline-none"
-                                            )}>
-                                            <UserPlusIcon className="size-3.5" strokeWidth={2} />
+                                        <Link href="/auth/register">
+                                            <UserPlusIcon />
                                             注册
                                         </Link>
                                     </Shadcn.DropdownMenuItem>
