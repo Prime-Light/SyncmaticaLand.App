@@ -58,7 +58,7 @@ export async function GET() {
         const sessionSecret = cookieStore.get(sessionCookieName)?.value;
 
         if (!sessionSecret) {
-            return NextResponse.json({ user: null }, { status: 200 });
+            return NextResponse.json({ user: null }, { status: 404 });
         }
 
         const { account } = createSessionClient(sessionSecret);

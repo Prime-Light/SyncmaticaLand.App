@@ -48,17 +48,38 @@
  *                   example: false
  *                 messageKey:
  *                   type: string
- *                   enum: [missing_fields, email_invalid, password_short, register_failed]
  *                   example: missing_fields
+ *                 reason:
+ *                   type: string
+ *                   example: Email, password, and name are required
+ *       500:
+ *         description: 服务器内部错误
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 messageKey:
+ *                   type: string
+ *                   example: register_failed
+ *                 reason:
+ *                   type: string
+ *                   example: Internal server error
  */
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { createAdminClient, getSessionCookieName } from "@/lib/appwrite/server";
+import { DATABASE_ID, USERS_COLLECTION_ID, AccountStatus } from "@/lib/appwrite/constants";
 import { BackendApiRouteLogger } from "@/lib/logger";
+import { ID } from "node-appwrite";
 
 type RegisterActionState = {
     success: boolean;
     messageKey: "missing_fields" | "email_invalid" | "password_short" | "register_success" | "register_failed" | "";
+    reason?: string;
 };
 
 export async function POST(request: Request): Promise<NextResponse<RegisterActionState>> {
@@ -74,6 +95,7 @@ export async function POST(request: Request): Promise<NextResponse<RegisterActio
                 {
                     success: false,
                     messageKey: "missing_fields",
+                    reason: "Email, password, and name are required",
                 },
                 { status: 400 }
             );
@@ -85,6 +107,7 @@ export async function POST(request: Request): Promise<NextResponse<RegisterActio
                 {
                     success: false,
                     messageKey: "email_invalid",
+                    reason: "Email is invalid",
                 },
                 { status: 400 }
             );
@@ -96,14 +119,25 @@ export async function POST(request: Request): Promise<NextResponse<RegisterActio
                 {
                     success: false,
                     messageKey: "password_short",
+                    reason: "Password must be at least 8 characters long",
                 },
                 { status: 400 }
             );
         }
 
-        const { account, projectId } = createAdminClient();
+        const { account, tablesDB, projectId } = createAdminClient();
 
-        /* const user = */ await account.create({ userId: "unique()", email, password, name });
+        const user = await account.create({ userId: ID.unique(), email, password, name });
+
+        await tablesDB.createRow({
+            databaseId: DATABASE_ID,
+            tableId: USERS_COLLECTION_ID,
+            rowId: user.$id,
+            data: {
+                account_status: AccountStatus.NORMAL,
+                uid: user.$id,
+            },
+        });
 
         const session = await account.createEmailPasswordSession({ email, password });
         const cookieStore = await cookies();
@@ -117,7 +151,7 @@ export async function POST(request: Request): Promise<NextResponse<RegisterActio
             expires: new Date(session.expire),
         });
 
-        BackendApiRouteLogger.info("Register success", { email, name });
+        BackendApiRouteLogger.info("Register request with success", { email, password, name });
         return NextResponse.json(
             {
                 success: true,
@@ -126,13 +160,15 @@ export async function POST(request: Request): Promise<NextResponse<RegisterActio
             { status: 201 }
         );
     } catch (err) {
-        BackendApiRouteLogger.error("Register failed", { err });
+        const errorMessage = err instanceof Error ? err.message : undefined;
+        BackendApiRouteLogger.error("Register request failed", { errorMessage });
         return NextResponse.json(
             {
                 success: false,
                 messageKey: "register_failed",
+                reason: errorMessage,
             },
-            { status: 400 }
+            { status: 500 }
         );
     }
 }

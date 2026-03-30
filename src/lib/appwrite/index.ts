@@ -1,38 +1,24 @@
-import { Client, Account, Databases } from "node-appwrite";
+import { Client } from "node-appwrite";
 
-class AppwriteClient {
-    private static instance: AppwriteClient;
-    private client: Client;
-    public account: Account;
-    public databases: Databases;
+type ClientOptions = { type: "admin"; apiKey: string } | { type: "session"; session: string };
 
-    private constructor(apiKey?: string) {
-        let client = new Client().setEndpoint(process.env.APPWRITE_ENDPOINT!).setProject(process.env.APPWRITE_PROJECT_ID!);
+export function createAppwriteClient(options: ClientOptions) {
+    const client = new Client().setEndpoint(process.env.APPWRITE_ENDPOINT!).setProject(process.env.APPWRITE_PROJECT_ID!);
 
-        const key = apiKey || process.env.APPWRITE_API_KEY;
-        if (key) {
-            client = client.setKey(key);
-        }
-
-        this.client = client;
-
-        // 初始化你需要用的服务
-        this.account = new Account(this.client);
-        this.databases = new Databases(this.client);
+    if (options.type === "admin") {
+        client.setKey(options.apiKey);
+    } else {
+        client.setSession(options.session);
     }
 
-    // 获取单例
-    public static getInstance(apiKey?: string): AppwriteClient {
-        if (!AppwriteClient.instance) {
-            AppwriteClient.instance = new AppwriteClient(apiKey);
-        }
-        return AppwriteClient.instance;
-    }
-
-    // 对外提供 client 访问
-    public getClient(): Client {
-        return this.client;
-    }
+    return client;
 }
 
-export default AppwriteClient;
+import { Account, TablesDB } from "node-appwrite";
+
+export function createServices(client: Client) {
+    return {
+        account: new Account(client),
+        tablesDB: new TablesDB(client),
+    };
+}

@@ -17,6 +17,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         missing_fields: "请输入邮箱和密码",
         login_success: "登录成功",
         login_failed: "登录失败，请稍后重试",
+        account_banned: "您的账户已被封禁",
+        invalid_credentials: "无效的邮箱或密码",
     };
     const messageText = state.messageKey ? messageTextByKey[state.messageKey] : "";
 
