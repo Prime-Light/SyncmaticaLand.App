@@ -79,6 +79,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                             <Shadcn.AlertTitle>{state.success ? "成功" : "失败"}</Shadcn.AlertTitle>
                             <Shadcn.AlertDescription className={state.success ? "text-green-600/90" : ""}>
                                 {messageText}
+                                {state.messageKey && state.messageKey === "account_banned" && (
+                                    <>
+                                        <br />
+                                        原因：{state.reason}
+                                    </>
+                                )}
                                 {state.success && <span className="ml-1">({`${countdown}秒后跳转首页`})</span>}
                             </Shadcn.AlertDescription>
                         </Shadcn.Alert>
