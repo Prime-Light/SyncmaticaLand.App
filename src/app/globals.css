@@ -142,5 +142,6 @@
         --cap-spinner-color: color-mix(in oklch, var(--foreground) 30%, var(--background));
         --cap-spinner-background-color: var(--background);
         --cap-border-radius: 0rem;
+        --cap-checkbox-border-radius: 0rem;
     }
 }

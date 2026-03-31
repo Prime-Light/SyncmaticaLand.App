@@ -1,25 +1,27 @@
-import AppwriteClient from "./index";
+import { createAppwriteClient, createServices } from "./index";
 
 export function createAdminClient() {
-    const appwriteClient = AppwriteClient.getInstance(process.env.APPWRITE_SECRET!);
+    const client = createAppwriteClient({
+        type: "admin",
+        apiKey: process.env.APPWRITE_SECRET!,
+    });
 
     return {
-        client: appwriteClient.getClient(),
-        account: appwriteClient.account,
-        databases: appwriteClient.databases,
+        client,
+        ...createServices(client),
         projectId: process.env.APPWRITE_PROJECT_ID!,
     };
 }
 
 export function createSessionClient(sessionSecret: string) {
-    const appwriteClient = AppwriteClient.getInstance();
-    const client = appwriteClient.getClient();
-    client.setSession(sessionSecret);
+    const client = createAppwriteClient({
+        type: "session",
+        session: sessionSecret,
+    });
 
     return {
         client,
-        account: appwriteClient.account,
-        databases: appwriteClient.databases,
+        ...createServices(client),
     };
 }
 
