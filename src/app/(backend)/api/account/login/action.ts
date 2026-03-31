@@ -82,7 +82,7 @@ export async function loginAction(_prevState: LoginActionState, formData: FormDa
         };
     } catch (err) {
         const errorMessage = err instanceof Error ? err.message : undefined;
-        BackendApiActionLogger.error("Login failed", { errorMessage, err }, true);
+        BackendApiActionLogger.error("Login failed", { errorMessage, err });
         return {
             success: false,
             messageKey: "login_failed",

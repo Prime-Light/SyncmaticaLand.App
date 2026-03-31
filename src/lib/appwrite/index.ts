@@ -14,11 +14,12 @@ export function createAppwriteClient(options: ClientOptions) {
     return client;
 }
 
-import { Account, TablesDB } from "node-appwrite";
+import { Account, TablesDB, Storage } from "node-appwrite";
 
 export function createServices(client: Client) {
     return {
         account: new Account(client),
         tablesDB: new TablesDB(client),
+        storage: new Storage(client),
     };
 }

@@ -1,5 +1,5 @@
 export const DATABASE_ID = process.env.APPWRITE_DATABASE_ID!;
-export const USERS_COLLECTION_ID = process.env.APPWRITE_USERS_COLLECTION_ID!;
+export const USERS_COLLECTION_ID = process.env.APPWRITE_USERS_TABLE_ID!;
 
 export enum AccountStatus {
     NORMAL = "NORMAL",
