@@ -1,0 +1,247 @@
+{
+    "openapi": "3.0.3",
+    "info": { "title": "SyncmaticaLand OpenAPI", "version": "0.2.0", "description": "SyncmaticaLand OpenAPI Specification" },
+    "paths": {
+        "/api/account/login": {
+            "post": {
+                "summary": "用户登录",
+                "description": "使用邮箱和密码登录用户账户",
+                "tags": ["Account"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": { "type": "string", "example": "user@example.com" },
+                                    "password": { "type": "string", "example": "password123" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "登录成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": { "type": "boolean", "example": true },
+                                        "messageKey": { "type": "string", "example": "login_success" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数缺失",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": { "type": "boolean", "example": false },
+                                        "messageKey": { "type": "string", "example": "missing_fields" },
+                                        "reason": { "type": "string", "example": "Email or password is missing" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "登录失败",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": { "type": "boolean", "example": false },
+                                        "messageKey": { "type": "string", "example": "invalid_credentials" },
+                                        "reason": { "type": "string", "example": "Invalid email or password" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "账户已被封禁",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": { "type": "boolean", "example": false },
+                                        "messageKey": { "type": "string", "example": "account_banned" },
+                                        "reason": { "type": "string", "example": "Your account has been banned" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": { "type": "boolean", "example": false },
+                                        "messageKey": { "type": "string", "example": "login_failed" },
+                                        "reason": { "type": "string", "example": "Internal server error" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/account/me": {
+            "get": {
+                "summary": "获取当前用户信息",
+                "description": "获取已登录用户的详细信息",
+                "tags": ["Account"],
+                "responses": {
+                    "200": {
+                        "description": "成功返回用户信息",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "nullable": true,
+                                            "properties": {
+                                                "id": { "type": "string", "example": "66d5b45e3d55c0001f40c78b" },
+                                                "name": { "type": "string", "example": "John Doe" },
+                                                "email": { "type": "string", "example": "user@example.com" },
+                                                "emailVerification": { "type": "boolean", "example": true },
+                                                "labels": { "type": "array", "items": { "type": "string" }, "example": [] }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "服务器错误",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": { "user": { "type": "object", "nullable": true, "example": null } }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/account/register": {
+            "post": {
+                "summary": "用户注册",
+                "description": "创建新用户账户并自动登录",
+                "tags": ["Account"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": { "type": "string", "example": "user@example.com" },
+                                    "password": { "type": "string", "example": "password123" },
+                                    "name": { "type": "string", "example": "John Doe" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "注册成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": { "type": "boolean", "example": true },
+                                        "messageKey": { "type": "string", "example": "register_success" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": { "type": "boolean", "example": false },
+                                        "messageKey": { "type": "string", "example": "missing_fields" },
+                                        "reason": { "type": "string", "example": "Email, password, and name are required" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": { "type": "boolean", "example": false },
+                                        "messageKey": { "type": "string", "example": "register_failed" },
+                                        "reason": { "type": "string", "example": "Internal server error" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/account/verify-email": {
+            "get": {
+                "summary": "邮箱验证",
+                "description": "使用用户ID和验证密钥验证用户邮箱",
+                "tags": ["Account"],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "required": true,
+                        "schema": { "type": "string", "example": "66d5b45e3d55c0001f40c78b" },
+                        "description": "用户ID"
+                    },
+                    {
+                        "in": "query",
+                        "name": "secret",
+                        "required": true,
+                        "schema": { "type": "string", "example": "verification-secret-123" },
+                        "description": "验证密钥"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "重定向到首页，附带验证结果",
+                        "headers": {
+                            "Location": { "schema": { "type": "string", "example": "/?verify=success" }, "description": "重定向地址" }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {},
+    "tags": []
+}
