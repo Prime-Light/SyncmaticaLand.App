@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2, ChevronDown, Stone } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
@@ -13,6 +13,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     const [state, formAction, isPending] = useActionState(loginAction, initialState);
     const [countdown, setCountdown] = useState(1);
     const [captchaSolved, setCaptchaSolved] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false);
+    const formRef = useRef<HTMLFormElement>(null);
+
+    const handleFormChange = (e: React.FormEvent<HTMLFormElement>) => {
+        setIsFormValid(e.currentTarget.checkValidity());
+    };
+
+    useEffect(() => {
+        if (formRef.current) {
+            setIsFormValid(formRef.current.checkValidity());
+        }
+    }, [captchaSolved]);
     const messageTextByKey: Record<Exclude<LoginActionState["messageKey"], "">, string> = {
         missing_fields: "请输入邮箱和密码",
         login_success: "登录成功",
@@ -41,7 +53,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
-            <form action={formAction}>
+            <form action={formAction} onChange={handleFormChange} ref={formRef}>
                 <Shadcn.FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
                         <a href="#" className="flex flex-col items-center gap-2 font-medium">
@@ -90,7 +102,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                         </Shadcn.Alert>
                     ) : null}
                     <Shadcn.Field>
-                        <Shadcn.Button type="submit" disabled={isPending || !captchaSolved}>
+                        <Shadcn.Button type="submit" disabled={isPending || !captchaSolved || !isFormValid}>
                             {isPending ? "登录中..." : "登录"}
                         </Shadcn.Button>
                     </Shadcn.Field>
