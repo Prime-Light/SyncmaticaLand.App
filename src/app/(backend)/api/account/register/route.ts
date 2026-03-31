@@ -90,7 +90,7 @@ export async function POST(request: Request): Promise<NextResponse<RegisterActio
         const name = String(formData.get("name") ?? "").trim();
 
         if (!email || !password || !name) {
-            BackendApiRouteLogger.warn("Register request with missing fields", { email, password, name });
+            BackendApiRouteLogger.warn("Register request with missing fields", { email, name });
             return NextResponse.json(
                 {
                     success: false,
@@ -114,7 +114,7 @@ export async function POST(request: Request): Promise<NextResponse<RegisterActio
         }
 
         if (password.length < 8) {
-            BackendApiRouteLogger.warn("Register request with password shorter than 8 characters", { password });
+            BackendApiRouteLogger.warn("Register request with password shorter than 8 characters", { email });
             return NextResponse.json(
                 {
                     success: false,
@@ -125,19 +125,34 @@ export async function POST(request: Request): Promise<NextResponse<RegisterActio
             );
         }
 
-        const { account, tablesDB, projectId } = createAdminClient();
+        const { account, tablesDB, projectId, users } = createAdminClient();
 
         const user = await account.create({ userId: ID.unique(), email, password, name });
 
-        await tablesDB.createRow({
-            databaseId: DATABASE_ID,
-            tableId: USERS_COLLECTION_ID,
-            rowId: user.$id,
-            data: {
-                account_status: AccountStatus.NORMAL,
-                uid: user.$id,
-            },
-        });
+        try {
+            await tablesDB.createRow({
+                databaseId: DATABASE_ID,
+                tableId: USERS_COLLECTION_ID,
+                rowId: user.$id,
+                data: {
+                    account_status: AccountStatus.NORMAL,
+                    uid: user.$id,
+                },
+            });
+        } catch (error) {
+            // Best-effort rollback: avoid leaving an auth account without a matching tablesDB row
+            try {
+                await users.delete(user.$id);
+            } catch (rollbackError) {
+                // If rollback fails, log and still surface the original error
+                BackendApiRouteLogger.error("Failed to rollback orphaned user after tablesDB.createRow failure", {
+                    userId: user.$id,
+                    error: rollbackError,
+                });
+            }
+
+            throw error;
+        }
 
         const session = await account.createEmailPasswordSession({ email, password });
         const cookieStore = await cookies();
@@ -151,7 +166,7 @@ export async function POST(request: Request): Promise<NextResponse<RegisterActio
             expires: new Date(session.expire),
         });
 
-        BackendApiRouteLogger.info("Register request with success", { email, password, name });
+        BackendApiRouteLogger.info("Register request with success", { email, name });
         return NextResponse.json(
             {
                 success: true,
@@ -161,12 +176,12 @@ export async function POST(request: Request): Promise<NextResponse<RegisterActio
         );
     } catch (err) {
         const errorMessage = err instanceof Error ? err.message : undefined;
-        BackendApiRouteLogger.error("Register request failed", { errorMessage });
+        BackendApiRouteLogger.error("Register request failed", { errorMessage, err });
         return NextResponse.json(
             {
                 success: false,
                 messageKey: "register_failed",
-                reason: errorMessage,
+                reason: "Internal server error",
             },
             { status: 500 }
         );

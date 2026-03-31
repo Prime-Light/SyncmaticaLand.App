@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { createAdminClient, createSessionClient, getSessionCookieName } from "@/lib/appwrite/server";
 import { DATABASE_ID, USERS_COLLECTION_ID, AccountStatus, UserDocument } from "@/lib/appwrite/constants";
 import { BackendApiActionLogger } from "@/lib/logger";
-import { Models } from "node-appwrite";
+import { Models, AppwriteException } from "node-appwrite";
 
 export type LoginActionState = {
     success: boolean;
@@ -17,7 +17,7 @@ export async function loginAction(_prevState: LoginActionState, formData: FormDa
     const password = String(formData.get("password") ?? "");
 
     if (!email || !password) {
-        BackendApiActionLogger.warn("Login request with missing fields", { email, password });
+        BackendApiActionLogger.warn("Login request with missing fields", { email });
         return {
             success: false,
             messageKey: "missing_fields",
@@ -32,11 +32,11 @@ export async function loginAction(_prevState: LoginActionState, formData: FormDa
         try {
             session = await account.createEmailPasswordSession({ email, password });
         } catch (err) {
-            if (err instanceof Error && err.message.includes("Invalid credentials")) {
+            if (err instanceof AppwriteException && err.type === "user_invalid_credentials") {
                 return {
                     success: false,
                     messageKey: "invalid_credentials",
-                    reason: err.message,
+                    reason: "The email or password you entered is incorrect",
                 };
             } else {
                 throw err;
@@ -86,7 +86,7 @@ export async function loginAction(_prevState: LoginActionState, formData: FormDa
         return {
             success: false,
             messageKey: "login_failed",
-            reason: errorMessage,
+            reason: "Internal server error",
         };
     }
 }

@@ -45,19 +45,34 @@ export async function registerAction(_prevState: RegisterActionState, formData: 
     }
 
     try {
-        const { account, tablesDB, projectId } = createAdminClient();
+        const { account, tablesDB, projectId, users } = createAdminClient();
 
         const user = await account.create({ userId: ID.unique(), email, password, name });
 
-        await tablesDB.createRow({
-            databaseId: DATABASE_ID,
-            tableId: USERS_COLLECTION_ID,
-            rowId: user.$id,
-            data: {
-                account_status: AccountStatus.NORMAL,
-                uid: user.$id,
-            },
-        });
+        try {
+            await tablesDB.createRow({
+                databaseId: DATABASE_ID,
+                tableId: USERS_COLLECTION_ID,
+                rowId: user.$id,
+                data: {
+                    account_status: AccountStatus.NORMAL,
+                    uid: user.$id,
+                },
+            });
+        } catch (error) {
+            // Best-effort rollback: avoid leaving an auth account without a matching tablesDB row
+            try {
+                await users.delete(user.$id);
+            } catch (rollbackError) {
+                // If rollback fails, log and still surface the original error
+                BackendApiActionLogger.error("Failed to rollback orphaned user after tablesDB.createRow failure", {
+                    userId: user.$id,
+                    error: rollbackError,
+                });
+            }
+
+            throw error;
+        }
 
         const session = await account.createEmailPasswordSession({ email, password });
         const cookieStore = await cookies();
@@ -71,18 +86,18 @@ export async function registerAction(_prevState: RegisterActionState, formData: 
             expires: new Date(session.expire),
         });
 
-        BackendApiActionLogger.info("Register request with success", { email, password, name });
+        BackendApiActionLogger.info("Register request with success", { email, name });
         return {
             success: true,
             messageKey: "register_success",
         };
     } catch (err) {
         const errorMessage = err instanceof Error ? err.message : undefined;
-        BackendApiActionLogger.error("Register request failed", { errorMessage });
+        BackendApiActionLogger.error("Register request failed", { errorMessage, err });
         return {
             success: false,
             messageKey: "register_failed",
-            reason: errorMessage,
+            reason: "Internal server error",
         };
     }
 }

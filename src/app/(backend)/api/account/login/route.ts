@@ -103,7 +103,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient, createSessionClient, getSessionCookieName } from "@/lib/appwrite/server";
 import { DATABASE_ID, USERS_COLLECTION_ID, AccountStatus, UserDocument } from "@/lib/appwrite/constants";
 import { BackendApiRouteLogger } from "@/lib/logger";
-import { Models } from "node-appwrite";
+import { Models, AppwriteException } from "node-appwrite";
 
 type LoginActionState = {
     success: boolean;
@@ -118,7 +118,7 @@ export async function POST(request: Request): Promise<NextResponse<LoginActionSt
         const password = String(formData.get("password") ?? "");
 
         if (!email || !password) {
-            BackendApiRouteLogger.warn("Login request with missing fields", { email, password });
+            BackendApiRouteLogger.warn("Login request with missing fields", { email });
             return NextResponse.json(
                 {
                     success: false,
@@ -135,12 +135,12 @@ export async function POST(request: Request): Promise<NextResponse<LoginActionSt
         try {
             session = await account.createEmailPasswordSession({ email, password });
         } catch (err) {
-            if (err instanceof Error && err.message.includes("Invalid credentials")) {
+            if (err instanceof AppwriteException && err.type === "user_invalid_credentials") {
                 return NextResponse.json(
                     {
                         success: false,
                         messageKey: "invalid_credentials",
-                        reason: err.message,
+                        reason: "The email or password you entered is incorrect",
                     },
                     { status: 401 }
                 );
@@ -194,13 +194,13 @@ export async function POST(request: Request): Promise<NextResponse<LoginActionSt
         );
     } catch (err) {
         const errorMessage = err instanceof Error ? err.message : undefined;
-        BackendApiRouteLogger.error("Login failed", { errorMessage });
+        BackendApiRouteLogger.error("Login failed", { errorMessage, err });
 
         return NextResponse.json(
             {
                 success: false,
                 messageKey: "login_failed",
-                reason: errorMessage,
+                reason: "Internal server error",
             },
             { status: 500 }
         );
