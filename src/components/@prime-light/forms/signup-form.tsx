@@ -26,7 +26,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
     }, [captchaSolved]);
     const messageTextByKey: Record<Exclude<RegisterActionState["messageKey"], "">, string> = {
         missing_fields: "请填写用户名、邮箱和密码",
-        register_success: "注册成功，请登录",
+        register_success: "注册成功",
         register_failed: "注册失败，请稍后重试",
         email_invalid: "邮箱格式错误",
         password_short: "密码长度不能小于8个字符",
@@ -40,7 +40,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
             setCountdown((prev) => {
                 if (prev <= 1) {
                     clearInterval(timer);
-                    window.location.assign("/auth/login");
+                    window.location.assign("/");
                     return 0;
                 }
                 return prev - 1;
@@ -89,7 +89,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                             <Shadcn.AlertTitle>{state.success ? "成功" : "失败"}</Shadcn.AlertTitle>
                             <Shadcn.AlertDescription className={state.success ? "text-green-600/90" : ""}>
                                 {messageText}
-                                {state.success && <span className="ml-1">({`${countdown}秒后跳转登录页`})</span>}
+                                {state.success && <span className="ml-1">({`${countdown}秒后跳转主页`})</span>}
                             </Shadcn.AlertDescription>
                         </Shadcn.Alert>
                     ) : null}
