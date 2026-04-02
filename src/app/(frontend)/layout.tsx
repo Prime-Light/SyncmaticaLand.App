@@ -25,7 +25,7 @@ export default function RootLayout({
             className={cn("antialiased", fontMono.variable, "font-sans", inter.variable, notoSansHeading.variable)}>
             <body className="min-h-svh">
                 <Prime.ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    <div className="min-h-svh flex flex-col">{children}</div>
+                    <div className="flex min-h-svh flex-col">{children}</div>
                 </Prime.ThemeProvider>
             </body>
         </html>
