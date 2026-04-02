@@ -6,6 +6,7 @@ type ExportItem = {
     name: string;
     isDefault: boolean;
     importPath: string;
+    isType: boolean;
 };
 
 const VALID_EXT = [".ts", ".tsx"];
@@ -44,10 +45,20 @@ function extractExports(filePath: string, sourceFile: SourceFile): ExportItem[] 
         if (name === "default") continue;
         if (!/^[A-Z]/.test(name)) continue;
 
+        let isType = false;
+        const decls = sym.getDeclarations();
+        if (decls.length > 0) {
+            isType = decls.every((d) => {
+                const kind = d.getKindName();
+                return kind === "TypeAliasDeclaration" || kind === "InterfaceDeclaration";
+            });
+        }
+
         exports.push({
             name,
             isDefault: false,
             importPath: "",
+            isType,
         });
     }
 
@@ -88,6 +99,7 @@ function extractExports(filePath: string, sourceFile: SourceFile): ExportItem[] 
                 name,
                 isDefault: true,
                 importPath: "",
+                isType: false,
             });
         }
     }
@@ -108,6 +120,7 @@ function extractExports(filePath: string, sourceFile: SourceFile): ExportItem[] 
                     name: alias,
                     isDefault: false,
                     importPath: moduleSpecifier,
+                    isType: spec.isTypeOnly(),
                 });
             }
         }
@@ -196,7 +209,11 @@ function main() {
 
         const formatted = items
             .sort((a, b) => a.name.localeCompare(b.name))
-            .map((e) => (e.isDefault ? `  default as ${e.name}` : `  ${e.name}`));
+            .map((e) => {
+                let prefix = "";
+                if (e.isType) prefix = "type ";
+                return e.isDefault ? `  default as ${e.name}` : `  ${prefix}${e.name}`;
+            });
 
         lines.push(formatted.join(",\n") + ",");
         lines.push(`} from "${importPath}";`);
