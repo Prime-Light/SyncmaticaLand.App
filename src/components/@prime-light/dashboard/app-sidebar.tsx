@@ -2,19 +2,7 @@
 
 import * as React from "react";
 
-import { NavDocuments } from "@/components/@prime-light/dashboard/nav-documents";
-import { NavMain } from "@/components/@prime-light/dashboard/nav-main";
-import { NavSecondary } from "@/components/@prime-light/dashboard/nav-secondary";
-import { NavUser } from "@/components/@prime-light/dashboard/nav-user";
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from "@/components/@shadcn-ui/sidebar";
+import { Shadcn, Prime } from "@/components";
 import {
     LayoutDashboardIcon,
     ListIcon,
@@ -149,29 +137,29 @@ const data = {
     ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Shadcn.Sidebar>) {
     return (
-        <Sidebar collapsible="offcanvas" {...props}>
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
+        <Shadcn.Sidebar collapsible="offcanvas" {...props}>
+            <Shadcn.SidebarHeader>
+                <Shadcn.SidebarMenu>
+                    <Shadcn.SidebarMenuItem>
+                        <Shadcn.SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
                             <a href="#">
                                 <CommandIcon className="size-5!" />
                                 <span className="text-base font-semibold">Acme Inc.</span>
                             </a>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader>
-            <SidebarContent>
-                <NavMain items={data.navMain} />
-                <NavDocuments items={data.documents} />
-                <NavSecondary items={data.navSecondary} className="mt-auto" />
-            </SidebarContent>
-            <SidebarFooter>
-                <NavUser user={data.user} />
-            </SidebarFooter>
-        </Sidebar>
+                        </Shadcn.SidebarMenuButton>
+                    </Shadcn.SidebarMenuItem>
+                </Shadcn.SidebarMenu>
+            </Shadcn.SidebarHeader>
+            <Shadcn.SidebarContent>
+                <Prime.NavMain items={data.navMain} />
+                <Prime.NavDocuments items={data.documents} />
+                <Prime.NavSecondary items={data.navSecondary} className="mt-auto" />
+            </Shadcn.SidebarContent>
+            <Shadcn.SidebarFooter>
+                <Prime.NavUser user={data.user} />
+            </Shadcn.SidebarFooter>
+        </Shadcn.Sidebar>
     );
 }

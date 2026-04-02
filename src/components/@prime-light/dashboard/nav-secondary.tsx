@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/@shadcn-ui/sidebar";
+import { Shadcn } from "@/components";
 
 export function NavSecondary({
     items,
@@ -13,23 +13,23 @@ export function NavSecondary({
         url: string;
         icon: React.ReactNode;
     }[];
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+} & React.ComponentPropsWithoutRef<typeof Shadcn.SidebarGroup>) {
     return (
-        <SidebarGroup {...props}>
-            <SidebarGroupContent>
-                <SidebarMenu>
+        <Shadcn.SidebarGroup {...props}>
+            <Shadcn.SidebarGroupContent>
+                <Shadcn.SidebarMenu>
                     {items.map((item) => (
-                        <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton asChild>
+                        <Shadcn.SidebarMenuItem key={item.title}>
+                            <Shadcn.SidebarMenuButton asChild>
                                 <a href={item.url}>
                                     {item.icon}
                                     <span>{item.title}</span>
                                 </a>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
+                            </Shadcn.SidebarMenuButton>
+                        </Shadcn.SidebarMenuItem>
                     ))}
-                </SidebarMenu>
-            </SidebarGroupContent>
-        </SidebarGroup>
+                </Shadcn.SidebarMenu>
+            </Shadcn.SidebarGroupContent>
+        </Shadcn.SidebarGroup>
     );
 }

@@ -1,21 +1,7 @@
 "use client";
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/@shadcn-ui/dropdown-menu";
-import {
-    SidebarGroup,
-    SidebarGroupLabel,
-    SidebarMenu,
-    SidebarMenuAction,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
-} from "@/components/@shadcn-ui/sidebar";
+import { Shadcn } from "@/components";
+import { useSidebar } from "@/components/@shadcn-ui/sidebar";
 import { MoreHorizontalIcon, FolderIcon, ShareIcon, Trash2Icon } from "lucide-react";
 
 export function NavDocuments({
@@ -30,52 +16,52 @@ export function NavDocuments({
     const { isMobile } = useSidebar();
 
     return (
-        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel>Documents</SidebarGroupLabel>
-            <SidebarMenu>
+        <Shadcn.SidebarGroup className="group-data-[collapsible=icon]:hidden">
+            <Shadcn.SidebarGroupLabel>Documents</Shadcn.SidebarGroupLabel>
+            <Shadcn.SidebarMenu>
                 {items.map((item) => (
-                    <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton asChild>
+                    <Shadcn.SidebarMenuItem key={item.name}>
+                        <Shadcn.SidebarMenuButton asChild>
                             <a href={item.url}>
                                 {item.icon}
                                 <span>{item.name}</span>
                             </a>
-                        </SidebarMenuButton>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <SidebarMenuAction showOnHover className="rounded-sm data-[state=open]:bg-accent">
+                        </Shadcn.SidebarMenuButton>
+                        <Shadcn.DropdownMenu>
+                            <Shadcn.DropdownMenuTrigger asChild>
+                                <Shadcn.SidebarMenuAction showOnHover className="rounded-sm data-[state=open]:bg-accent">
                                     <MoreHorizontalIcon />
                                     <span className="sr-only">More</span>
-                                </SidebarMenuAction>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
+                                </Shadcn.SidebarMenuAction>
+                            </Shadcn.DropdownMenuTrigger>
+                            <Shadcn.DropdownMenuContent
                                 className="w-24 rounded-lg"
                                 side={isMobile ? "bottom" : "right"}
                                 align={isMobile ? "end" : "start"}>
-                                <DropdownMenuItem>
+                                <Shadcn.DropdownMenuItem>
                                     <FolderIcon />
                                     <span>Open</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                </Shadcn.DropdownMenuItem>
+                                <Shadcn.DropdownMenuItem>
                                     <ShareIcon />
                                     <span>Share</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem variant="destructive">
+                                </Shadcn.DropdownMenuItem>
+                                <Shadcn.DropdownMenuSeparator />
+                                <Shadcn.DropdownMenuItem variant="destructive">
                                     <Trash2Icon />
                                     <span>Delete</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </SidebarMenuItem>
+                                </Shadcn.DropdownMenuItem>
+                            </Shadcn.DropdownMenuContent>
+                        </Shadcn.DropdownMenu>
+                    </Shadcn.SidebarMenuItem>
                 ))}
-                <SidebarMenuItem>
-                    <SidebarMenuButton className="text-sidebar-foreground/70">
+                <Shadcn.SidebarMenuItem>
+                    <Shadcn.SidebarMenuButton className="text-sidebar-foreground/70">
                         <MoreHorizontalIcon className="text-sidebar-foreground/70" />
                         <span>More</span>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-        </SidebarGroup>
+                    </Shadcn.SidebarMenuButton>
+                </Shadcn.SidebarMenuItem>
+            </Shadcn.SidebarMenu>
+        </Shadcn.SidebarGroup>
     );
 }

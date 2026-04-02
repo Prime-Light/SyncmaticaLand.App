@@ -4,10 +4,7 @@ import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/@shadcn-ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/@shadcn-ui/chart";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/@shadcn-ui/select";
-import { ToggleGroup, ToggleGroupItem } from "@/components/@shadcn-ui/toggle-group";
+import { Shadcn } from "@/components";
 
 export const description = "An interactive area chart";
 
@@ -117,7 +114,7 @@ const chartConfig = {
         label: "Mobile",
         color: "var(--primary)",
     },
-} satisfies ChartConfig;
+} satisfies Shadcn.ChartConfig;
 
 export function ChartAreaInteractive() {
     const isMobile = useIsMobile();
@@ -144,47 +141,47 @@ export function ChartAreaInteractive() {
     });
 
     return (
-        <Card className="@container/card">
-            <CardHeader>
-                <CardTitle>Total Visitors</CardTitle>
-                <CardDescription>
+        <Shadcn.Card className="@container/card">
+            <Shadcn.CardHeader>
+                <Shadcn.CardTitle>Total Visitors</Shadcn.CardTitle>
+                <Shadcn.CardDescription>
                     <span className="hidden @[540px]/card:block">Total for the last 3 months</span>
                     <span className="@[540px]/card:hidden">Last 3 months</span>
-                </CardDescription>
-                <CardAction>
-                    <ToggleGroup
+                </Shadcn.CardDescription>
+                <Shadcn.CardAction>
+                    <Shadcn.ToggleGroup
                         type="single"
                         value={timeRange}
                         onValueChange={setTimeRange}
                         variant="outline"
                         className="hidden *:data-[slot=toggle-group-item]:px-4! @[767px]/card:flex">
-                        <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
-                        <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
-                        <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
-                    </ToggleGroup>
-                    <Select value={timeRange} onValueChange={setTimeRange}>
-                        <SelectTrigger
+                        <Shadcn.ToggleGroupItem value="90d">Last 3 months</Shadcn.ToggleGroupItem>
+                        <Shadcn.ToggleGroupItem value="30d">Last 30 days</Shadcn.ToggleGroupItem>
+                        <Shadcn.ToggleGroupItem value="7d">Last 7 days</Shadcn.ToggleGroupItem>
+                    </Shadcn.ToggleGroup>
+                    <Shadcn.Select value={timeRange} onValueChange={setTimeRange}>
+                        <Shadcn.SelectTrigger
                             className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
                             size="sm"
                             aria-label="Select a value">
-                            <SelectValue placeholder="Last 3 months" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl">
-                            <SelectItem value="90d" className="rounded-lg">
+                            <Shadcn.SelectValue placeholder="Last 3 months" />
+                        </Shadcn.SelectTrigger>
+                        <Shadcn.SelectContent className="rounded-xl">
+                            <Shadcn.SelectItem value="90d" className="rounded-lg">
                                 Last 3 months
-                            </SelectItem>
-                            <SelectItem value="30d" className="rounded-lg">
+                            </Shadcn.SelectItem>
+                            <Shadcn.SelectItem value="30d" className="rounded-lg">
                                 Last 30 days
-                            </SelectItem>
-                            <SelectItem value="7d" className="rounded-lg">
+                            </Shadcn.SelectItem>
+                            <Shadcn.SelectItem value="7d" className="rounded-lg">
                                 Last 7 days
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                </CardAction>
-            </CardHeader>
-            <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-                <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+                            </Shadcn.SelectItem>
+                        </Shadcn.SelectContent>
+                    </Shadcn.Select>
+                </Shadcn.CardAction>
+            </Shadcn.CardHeader>
+            <Shadcn.CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+                <Shadcn.ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
                     <AreaChart data={filteredData}>
                         <defs>
                             <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
@@ -211,10 +208,10 @@ export function ChartAreaInteractive() {
                                 });
                             }}
                         />
-                        <ChartTooltip
+                        <Shadcn.ChartTooltip
                             cursor={false}
                             content={
-                                <ChartTooltipContent
+                                <Shadcn.ChartTooltipContent
                                     labelFormatter={(value) => {
                                         return new Date(value).toLocaleDateString("en-US", {
                                             month: "short",
@@ -228,8 +225,8 @@ export function ChartAreaInteractive() {
                         <Area dataKey="mobile" type="natural" fill="url(#fillMobile)" stroke="var(--color-mobile)" stackId="a" />
                         <Area dataKey="desktop" type="natural" fill="url(#fillDesktop)" stroke="var(--color-desktop)" stackId="a" />
                     </AreaChart>
-                </ChartContainer>
-            </CardContent>
-        </Card>
+                </Shadcn.ChartContainer>
+            </Shadcn.CardContent>
+        </Shadcn.Card>
     );
 }
