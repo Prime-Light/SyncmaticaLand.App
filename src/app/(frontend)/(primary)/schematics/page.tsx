@@ -23,7 +23,7 @@ export default function SchematicsIndex() {
         <main className="min-h-screen bg-background text-foreground">
             {/* Hero Section */}
             <section className="relative">
-                <div className="mx-auto max-w-7xl px-4 py-16 lg:py-32 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-32">
                     <div className="text-center">
                         <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">原理图市场</h1>
                         <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
