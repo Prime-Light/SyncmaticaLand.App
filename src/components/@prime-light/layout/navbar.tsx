@@ -21,7 +21,6 @@ import {
 import Cookies from "js-cookie";
 import { Prime, Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
-import { logoutAction, resendEmailVerificationAction } from "@/lib/auth/session";
 
 interface NavbarProps {
     className?: string;
@@ -172,7 +171,7 @@ export function Navbar({ initialUser, className }: NavbarProps) {
 
     const handleLogout = () => {
         startTransition(async () => {
-            await logoutAction();
+            // await logoutAction();
             setUser(null);
             setVerificationNotice("");
             setIsResending(false);
@@ -185,8 +184,8 @@ export function Navbar({ initialUser, className }: NavbarProps) {
         setIsResending(true);
         startTransition(async () => {
             try {
-                const result = await resendEmailVerificationAction();
-                setVerificationNotice(result.success ? "sent" : "failed");
+                // const result = await resendEmailVerificationAction();
+                // setVerificationNotice(result.success ? "sent" : "failed");
             } finally {
                 setIsResending(false);
             }
@@ -294,7 +293,7 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                     <Shadcn.NavigationMenuItem>
                                         <Shadcn.NavigationMenuLink asChild>
                                             <Link
-                                                href="/auth/signup"
+                                                href="/auth/register"
                                                 className={cn(
                                                     "inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-colors",
                                                     "hover:bg-accent hover:text-accent-foreground",
@@ -367,7 +366,7 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                         </Link>
                                     </Shadcn.DropdownMenuItem>
                                     <Shadcn.DropdownMenuItem asChild>
-                                        <Link href="/auth/signup">
+                                        <Link href="/auth/register">
                                             <UserPlusIcon />
                                             注册
                                         </Link>

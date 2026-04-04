@@ -23,6 +23,6 @@
             "@/*": ["./*"]
         }
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts", "src/components/@prime-light/forms/register-form.tsx", "src/components/@prime-light/forms/login-form.tsx"],
     "exclude": ["node_modules"]
 }

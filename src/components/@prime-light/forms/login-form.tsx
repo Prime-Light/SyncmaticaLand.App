@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2, ChevronDown, Stone } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
-import { loginAction } from "@/app/(backend)/api/account/login/action";
+import { loginAction, type loginActionState } from "@/app/(backend)/api/account/login/action";
 import { cn } from "@/lib/utils";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
