@@ -94,7 +94,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         ),
         cell: ({ row }) => (
             <div className="flex items-center justify-center">
-                <Shadcn.Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
+                <Shadcn.Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
             </div>
         ),
         enableSorting: false,
@@ -366,7 +370,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                     </Shadcn.Button>
                 </div>
             </div>
-                <Shadcn.TabsContent value="outline" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+            <Shadcn.TabsContent value="outline" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
                 <div className="overflow-hidden rounded-lg border">
                     <DndContext
                         collisionDetection={closestCenter}
@@ -409,7 +413,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                     </DndContext>
                 </div>
                 <div className="flex items-center justify-between px-4">
-                            <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
+                    <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
                         {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
                     </div>
                     <div className="flex w-full items-center gap-8 lg:w-fit">
@@ -439,7 +443,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                         <div className="flex w-fit items-center justify-center text-sm font-medium">
                             Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
                         </div>
-                            <div className="ms-auto flex items-center gap-2 lg:ms-0">
+                        <div className="ms-auto flex items-center gap-2 lg:ms-0">
                             <Shadcn.Button
                                 variant="outline"
                                 className="hidden h-8 w-8 p-0 lg:flex"

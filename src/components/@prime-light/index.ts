@@ -14,6 +14,7 @@ export { default as ParticleBackground } from "./decoration/ParticleBackground";
 
 // export { LoginForm } from "./forms/login-formX";
 export { RegisterForm } from "./forms/register-form";
+export { OtpForm } from "./forms/otp-form";
 
 export { Footer } from "./layout/footer";
 export { Navbar } from "./layout/navbar";

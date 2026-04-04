@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import axios, { AxiosError } from "axios";
-import { AlertCircle, CheckCircle2, Eye, EyeOff, Stone } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Stone } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
 import { IApiErrorResponse } from "@/types/api-error";
@@ -15,7 +15,6 @@ type RegisterActionState = {
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
     const [state, setState] = useState<RegisterActionState>({ success: false, messageKey: "" });
-    const [countdown, setCountdown] = useState(3);
     const [captchaSolved, setCaptchaSolved] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
     const [isPending, setIsPending] = useState(false);
@@ -77,31 +76,14 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
     };
     const messageText = state.messageKey ? messageTextByKey[state.messageKey] : "";
 
-    useEffect(() => {
-        if (!state.success) return;
-        const timer = setInterval(() => {
-            setCountdown((prev) => {
-                if (prev <= 1) {
-                    clearInterval(timer);
-                    window.location.assign("/");
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [state.success]);
-
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <form onSubmit={handleSubmit} onChange={handleFormChange} ref={formRef}>
                 <Shadcn.FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
-                        <a href="#" className="flex flex-col items-center gap-2 font-medium">
-                            <div className="flex size-8 items-center justify-center rounded-md">
-                                <Stone className="size-6" />
-                            </div>
-                        </a>
+                        <div className="flex size-8 items-center justify-center rounded-md">
+                            <Stone className="size-6" />
+                        </div>
                         <h1 className="text-xl font-bold">{"创建账号"}</h1>
                         <Shadcn.FieldDescription>
                             {"已有账号？"} <Link href="/auth/login">{"登录"}</Link>
@@ -141,16 +123,11 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                         <Prime.Captcha onSolve={setCaptchaSolved} />
                     </Shadcn.Field>
 
-                    {messageText && (
-                        <Shadcn.Alert
-                            variant={state.success ? "default" : "destructive"}
-                            className={state.success ? "border-green-500/50 text-green-600" : ""}>
-                            {state.success ? <CheckCircle2 /> : <AlertCircle />}
-                            <Shadcn.AlertTitle>{state.success ? "成功" : "失败"}</Shadcn.AlertTitle>
-                            <Shadcn.AlertDescription className={state.success ? "text-green-600/90" : ""}>
-                                {messageText}
-                                {state.success && <span className="ml-1">({`${countdown}秒后跳转主页`})</span>}
-                            </Shadcn.AlertDescription>
+                    {messageText && !state.success && (
+                        <Shadcn.Alert variant="destructive">
+                            <AlertCircle />
+                            <Shadcn.AlertTitle>{"失败"}</Shadcn.AlertTitle>
+                            <Shadcn.AlertDescription>{messageText}</Shadcn.AlertDescription>
                         </Shadcn.Alert>
                     )}
 

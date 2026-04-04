@@ -2,7 +2,7 @@ import { Geist_Mono, Inter, Noto_Sans } from "next/font/google";
 
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
-import { Prime, Shadcn } from "@/components";
+import { Prime } from "@/components";
 import { TooltipProvider } from "@/components/@shadcn-ui";
 
 const notoSansHeading = Noto_Sans({ subsets: ["latin"], variable: "--font-heading" });
@@ -26,7 +26,9 @@ export default function RootLayout({
             className={cn("antialiased", fontMono.variable, "font-sans", inter.variable, notoSansHeading.variable)}>
             <body className="min-h-svh">
                 <Prime.ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    <div className="flex min-h-svh flex-col"><TooltipProvider>{children}</TooltipProvider></div>
+                    <div className="flex min-h-svh flex-col">
+                        <TooltipProvider>{children}</TooltipProvider>
+                    </div>
                 </Prime.ThemeProvider>
             </body>
         </html>
