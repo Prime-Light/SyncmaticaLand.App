@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import axios, { AxiosError } from "axios";
-import { AlertCircle, CheckCircle2, Stone } from "lucide-react";
+import { AlertCircle, CheckCircle2, Eye, EyeOff, Stone } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
 import { IApiErrorResponse } from "@/types/api-error";
@@ -19,6 +19,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
     const [captchaSolved, setCaptchaSolved] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
     const [isPending, setIsPending] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
 
     const handleFormChange = (e: React.ChangeEvent<HTMLFormElement>) => {
@@ -119,7 +120,20 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
 
                     <Shadcn.Field>
                         <Shadcn.FieldLabel htmlFor="password">{"密码"}</Shadcn.FieldLabel>
-                        <Shadcn.Input id="password" name="password" type="password" autoComplete="new-password" required />
+                        <div className="relative">
+                            <Shadcn.Input id="password" name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" required className="pr-10" />
+                            <Shadcn.Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                tabIndex={-1}
+                                aria-label={showPassword ? "隐藏密码" : "显示密码"}
+                                className="absolute right-0 top-0 size-full max-w-10 hover:bg-transparent"
+                                onClick={() => setShowPassword((v) => !v)}
+                            >
+                                {showPassword ? <EyeOff /> : <Eye />}
+                            </Shadcn.Button>
+                        </div>
                     </Shadcn.Field>
 
                     <Shadcn.Field>
