@@ -22,9 +22,14 @@ export class ApiResponse<T> {
         return this;
     }
 
-    build(): NextResponse<{ data: T } | null> {
+    build(): NextResponse<{ data: T }> {
+        if (this._code == ApiResponseCode.NO_CONTENT) {
+            throw new Error(
+                "[DEPRECATED] NO-CONTENT response should not build through ApiResponse<T> class"
+            );
+        }
         return NextResponse.json(
-            this._code === ApiResponseCode.NO_CONTENT ? null : { data: this._data },
+            { data: this._data },
             {
                 status: this._code,
             }

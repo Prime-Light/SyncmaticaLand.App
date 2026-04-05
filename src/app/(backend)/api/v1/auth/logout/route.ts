@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/database/server";
 import { BackendApiRouteLogger } from "@/lib/logger";
-import { ApiError, ApiErrorCode, ApiResponse, ApiResponseCode } from "@/lib/api-responses";
+import { ApiError, ApiErrorCode, ApiResponseCode } from "@/lib/api-responses";
 
 export async function POST(): Promise<NextResponse> {
     const supabase = await createSupabaseServerClient();
@@ -17,5 +17,5 @@ export async function POST(): Promise<NextResponse> {
             .build();
     }
 
-    return new ApiResponse().code(ApiResponseCode.NO_CONTENT).build();
+    return NextResponse.json(null, { status: ApiResponseCode.NO_CONTENT });
 }
