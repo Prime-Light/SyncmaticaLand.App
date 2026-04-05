@@ -51,7 +51,9 @@ function UserMenuHeader({ user, userInitials }: { user: CurrentUser; userInitial
                 </Shadcn.Avatar>
                 <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                        <span className="truncate text-sm font-medium">{user.name || "用户"}</span>
+                        <span className="truncate text-sm font-medium">
+                            {user.name || "用户"}
+                        </span>
                         {user.labels.includes("admin") && (
                             <Shadcn.Badge
                                 variant="outline"
@@ -114,7 +116,11 @@ function VerificationAlert({
                         )}
                         {verificationNotice === "sent" ? "已发送" : "重新发送验证邮件"}
                     </Shadcn.Button>
-                    {verificationNotice === "failed" && <p className="mt-2 text-center text-xs text-destructive">发送失败，请重试</p>}
+                    {verificationNotice === "failed" && (
+                        <p className="mt-2 text-center text-xs text-destructive">
+                            发送失败，请重试
+                        </p>
+                    )}
                 </Shadcn.AlertDescription>
             </Shadcn.Alert>
         </div>
@@ -205,8 +211,12 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                         <StoneIcon className="size-6 text-foreground" strokeWidth={1.5} />
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-sm leading-tight font-semibold tracking-tight">SyncmaticaLand</span>
-                        <span className="text-xs leading-tight font-medium text-muted-foreground">投影共和国</span>
+                        <span className="text-sm leading-tight font-semibold tracking-tight">
+                            SyncmaticaLand
+                        </span>
+                        <span className="text-xs leading-tight font-medium text-muted-foreground">
+                            投影共和国
+                        </span>
                     </div>
                 </Link>
 
@@ -216,7 +226,10 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                         <Shadcn.NavigationMenuList className="gap-1">
                             {navItems.map((item) => {
                                 const Icon = item.icon;
-                                const isActive = item.href === "/" ? $pathname === "/" : $pathname.startsWith(item.href);
+                                const isActive =
+                                    item.href === "/"
+                                        ? $pathname === "/"
+                                        : $pathname.startsWith(item.href);
                                 return (
                                     <Shadcn.NavigationMenuItem key={item.href}>
                                         <Shadcn.NavigationMenuLink asChild>
@@ -239,18 +252,30 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                 );
                             })}
                         </Shadcn.NavigationMenuList>
-                        <Shadcn.Separator className="mx-4 my-auto h-3/4" orientation="vertical" />
+                        <Shadcn.Separator
+                            className="mx-4 my-auto h-3/4"
+                            orientation="vertical"
+                        />
                         <Shadcn.NavigationMenuList className="gap-1">
                             {user ? (
                                 <Shadcn.DropdownMenu>
                                     <Shadcn.DropdownMenuTrigger asChild>
-                                        <Shadcn.Button variant="ghost" size="lg" className="gap-2 px-3">
+                                        <Shadcn.Button
+                                            variant="ghost"
+                                            size="lg"
+                                            className="gap-2 px-3">
                                             <Shadcn.Avatar size="sm">
-                                                <Shadcn.AvatarFallback>{userInitials}</Shadcn.AvatarFallback>
+                                                <Shadcn.AvatarFallback>
+                                                    {userInitials}
+                                                </Shadcn.AvatarFallback>
                                             </Shadcn.Avatar>
-                                            <span className="hidden lg:inline">{user.name || "用户"}</span>
+                                            <span className="hidden lg:inline">
+                                                {user.name || "用户"}
+                                            </span>
                                             {!user.emailVerification && (
-                                                <Shadcn.Badge variant="destructive" className="gap-1">
+                                                <Shadcn.Badge
+                                                    variant="destructive"
+                                                    className="gap-1">
                                                     <MailWarningIcon />
                                                     未验证
                                                 </Shadcn.Badge>
@@ -258,7 +283,10 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                         </Shadcn.Button>
                                     </Shadcn.DropdownMenuTrigger>
                                     <Shadcn.DropdownMenuContent align="end" className="w-64">
-                                        <UserMenuHeader user={user} userInitials={userInitials} />
+                                        <UserMenuHeader
+                                            user={user}
+                                            userInitials={userInitials}
+                                        />
                                         {!user.emailVerification && (
                                             <>
                                                 <Shadcn.DropdownMenuSeparator />
@@ -308,7 +336,10 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                 </>
                             )}
                         </Shadcn.NavigationMenuList>
-                        <Shadcn.Separator className="mx-4 my-auto h-3/4" orientation="vertical" />
+                        <Shadcn.Separator
+                            className="mx-4 my-auto h-3/4"
+                            orientation="vertical"
+                        />
                         <Prime.ThemeToggle />
                     </Shadcn.NavigationMenu>
                 </div>
@@ -326,10 +357,18 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                             <Shadcn.DropdownMenuGroup>
                                 {navItems.map((item) => {
                                     const Icon = item.icon;
-                                    const isActive = item.href === "/" ? $pathname === "/" : $pathname.startsWith(item.href);
+                                    const isActive =
+                                        item.href === "/"
+                                            ? $pathname === "/"
+                                            : $pathname.startsWith(item.href);
                                     return (
                                         <Shadcn.DropdownMenuItem key={item.href} asChild>
-                                            <Link href={item.href} className={cn(isActive && "bg-accent text-accent-foreground")}>
+                                            <Link
+                                                href={item.href}
+                                                className={cn(
+                                                    isActive &&
+                                                        "bg-accent text-accent-foreground"
+                                                )}>
                                                 <Icon />
                                                 {item.label}
                                             </Link>

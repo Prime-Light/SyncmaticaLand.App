@@ -14,14 +14,14 @@ export const ReqSchema = z.object({
 export type Req = z.infer<typeof ReqSchema>;
 
 export const ResSchema = z.object({
-        email: z.string().meta({
-            description: "用户的邮箱地址",
-            example: "user@example.com",
-        }),
-        message: z.string().meta({
-            description: "重发验证邮件后的提示信息",
-            example: "验证邮件已发送",
-        }),
+    email: z.string().meta({
+        description: "用户的邮箱地址",
+        example: "user@example.com",
+    }),
+    message: z.string().meta({
+        description: "重发验证邮件后的提示信息",
+        example: "验证邮件已发送",
+    }),
 });
 
 export type Res = z.infer<typeof ResSchema>;

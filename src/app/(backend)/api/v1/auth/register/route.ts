@@ -17,18 +17,28 @@ export async function POST(req: NextRequest): Promise<NextResponse<RegisterResul
         email: body.email,
         password: body.password,
         options: {
-            emailRedirectTo: body.redirect_url || `${safelyGetEnv("NEXT_PUBLIC_HOST_URL")}/auth/verify/callback`,
+            emailRedirectTo:
+                body.redirect_url ||
+                `${safelyGetEnv("NEXT_PUBLIC_HOST_URL")}/auth/verify/callback`,
         },
     });
 
     if (error) {
         BackendApiRouteLogger.error("Failed to register user", { error });
-        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("注册失败").details({ error: error.message }).build();
+        return new ApiError()
+            .code(ApiErrorCode.BAD_REQUEST)
+            .message("注册失败")
+            .details({ error: error.message })
+            .build();
     }
 
     if (!data.user) {
         BackendApiRouteLogger.error("Failed to register user: no user returned");
-        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("注册失败").details({ error: "Failed to create user" }).build();
+        return new ApiError()
+            .code(ApiErrorCode.BAD_REQUEST)
+            .message("注册失败")
+            .details({ error: "Failed to create user" })
+            .build();
     }
 
     // 2. 创建用户 profile
@@ -46,9 +56,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<RegisterResul
         const { error: deleteError } = await supabaseServer.auth.admin.deleteUser(data.user.id);
 
         if (deleteError) {
-            BackendApiRouteLogger.error("[CAUTION!] Failed to delete user during rollback. This will result in inconsistent data.", {
-                error: deleteError,
-            });
+            BackendApiRouteLogger.error(
+                "[CAUTION!] Failed to delete user during rollback. This will result in inconsistent data.",
+                {
+                    error: deleteError,
+                }
+            );
         }
 
         return new ApiError()

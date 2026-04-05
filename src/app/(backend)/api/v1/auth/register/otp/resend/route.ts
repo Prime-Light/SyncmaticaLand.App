@@ -16,13 +16,19 @@ export async function POST(req: NextRequest): Promise<NextResponse<ResendResult>
         type: "signup",
         email: body.email,
         options: {
-            emailRedirectTo: body.redirect_url || `${safelyGetEnv("NEXT_PUBLIC_HOST_URL")}/auth/verify/callback`,
+            emailRedirectTo:
+                body.redirect_url ||
+                `${safelyGetEnv("NEXT_PUBLIC_HOST_URL")}/auth/verify/callback`,
         },
     });
 
     if (error) {
         BackendApiRouteLogger.error("Failed to resend verification email", { error });
-        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("发送失败").details({ error: error.message }).build();
+        return new ApiError()
+            .code(ApiErrorCode.BAD_REQUEST)
+            .message("发送失败")
+            .details({ error: error.message })
+            .build();
     }
 
     return new ApiResponse<Auth.Register.Resend.Res>()

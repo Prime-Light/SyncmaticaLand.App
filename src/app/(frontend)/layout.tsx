@@ -23,9 +23,19 @@ export default function RootLayout({
         <html
             lang="zh-CN"
             suppressHydrationWarning
-            className={cn("antialiased", fontMono.variable, "font-sans", inter.variable, notoSansHeading.variable)}>
+            className={cn(
+                "antialiased",
+                fontMono.variable,
+                "font-sans",
+                inter.variable,
+                notoSansHeading.variable
+            )}>
             <body className="min-h-svh">
-                <Prime.ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                <Prime.ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange>
                     <div className="flex min-h-svh flex-col">
                         <TooltipProvider>{children}</TooltipProvider>
                     </div>

@@ -87,12 +87,24 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
 
                     <Shadcn.Field>
                         <Shadcn.FieldLabel htmlFor="name">{"用户名"}</Shadcn.FieldLabel>
-                        <Shadcn.Input id="name" name="name" type="text" placeholder="您的用户名" required />
+                        <Shadcn.Input
+                            id="name"
+                            name="name"
+                            type="text"
+                            placeholder="您的用户名"
+                            required
+                        />
                     </Shadcn.Field>
 
                     <Shadcn.Field>
                         <Shadcn.FieldLabel htmlFor="email">{"邮箱"}</Shadcn.FieldLabel>
-                        <Shadcn.Input id="email" name="email" type="email" placeholder="me@example.com" required />
+                        <Shadcn.Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="me@example.com"
+                            required
+                        />
                     </Shadcn.Field>
 
                     <Shadcn.Field>
@@ -133,7 +145,9 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                     )}
 
                     <Shadcn.Field>
-                        <Shadcn.Button type="submit" disabled={isPending || !captchaSolved || !isFormValid}>
+                        <Shadcn.Button
+                            type="submit"
+                            disabled={isPending || !captchaSolved || !isFormValid}>
                             {isPending ? "注册中..." : "注册"}
                         </Shadcn.Button>
                     </Shadcn.Field>

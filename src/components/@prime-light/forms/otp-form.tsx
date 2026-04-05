@@ -112,16 +112,21 @@ export function OtpForm({
 
                     <Shadcn.Field className="mt-4">
                         <div className="flex items-center justify-between">
-                            <Shadcn.FieldLabel htmlFor="otp-verification">OTP 验证码</Shadcn.FieldLabel>
+                            <Shadcn.FieldLabel htmlFor="otp-verification">
+                                OTP 验证码
+                            </Shadcn.FieldLabel>
                             <Shadcn.Button
                                 variant="outline"
                                 size="xs"
                                 disabled={resendTimeout > 0 || isResending || !email}
                                 type="button"
-                                onClick={handleResend}
-                            >
+                                onClick={handleResend}>
                                 <RefreshCwIcon className={cn(isResending && "animate-spin")} />
-                                {isResending ? "发送中..." : resendTimeout > 0 ? `${resendTimeout} 秒后重发` : "重发"}
+                                {isResending
+                                    ? "发送中..."
+                                    : resendTimeout > 0
+                                      ? `${resendTimeout} 秒后重发`
+                                      : "重发"}
                             </Shadcn.Button>
                         </div>
                         <div className="flex items-center justify-center">
@@ -131,8 +136,7 @@ export function OtpForm({
                                 required
                                 pattern={REGEXP_ONLY_DIGITS}
                                 value={otp}
-                                onChange={setOtp}
-                            >
+                                onChange={setOtp}>
                                 <Shadcn.InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
                                     <Shadcn.InputOTPSlot index={0} />
                                     <Shadcn.InputOTPSlot index={1} />
@@ -151,18 +155,25 @@ export function OtpForm({
                     {state.message && (
                         <Shadcn.Alert variant={state.success ? "default" : "destructive"}>
                             <AlertCircle />
-                            <Shadcn.AlertTitle>{state.success ? "成功" : "失败"}</Shadcn.AlertTitle>
+                            <Shadcn.AlertTitle>
+                                {state.success ? "成功" : "失败"}
+                            </Shadcn.AlertTitle>
                             <Shadcn.AlertDescription>{state.message}</Shadcn.AlertDescription>
                         </Shadcn.Alert>
                     )}
 
                     <Shadcn.Field>
-                        <Shadcn.Button type="submit" className="w-full" disabled={isPending || otp.length !== 6}>
+                        <Shadcn.Button
+                            type="submit"
+                            className="w-full"
+                            disabled={isPending || otp.length !== 6}>
                             {isPending ? "验证中..." : "验证"}
                         </Shadcn.Button>
                         <div className="text-sm text-muted-foreground">
                             验证失败？{" "}
-                            <a href="#" className="underline underline-offset-4 transition-colors hover:text-primary">
+                            <a
+                                href="#"
+                                className="underline underline-offset-4 transition-colors hover:text-primary">
                                 联系支持团队
                             </a>
                         </div>

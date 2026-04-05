@@ -12,7 +12,7 @@ export { SiteHeader } from "./dashboard/site-header";
 
 export { default as ParticleBackground } from "./decoration/ParticleBackground";
 
-// export { LoginForm } from "./forms/login-formX";
+export { LoginForm } from "./forms/login-form";
 export { RegisterForm } from "./forms/register-form";
 export { OtpForm } from "./forms/otp-form";
 
