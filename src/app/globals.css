@@ -137,11 +137,25 @@
         --cap-checkbox-border: 1px solid var(--border);
         --cap-checkbox-background: var(--muted);
         --cap-font:
-            system, -apple-system, "BlinkMacSystemFont", ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue",
-            "Lucida Grande", "Ubuntu", "arial", sans-serif;
+            system, -apple-system, "BlinkMacSystemFont", ".SFNSText-Regular", "San Francisco",
+            "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", "Ubuntu", "arial",
+            sans-serif;
         --cap-spinner-color: color-mix(in oklch, var(--foreground) 30%, var(--background));
         --cap-spinner-background-color: var(--background);
         --cap-border-radius: 0rem;
         --cap-checkbox-border-radius: 0rem;
+    }
+
+    li.cn-toast[data-type="info"] {
+        @apply text-primary!;
+    }
+    li.cn-toast[data-type="success"] {
+        @apply text-green-600! dark:text-green-500!;
+    }
+    li.cn-toast[data-type="warning"] {
+        @apply text-yellow-600! dark:text-yellow-500!;
+    }
+    li.cn-toast[data-type="error"] {
+        @apply text-destructive!;
     }
 }

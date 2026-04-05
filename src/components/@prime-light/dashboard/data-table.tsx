@@ -13,7 +13,12 @@ import {
     type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+    arrayMove,
+    SortableContext,
+    useSortable,
+    verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
     flexRender,
@@ -68,7 +73,12 @@ function DragHandle({ id }: { id: number }) {
     });
 
     return (
-        <Shadcn.Button {...attributes} {...listeners} variant="ghost" size="icon" className="size-7 text-muted-foreground hover:bg-transparent">
+        <Shadcn.Button
+            {...attributes}
+            {...listeners}
+            variant="ghost"
+            size="icon"
+            className="size-7 text-muted-foreground hover:bg-transparent">
             <GripVerticalIcon className="size-3 text-muted-foreground" />
             <span className="sr-only">Drag to reorder</span>
         </Shadcn.Button>
@@ -86,7 +96,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         header: ({ table }) => (
             <div className="flex items-center justify-center">
                 <Shadcn.Checkbox
-                    checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
                     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                     aria-label="Select all"
                 />
@@ -94,7 +107,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         ),
         cell: ({ row }) => (
             <div className="flex items-center justify-center">
-                <Shadcn.Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
+                <Shadcn.Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
             </div>
         ),
         enableSorting: false,
@@ -124,7 +141,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         header: "Status",
         cell: ({ row }) => (
             <Shadcn.Badge variant="outline" className="px-1.5 text-muted-foreground">
-                {row.original.status === "Done" ? <CircleCheckIcon className="fill-green-500 dark:fill-green-400" /> : <LoaderIcon />}
+                {row.original.status === "Done" ? (
+                    <CircleCheckIcon className="fill-green-500 dark:fill-green-400" />
+                ) : (
+                    <LoaderIcon />
+                )}
                 {row.original.status}
             </Shadcn.Badge>
         ),
@@ -201,8 +222,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
                         </Shadcn.SelectTrigger>
                         <Shadcn.SelectContent align="end">
                             <Shadcn.SelectGroup>
-                                <Shadcn.SelectItem value="Eddie Lake">Eddie Lake</Shadcn.SelectItem>
-                                <Shadcn.SelectItem value="Jamik Tashpulatov">Jamik Tashpulatov</Shadcn.SelectItem>
+                                <Shadcn.SelectItem value="Eddie Lake">
+                                    Eddie Lake
+                                </Shadcn.SelectItem>
+                                <Shadcn.SelectItem value="Jamik Tashpulatov">
+                                    Jamik Tashpulatov
+                                </Shadcn.SelectItem>
                             </Shadcn.SelectGroup>
                         </Shadcn.SelectContent>
                     </Shadcn.Select>
@@ -215,7 +240,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         cell: () => (
             <Shadcn.DropdownMenu>
                 <Shadcn.DropdownMenuTrigger asChild>
-                    <Shadcn.Button variant="ghost" className="flex size-8 text-muted-foreground data-[state=open]:bg-muted" size="icon">
+                    <Shadcn.Button
+                        variant="ghost"
+                        className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
+                        size="icon">
                         <EllipsisVerticalIcon />
                         <span className="sr-only">Open menu</span>
                     </Shadcn.Button>
@@ -225,7 +253,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
                     <Shadcn.DropdownMenuItem>Make a copy</Shadcn.DropdownMenuItem>
                     <Shadcn.DropdownMenuItem>Favorite</Shadcn.DropdownMenuItem>
                     <Shadcn.DropdownMenuSeparator />
-                    <Shadcn.DropdownMenuItem variant="destructive">Delete</Shadcn.DropdownMenuItem>
+                    <Shadcn.DropdownMenuItem variant="destructive">
+                        Delete
+                    </Shadcn.DropdownMenuItem>
                 </Shadcn.DropdownMenuContent>
             </Shadcn.DropdownMenu>
         ),
@@ -248,7 +278,9 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
                 transition: transition,
             }}>
             {row.getVisibleCells().map((cell) => (
-                <Shadcn.TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Shadcn.TableCell>
+                <Shadcn.TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Shadcn.TableCell>
             ))}
         </Shadcn.TableRow>
     );
@@ -265,9 +297,16 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
         pageSize: 10,
     });
     const sortableId = React.useId();
-    const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
+    const sensors = useSensors(
+        useSensor(MouseSensor, {}),
+        useSensor(TouchSensor, {}),
+        useSensor(KeyboardSensor, {})
+    );
 
-    const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data]);
+    const dataIds = React.useMemo<UniqueIdentifier[]>(
+        () => data?.map(({ id }) => id) || [],
+        [data]
+    );
 
     const table = useReactTable({
         data,
@@ -312,15 +351,24 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                     View
                 </Shadcn.Label>
                 <Shadcn.Select defaultValue="outline">
-                    <Shadcn.SelectTrigger className="flex w-fit @4xl/main:hidden" size="sm" id="view-selector">
+                    <Shadcn.SelectTrigger
+                        className="flex w-fit @4xl/main:hidden"
+                        size="sm"
+                        id="view-selector">
                         <Shadcn.SelectValue placeholder="Select a view" />
                     </Shadcn.SelectTrigger>
                     <Shadcn.SelectContent>
                         <Shadcn.SelectGroup>
                             <Shadcn.SelectItem value="outline">Outline</Shadcn.SelectItem>
-                            <Shadcn.SelectItem value="past-performance">Past Performance</Shadcn.SelectItem>
-                            <Shadcn.SelectItem value="key-personnel">Key Personnel</Shadcn.SelectItem>
-                            <Shadcn.SelectItem value="focus-documents">Focus Documents</Shadcn.SelectItem>
+                            <Shadcn.SelectItem value="past-performance">
+                                Past Performance
+                            </Shadcn.SelectItem>
+                            <Shadcn.SelectItem value="key-personnel">
+                                Key Personnel
+                            </Shadcn.SelectItem>
+                            <Shadcn.SelectItem value="focus-documents">
+                                Focus Documents
+                            </Shadcn.SelectItem>
                         </Shadcn.SelectGroup>
                     </Shadcn.SelectContent>
                 </Shadcn.Select>
@@ -332,7 +380,9 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                     <Shadcn.TabsTrigger value="key-personnel">
                         Key Personnel <Shadcn.Badge variant="secondary">2</Shadcn.Badge>
                     </Shadcn.TabsTrigger>
-                    <Shadcn.TabsTrigger value="focus-documents">Focus Documents</Shadcn.TabsTrigger>
+                    <Shadcn.TabsTrigger value="focus-documents">
+                        Focus Documents
+                    </Shadcn.TabsTrigger>
                 </Shadcn.TabsList>
                 <div className="flex items-center gap-2">
                     <Shadcn.DropdownMenu>
@@ -346,14 +396,20 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                         <Shadcn.DropdownMenuContent align="end" className="w-32">
                             {table
                                 .getAllColumns()
-                                .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
+                                .filter(
+                                    (column) =>
+                                        typeof column.accessorFn !== "undefined" &&
+                                        column.getCanHide()
+                                )
                                 .map((column) => {
                                     return (
                                         <Shadcn.DropdownMenuCheckboxItem
                                             key={column.id}
                                             className="capitalize"
                                             checked={column.getIsVisible()}
-                                            onCheckedChange={(value) => column.toggleVisibility(!!value)}>
+                                            onCheckedChange={(value) =>
+                                                column.toggleVisibility(!!value)
+                                            }>
                                             {column.id}
                                         </Shadcn.DropdownMenuCheckboxItem>
                                     );
@@ -366,7 +422,9 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                     </Shadcn.Button>
                 </div>
             </div>
-                <Shadcn.TabsContent value="outline" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+            <Shadcn.TabsContent
+                value="outline"
+                className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
                 <div className="overflow-hidden rounded-lg border">
                     <DndContext
                         collisionDetection={closestCenter}
@@ -380,10 +438,15 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                                     <Shadcn.TableRow key={headerGroup.id}>
                                         {headerGroup.headers.map((header) => {
                                             return (
-                                                <Shadcn.TableHead key={header.id} colSpan={header.colSpan}>
+                                                <Shadcn.TableHead
+                                                    key={header.id}
+                                                    colSpan={header.colSpan}>
                                                     {header.isPlaceholder
                                                         ? null
-                                                        : flexRender(header.column.columnDef.header, header.getContext())}
+                                                        : flexRender(
+                                                              header.column.columnDef.header,
+                                                              header.getContext()
+                                                          )}
                                                 </Shadcn.TableHead>
                                             );
                                         })}
@@ -392,14 +455,18 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                             </Shadcn.TableHeader>
                             <Shadcn.TableBody className="**:data-[slot=table-cell]:first:w-8">
                                 {table.getRowModel().rows?.length ? (
-                                    <SortableContext items={dataIds} strategy={verticalListSortingStrategy}>
+                                    <SortableContext
+                                        items={dataIds}
+                                        strategy={verticalListSortingStrategy}>
                                         {table.getRowModel().rows.map((row) => (
                                             <DraggableRow key={row.id} row={row} />
                                         ))}
                                     </SortableContext>
                                 ) : (
                                     <Shadcn.TableRow>
-                                        <Shadcn.TableCell colSpan={columns.length} className="h-24 text-center">
+                                        <Shadcn.TableCell
+                                            colSpan={columns.length}
+                                            className="h-24 text-center">
                                             No results.
                                         </Shadcn.TableCell>
                                     </Shadcn.TableRow>
@@ -409,12 +476,15 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                     </DndContext>
                 </div>
                 <div className="flex items-center justify-between px-4">
-                            <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
-                        {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
+                    <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
+                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                        {table.getFilteredRowModel().rows.length} row(s) selected.
                     </div>
                     <div className="flex w-full items-center gap-8 lg:w-fit">
                         <div className="hidden items-center gap-2 lg:flex">
-                            <Shadcn.Label htmlFor="rows-per-page" className="text-sm font-medium">
+                            <Shadcn.Label
+                                htmlFor="rows-per-page"
+                                className="text-sm font-medium">
                                 Rows per page
                             </Shadcn.Label>
                             <Shadcn.Select
@@ -422,13 +492,20 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                                 onValueChange={(value) => {
                                     table.setPageSize(Number(value));
                                 }}>
-                                <Shadcn.SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                                    <Shadcn.SelectValue placeholder={table.getState().pagination.pageSize} />
+                                <Shadcn.SelectTrigger
+                                    size="sm"
+                                    className="w-20"
+                                    id="rows-per-page">
+                                    <Shadcn.SelectValue
+                                        placeholder={table.getState().pagination.pageSize}
+                                    />
                                 </Shadcn.SelectTrigger>
                                 <Shadcn.SelectContent side="top">
                                     <Shadcn.SelectGroup>
                                         {[10, 20, 30, 40, 50].map((pageSize) => (
-                                            <Shadcn.SelectItem key={pageSize} value={`${pageSize}`}>
+                                            <Shadcn.SelectItem
+                                                key={pageSize}
+                                                value={`${pageSize}`}>
                                                 {pageSize}
                                             </Shadcn.SelectItem>
                                         ))}
@@ -437,9 +514,10 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                             </Shadcn.Select>
                         </div>
                         <div className="flex w-fit items-center justify-center text-sm font-medium">
-                            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                            Page {table.getState().pagination.pageIndex + 1} of{" "}
+                            {table.getPageCount()}
                         </div>
-                            <div className="ms-auto flex items-center gap-2 lg:ms-0">
+                        <div className="ms-auto flex items-center gap-2 lg:ms-0">
                             <Shadcn.Button
                                 variant="outline"
                                 className="hidden h-8 w-8 p-0 lg:flex"
@@ -525,7 +603,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
             <Shadcn.DrawerContent>
                 <Shadcn.DrawerHeader className="gap-1">
                     <Shadcn.DrawerTitle>{item.header}</Shadcn.DrawerTitle>
-                    <Shadcn.DrawerDescription>Showing total visitors for the last 6 months</Shadcn.DrawerDescription>
+                    <Shadcn.DrawerDescription>
+                        Showing total visitors for the last 6 months
+                    </Shadcn.DrawerDescription>
                 </Shadcn.DrawerHeader>
                 <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
                     {!isMobile && (
@@ -547,7 +627,10 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                                         tickFormatter={(value) => value.slice(0, 3)}
                                         hide
                                     />
-                                    <Shadcn.ChartTooltip cursor={false} content={<Shadcn.ChartTooltipContent indicator="dot" />} />
+                                    <Shadcn.ChartTooltip
+                                        cursor={false}
+                                        content={<Shadcn.ChartTooltipContent indicator="dot" />}
+                                    />
                                     <Area
                                         dataKey="mobile"
                                         type="natural"
@@ -569,11 +652,13 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                             <Shadcn.Separator />
                             <div className="grid gap-2">
                                 <div className="flex gap-2 leading-none font-medium">
-                                    Trending up by 5.2% this month <TrendingUpIcon className="size-4" />
+                                    Trending up by 5.2% this month{" "}
+                                    <TrendingUpIcon className="size-4" />
                                 </div>
                                 <div className="text-muted-foreground">
-                                    Showing total visitors for the last 6 months. This is just some random text to test the layout. It spans
-                                    multiple lines and should wrap around.
+                                    Showing total visitors for the last 6 months. This is just
+                                    some random text to test the layout. It spans multiple lines
+                                    and should wrap around.
                                 </div>
                             </div>
                             <Shadcn.Separator />
@@ -593,14 +678,30 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                                     </Shadcn.SelectTrigger>
                                     <Shadcn.SelectContent>
                                         <Shadcn.SelectGroup>
-                                            <Shadcn.SelectItem value="Table of Contents">Table of Contents</Shadcn.SelectItem>
-                                            <Shadcn.SelectItem value="Executive Summary">Executive Summary</Shadcn.SelectItem>
-                                            <Shadcn.SelectItem value="Technical Approach">Technical Approach</Shadcn.SelectItem>
-                                            <Shadcn.SelectItem value="Design">Design</Shadcn.SelectItem>
-                                            <Shadcn.SelectItem value="Capabilities">Capabilities</Shadcn.SelectItem>
-                                            <Shadcn.SelectItem value="Focus Documents">Focus Documents</Shadcn.SelectItem>
-                                            <Shadcn.SelectItem value="Narrative">Narrative</Shadcn.SelectItem>
-                                            <Shadcn.SelectItem value="Cover Page">Cover Page</Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="Table of Contents">
+                                                Table of Contents
+                                            </Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="Executive Summary">
+                                                Executive Summary
+                                            </Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="Technical Approach">
+                                                Technical Approach
+                                            </Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="Design">
+                                                Design
+                                            </Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="Capabilities">
+                                                Capabilities
+                                            </Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="Focus Documents">
+                                                Focus Documents
+                                            </Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="Narrative">
+                                                Narrative
+                                            </Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="Cover Page">
+                                                Cover Page
+                                            </Shadcn.SelectItem>
                                         </Shadcn.SelectGroup>
                                     </Shadcn.SelectContent>
                                 </Shadcn.Select>
@@ -613,9 +714,15 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                                     </Shadcn.SelectTrigger>
                                     <Shadcn.SelectContent>
                                         <Shadcn.SelectGroup>
-                                            <Shadcn.SelectItem value="Done">Done</Shadcn.SelectItem>
-                                            <Shadcn.SelectItem value="In Progress">In Progress</Shadcn.SelectItem>
-                                            <Shadcn.SelectItem value="Not Started">Not Started</Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="Done">
+                                                Done
+                                            </Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="In Progress">
+                                                In Progress
+                                            </Shadcn.SelectItem>
+                                            <Shadcn.SelectItem value="Not Started">
+                                                Not Started
+                                            </Shadcn.SelectItem>
                                         </Shadcn.SelectGroup>
                                     </Shadcn.SelectContent>
                                 </Shadcn.Select>
@@ -639,9 +746,15 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                                 </Shadcn.SelectTrigger>
                                 <Shadcn.SelectContent>
                                     <Shadcn.SelectGroup>
-                                        <Shadcn.SelectItem value="Eddie Lake">Eddie Lake</Shadcn.SelectItem>
-                                        <Shadcn.SelectItem value="Jamik Tashpulatov">Jamik Tashpulatov</Shadcn.SelectItem>
-                                        <Shadcn.SelectItem value="Emily Whalen">Emily Whalen</Shadcn.SelectItem>
+                                        <Shadcn.SelectItem value="Eddie Lake">
+                                            Eddie Lake
+                                        </Shadcn.SelectItem>
+                                        <Shadcn.SelectItem value="Jamik Tashpulatov">
+                                            Jamik Tashpulatov
+                                        </Shadcn.SelectItem>
+                                        <Shadcn.SelectItem value="Emily Whalen">
+                                            Emily Whalen
+                                        </Shadcn.SelectItem>
                                     </Shadcn.SelectGroup>
                                 </Shadcn.SelectContent>
                             </Shadcn.Select>

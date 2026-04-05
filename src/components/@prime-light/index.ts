@@ -13,7 +13,8 @@ export { SiteHeader } from "./dashboard/site-header";
 export { default as ParticleBackground } from "./decoration/ParticleBackground";
 
 export { LoginForm } from "./forms/login-form";
-export { SignupForm } from "./forms/signup-form";
+export { RegisterForm } from "./forms/register-form";
+export { ReusableOtpForm } from "./forms/otp-form";
 
 export { Footer } from "./layout/footer";
 export { Navbar } from "./layout/navbar";

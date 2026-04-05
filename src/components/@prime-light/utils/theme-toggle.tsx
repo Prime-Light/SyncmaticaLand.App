@@ -11,8 +11,14 @@ export function ThemeToggle() {
         <Shadcn.DropdownMenu>
             <Shadcn.DropdownMenuTrigger asChild>
                 <Shadcn.Button variant="outline" size="icon">
-                    <SunIcon suppressHydrationWarning className="absolute size-[1.2rem] transition-all dark:opacity-0" />
-                    <MoonIcon suppressHydrationWarning className="absolute size-[1.2rem] opacity-0 transition-all dark:opacity-100" />
+                    <SunIcon
+                        suppressHydrationWarning
+                        className="absolute size-[1.2rem] transition-all dark:opacity-0"
+                    />
+                    <MoonIcon
+                        suppressHydrationWarning
+                        className="absolute size-[1.2rem] opacity-0 transition-all dark:opacity-100"
+                    />
                     <span className="sr-only">{"切换主题"}</span>
                 </Shadcn.Button>
             </Shadcn.DropdownMenuTrigger>

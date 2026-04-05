@@ -13,7 +13,15 @@ export interface SchematicCardProps {
     imageUrl?: string;
 }
 
-export function SchematicCard({ title, description, author, likes, downloads, views, imageUrl }: SchematicCardProps) {
+export function SchematicCard({
+    title,
+    description,
+    author,
+    likes,
+    downloads,
+    views,
+    imageUrl,
+}: SchematicCardProps) {
     return (
         <Shadcn.Card className="group overflow-hidden border-0 shadow-sm">
             {/* Image Container */}
@@ -35,7 +43,9 @@ export function SchematicCard({ title, description, author, likes, downloads, vi
 
             {/* Content */}
             <Shadcn.CardHeader className="space-y-2 p-4 pt-3">
-                <Shadcn.CardTitle className="line-clamp-1 text-base font-semibold">{title}</Shadcn.CardTitle>
+                <Shadcn.CardTitle className="line-clamp-1 text-base font-semibold">
+                    {title}
+                </Shadcn.CardTitle>
                 <Shadcn.CardDescription className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                     {description}
                 </Shadcn.CardDescription>
@@ -45,7 +55,9 @@ export function SchematicCard({ title, description, author, likes, downloads, vi
             <Shadcn.CardFooter className="flex items-center justify-between border-0 bg-transparent p-4 pt-3">
                 <div className="flex items-center gap-2">
                     <div className="flex size-6 items-center justify-center rounded-full bg-primary/10">
-                        <span className="text-xs font-medium text-primary">{author.charAt(0).toUpperCase()}</span>
+                        <span className="text-xs font-medium text-primary">
+                            {author.charAt(0).toUpperCase()}
+                        </span>
                     </div>
                     <span className="text-sm text-muted-foreground">{author}</span>
                 </div>
@@ -53,15 +65,21 @@ export function SchematicCard({ title, description, author, likes, downloads, vi
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                         <Heart className="size-4" />
-                        <span className="text-xs">{likes > 999 ? `${(likes / 1000).toFixed(1)}k` : likes}</span>
+                        <span className="text-xs">
+                            {likes > 999 ? `${(likes / 1000).toFixed(1)}k` : likes}
+                        </span>
                     </div>
                     <div className="flex items-center gap-1">
                         <Download className="size-4" />
-                        <span className="text-xs">{downloads > 999 ? `${(downloads / 1000).toFixed(1)}k` : downloads}</span>
+                        <span className="text-xs">
+                            {downloads > 999 ? `${(downloads / 1000).toFixed(1)}k` : downloads}
+                        </span>
                     </div>
                     <div className="flex items-center gap-1">
                         <Eye className="size-4" />
-                        <span className="text-xs">{views > 999 ? `${(views / 1000).toFixed(1)}k` : views}</span>
+                        <span className="text-xs">
+                            {views > 999 ? `${(views / 1000).toFixed(1)}k` : views}
+                        </span>
                     </div>
                 </div>
             </Shadcn.CardFooter>

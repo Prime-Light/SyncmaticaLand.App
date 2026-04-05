@@ -1,4 +1,4 @@
-import { Prime, Shadcn} from "@/components";
+import { Prime, Shadcn } from "@/components";
 
 import data from "./data.json";
 

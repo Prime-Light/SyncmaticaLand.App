@@ -12,7 +12,11 @@ type ExportItem = {
 const VALID_EXT = [".ts", ".tsx"];
 
 function isValidFile(file: string) {
-    return VALID_EXT.includes(path.extname(file)) && !path.basename(file).startsWith("_") && !file.endsWith("index.ts");
+    return (
+        VALID_EXT.includes(path.extname(file)) &&
+        !path.basename(file).startsWith("_") &&
+        !file.endsWith("index.ts")
+    );
 }
 
 function walk(dir: string, exclude = new Set<string>()): string[] {

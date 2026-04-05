@@ -12,28 +12,17 @@ import {
     UserKeyIcon,
     UserPlusIcon,
     LogOutIcon,
-    MailWarningIcon,
-    MailCheckIcon,
-    Loader2Icon,
     SparklesIcon,
     ShieldUserIcon,
 } from "lucide-react";
-import Cookies from "js-cookie";
 import { Prime, Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
-import { logoutAction, resendEmailVerificationAction } from "@/lib/auth/session";
+import { Auth, WrapSchema } from "@/schema";
+import { toast } from "sonner";
 
 interface NavbarProps {
     className?: string;
-    initialUser: CurrentUser | null;
-}
-
-interface CurrentUser {
-    id: string;
-    name: string;
-    email: string;
-    emailVerification: boolean;
-    labels: string[];
+    initialUser: Auth.Me.Me.Res["user"] | null;
 }
 
 const navItems = [
@@ -43,17 +32,26 @@ const navItems = [
 ];
 
 // 用户信息头部组件（统一桌面端和移动端）
-function UserMenuHeader({ user, userInitials }: { user: CurrentUser; userInitials: string }) {
+function UserMenuHeader({
+    user,
+    userInitials,
+}: {
+    user: Auth.Me.Me.Res["user"];
+    userInitials: string;
+}) {
     return (
         <Shadcn.DropdownMenuLabel className="space-y-2">
             <div className="flex items-center gap-2">
                 <Shadcn.Avatar size="sm">
+                    <Shadcn.AvatarImage src={user.avatar_url} />
                     <Shadcn.AvatarFallback>{userInitials}</Shadcn.AvatarFallback>
                 </Shadcn.Avatar>
                 <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                        <span className="truncate text-sm font-medium">{user.name || "用户"}</span>
-                        {user.labels.includes("admin") && (
+                        <span className="truncate text-sm font-medium">
+                            {user.display_name || "用户"}
+                        </span>
+                        {user.role === "admin" && (
                             <Shadcn.Badge
                                 variant="outline"
                                 className="h-5 gap-1 border-red-500/50 bg-red-500/10 px-1.5 text-[10px] text-red-700 dark:text-red-300">
@@ -61,64 +59,18 @@ function UserMenuHeader({ user, userInitials }: { user: CurrentUser; userInitial
                                 管理员
                             </Shadcn.Badge>
                         )}
-                        {user.labels.includes("premium") && (
+                        {user.role === "creator" && (
                             <Shadcn.Badge
                                 variant="outline"
                                 className="h-5 gap-1 border-purple-500/50 bg-purple-500/10 px-1.5 text-[10px] text-purple-700 dark:text-purple-300">
                                 <SparklesIcon />
-                                高级用户
+                                创作者
                             </Shadcn.Badge>
                         )}
                     </div>
                 </div>
             </div>
-            {!user.emailVerification && (
-                <Shadcn.Badge variant="destructive" className="w-full justify-center gap-1.5">
-                    <MailWarningIcon />
-                    邮箱未验证
-                </Shadcn.Badge>
-            )}
         </Shadcn.DropdownMenuLabel>
-    );
-}
-
-// 邮箱验证提醒组件（统一桌面端和移动端）
-function VerificationAlert({
-    onResend,
-    isResending,
-    verificationNotice,
-}: {
-    onResend: () => void;
-    isResending: boolean;
-    verificationNotice: "" | "sent" | "failed";
-}) {
-    return (
-        <div className="px-2 py-2">
-            <Shadcn.Alert className="border-amber-500/50 bg-amber-500/10 text-amber-800 dark:text-amber-300">
-                <MailWarningIcon className="text-amber-600 dark:text-amber-400" />
-                <Shadcn.AlertTitle>验证邮箱</Shadcn.AlertTitle>
-                <Shadcn.AlertDescription className="text-amber-700/80 dark:text-amber-400/80">
-                    <span>请验证您的邮箱地址以解锁全部功能</span>
-                    <Shadcn.Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="mt-2 w-full border-amber-500/50 bg-amber-500/5 text-amber-700 hover:bg-amber-500/20 dark:text-amber-400"
-                        onClick={onResend}
-                        disabled={isResending || verificationNotice === "sent"}>
-                        {isResending ? (
-                            <Loader2Icon className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                        ) : verificationNotice === "sent" ? (
-                            <MailCheckIcon className="mr-1.5 h-3.5 w-3.5" />
-                        ) : (
-                            <MailWarningIcon className="mr-1.5 h-3.5 w-3.5" />
-                        )}
-                        {verificationNotice === "sent" ? "已发送" : "重新发送验证邮件"}
-                    </Shadcn.Button>
-                    {verificationNotice === "failed" && <p className="mt-2 text-center text-xs text-destructive">发送失败，请重试</p>}
-                </Shadcn.AlertDescription>
-            </Shadcn.Alert>
-        </div>
     );
 }
 
@@ -137,22 +89,22 @@ export function Navbar({ initialUser, className }: NavbarProps) {
     const $pathname = usePathname();
     const $router = useRouter();
 
-    const [user, setUser] = useState<CurrentUser | null>(initialUser);
-    const [verificationNotice, setVerificationNotice] = useState<"" | "sent" | "failed">("");
-    const [isResending, setIsResending] = useState(false);
+    const [user, setUser] = useState<Auth.Me.Me.Res["user"] | null>(initialUser);
     const [, startTransition] = useTransition();
 
     useEffect(() => {
         let mounted = true;
 
-        fetch("/api/account/me", { method: "GET", cache: "no-store" })
+        fetch("/api/v1/auth/me", { method: "GET", cache: "no-store" })
             .then(async (res) => {
                 if (!res.ok) return null;
-                return (await res.json()) as { user: CurrentUser | null };
+                return (await res.json()) as WrapSchema<Auth.Me.Me.Res>;
             })
             .then((data) => {
                 if (!mounted) return;
-                setUser(data?.user ?? null);
+                // ***烦死了这是什么东西，这很安全，ESLint 和 TS 一棒子打飞！
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                setUser((data as any).data.user ?? null);
             })
             .catch(() => {
                 if (!mounted) return;
@@ -165,31 +117,22 @@ export function Navbar({ initialUser, className }: NavbarProps) {
     }, []);
 
     const userInitials = useMemo(() => {
-        const seed = user?.name?.trim() || user?.email?.trim() || "";
+        const seed = user?.display_name?.trim() || user?.email?.trim() || "";
         if (!seed) return "U";
         return seed[0].toUpperCase();
     }, [user]);
+
+    async function logoutAction() {
+        await fetch("/api/v1/auth/logout", { method: "POST", cache: "no-store" });
+    }
 
     const handleLogout = () => {
         startTransition(async () => {
             await logoutAction();
             setUser(null);
-            setVerificationNotice("");
-            setIsResending(false);
+            toast.success("登出成功");
             $router.refresh();
-            // $router.push("/");
-        });
-    };
-
-    const handleResendVerification = () => {
-        setIsResending(true);
-        startTransition(async () => {
-            try {
-                const result = await resendEmailVerificationAction();
-                setVerificationNotice(result.success ? "sent" : "failed");
-            } finally {
-                setIsResending(false);
-            }
+            $router.push("/");
         });
     };
 
@@ -206,8 +149,12 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                         <StoneIcon className="size-6 text-foreground" strokeWidth={1.5} />
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-sm leading-tight font-semibold tracking-tight">SyncmaticaLand</span>
-                        <span className="text-xs leading-tight font-medium text-muted-foreground">投影共和国</span>
+                        <span className="text-sm leading-tight font-semibold tracking-tight">
+                            SyncmaticaLand
+                        </span>
+                        <span className="text-xs leading-tight font-medium text-muted-foreground">
+                            投影共和国
+                        </span>
                     </div>
                 </Link>
 
@@ -217,7 +164,10 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                         <Shadcn.NavigationMenuList className="gap-1">
                             {navItems.map((item) => {
                                 const Icon = item.icon;
-                                const isActive = item.href === "/" ? $pathname === "/" : $pathname.startsWith(item.href);
+                                const isActive =
+                                    item.href === "/"
+                                        ? $pathname === "/"
+                                        : $pathname.startsWith(item.href);
                                 return (
                                     <Shadcn.NavigationMenuItem key={item.href}>
                                         <Shadcn.NavigationMenuLink asChild>
@@ -240,36 +190,34 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                 );
                             })}
                         </Shadcn.NavigationMenuList>
-                        <Shadcn.Separator className="mx-4 my-auto h-3/4" orientation="vertical" />
+                        <Shadcn.Separator
+                            className="mx-4 my-auto h-3/4"
+                            orientation="vertical"
+                        />
                         <Shadcn.NavigationMenuList className="gap-1">
                             {user ? (
                                 <Shadcn.DropdownMenu>
                                     <Shadcn.DropdownMenuTrigger asChild>
-                                        <Shadcn.Button variant="ghost" size="lg" className="gap-2 px-3">
+                                        <Shadcn.Button
+                                            variant="ghost"
+                                            size="lg"
+                                            className="gap-2 px-3">
                                             <Shadcn.Avatar size="sm">
-                                                <Shadcn.AvatarFallback>{userInitials}</Shadcn.AvatarFallback>
+                                                <Shadcn.AvatarImage src={user.avatar_url} />
+                                                <Shadcn.AvatarFallback>
+                                                    {userInitials}
+                                                </Shadcn.AvatarFallback>
                                             </Shadcn.Avatar>
-                                            <span className="hidden lg:inline">{user.name || "用户"}</span>
-                                            {!user.emailVerification && (
-                                                <Shadcn.Badge variant="destructive" className="gap-1">
-                                                    <MailWarningIcon />
-                                                    未验证
-                                                </Shadcn.Badge>
-                                            )}
+                                            <span className="hidden lg:inline">
+                                                {user.display_name || "用户"}
+                                            </span>
                                         </Shadcn.Button>
                                     </Shadcn.DropdownMenuTrigger>
                                     <Shadcn.DropdownMenuContent align="end" className="w-64">
-                                        <UserMenuHeader user={user} userInitials={userInitials} />
-                                        {!user.emailVerification && (
-                                            <>
-                                                <Shadcn.DropdownMenuSeparator />
-                                                <VerificationAlert
-                                                    onResend={handleResendVerification}
-                                                    isResending={isResending}
-                                                    verificationNotice={verificationNotice}
-                                                />
-                                            </>
-                                        )}
+                                        <UserMenuHeader
+                                            user={user}
+                                            userInitials={userInitials}
+                                        />
                                         <Shadcn.DropdownMenuSeparator />
                                         <LogoutItem onLogout={handleLogout} />
                                     </Shadcn.DropdownMenuContent>
@@ -294,7 +242,7 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                     <Shadcn.NavigationMenuItem>
                                         <Shadcn.NavigationMenuLink asChild>
                                             <Link
-                                                href="/auth/signup"
+                                                href="/auth/register"
                                                 className={cn(
                                                     "inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-colors",
                                                     "hover:bg-accent hover:text-accent-foreground",
@@ -309,7 +257,10 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                 </>
                             )}
                         </Shadcn.NavigationMenuList>
-                        <Shadcn.Separator className="mx-4 my-auto h-3/4" orientation="vertical" />
+                        <Shadcn.Separator
+                            className="mx-4 my-auto h-3/4"
+                            orientation="vertical"
+                        />
                         <Prime.ThemeToggle />
                     </Shadcn.NavigationMenu>
                 </div>
@@ -327,10 +278,18 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                             <Shadcn.DropdownMenuGroup>
                                 {navItems.map((item) => {
                                     const Icon = item.icon;
-                                    const isActive = item.href === "/" ? $pathname === "/" : $pathname.startsWith(item.href);
+                                    const isActive =
+                                        item.href === "/"
+                                            ? $pathname === "/"
+                                            : $pathname.startsWith(item.href);
                                     return (
                                         <Shadcn.DropdownMenuItem key={item.href} asChild>
-                                            <Link href={item.href} className={cn(isActive && "bg-accent text-accent-foreground")}>
+                                            <Link
+                                                href={item.href}
+                                                className={cn(
+                                                    isActive &&
+                                                        "bg-accent text-accent-foreground"
+                                                )}>
                                                 <Icon />
                                                 {item.label}
                                             </Link>
@@ -345,16 +304,6 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                             {user ? (
                                 <>
                                     <UserMenuHeader user={user} userInitials={userInitials} />
-                                    {!user.emailVerification && (
-                                        <>
-                                            <Shadcn.DropdownMenuSeparator />
-                                            <VerificationAlert
-                                                onResend={handleResendVerification}
-                                                isResending={isResending}
-                                                verificationNotice={verificationNotice}
-                                            />
-                                        </>
-                                    )}
                                     <Shadcn.DropdownMenuSeparator />
                                     <LogoutItem onLogout={handleLogout} />
                                 </>
@@ -367,7 +316,7 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                         </Link>
                                     </Shadcn.DropdownMenuItem>
                                     <Shadcn.DropdownMenuItem asChild>
-                                        <Link href="/auth/signup">
+                                        <Link href="/auth/register">
                                             <UserPlusIcon />
                                             注册
                                         </Link>

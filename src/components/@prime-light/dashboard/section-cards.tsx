@@ -9,7 +9,9 @@ export function SectionCards() {
             <Shadcn.Card className="@container/card">
                 <Shadcn.CardHeader>
                     <Shadcn.CardDescription>Total Revenue</Shadcn.CardDescription>
-                    <Shadcn.CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">$1,250.00</Shadcn.CardTitle>
+                    <Shadcn.CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                        $1,250.00
+                    </Shadcn.CardTitle>
                     <Shadcn.CardAction>
                         <Shadcn.Badge variant="outline">
                             <TrendingUpIcon />
@@ -27,7 +29,9 @@ export function SectionCards() {
             <Shadcn.Card className="@container/card">
                 <Shadcn.CardHeader>
                     <Shadcn.CardDescription>New Customers</Shadcn.CardDescription>
-                    <Shadcn.CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">1,234</Shadcn.CardTitle>
+                    <Shadcn.CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                        1,234
+                    </Shadcn.CardTitle>
                     <Shadcn.CardAction>
                         <Shadcn.Badge variant="outline">
                             <TrendingDownIcon />
@@ -45,7 +49,9 @@ export function SectionCards() {
             <Shadcn.Card className="@container/card">
                 <Shadcn.CardHeader>
                     <Shadcn.CardDescription>Active Accounts</Shadcn.CardDescription>
-                    <Shadcn.CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">45,678</Shadcn.CardTitle>
+                    <Shadcn.CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                        45,678
+                    </Shadcn.CardTitle>
                     <Shadcn.CardAction>
                         <Shadcn.Badge variant="outline">
                             <TrendingUpIcon />
@@ -63,7 +69,9 @@ export function SectionCards() {
             <Shadcn.Card className="@container/card">
                 <Shadcn.CardHeader>
                     <Shadcn.CardDescription>Growth Rate</Shadcn.CardDescription>
-                    <Shadcn.CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">4.5%</Shadcn.CardTitle>
+                    <Shadcn.CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                        4.5%
+                    </Shadcn.CardTitle>
                     <Shadcn.CardAction>
                         <Shadcn.Badge variant="outline">
                             <TrendingUpIcon />

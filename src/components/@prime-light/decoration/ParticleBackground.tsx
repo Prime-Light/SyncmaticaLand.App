@@ -127,7 +127,11 @@ export default function ParticleBackground({
 
     return (
         <>
-            <canvas ref={canvasRef} className={cn("pointer-events-none fixed inset-0 z-0", className)} style={{ opacity }} />
+            <canvas
+                ref={canvasRef}
+                className={cn("pointer-events-none fixed inset-0 z-0", className)}
+                style={{ opacity }}
+            />
             <div
                 className={cn(
                     "pointer-events-none fixed inset-0 z-0",

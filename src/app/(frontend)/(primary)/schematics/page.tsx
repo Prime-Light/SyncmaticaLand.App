@@ -25,7 +25,9 @@ export default function SchematicsIndex() {
             <section className="relative">
                 <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-32">
                     <div className="text-center">
-                        <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">原理图市场</h1>
+                        <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+                            原理图市场
+                        </h1>
                         <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
                             发现、分享和下载 Minecraft 原理图，探索无限创意的世界。
                             在这里，建筑师们展示他们的杰作，玩家找到下一个伟大项目的灵感。

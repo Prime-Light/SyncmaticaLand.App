@@ -24,6 +24,8 @@ export { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLab
 
 export { Input } from "./input";
 
+export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "./input-otp";
+
 export { Label } from "./label";
 
 export { NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport } from "./navigation-menu";

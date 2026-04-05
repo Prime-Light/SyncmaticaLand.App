@@ -29,7 +29,9 @@ export function NavDocuments({
                         </Shadcn.SidebarMenuButton>
                         <Shadcn.DropdownMenu>
                             <Shadcn.DropdownMenuTrigger asChild>
-                                <Shadcn.SidebarMenuAction showOnHover className="rounded-sm data-[state=open]:bg-accent">
+                                <Shadcn.SidebarMenuAction
+                                    showOnHover
+                                    className="rounded-sm data-[state=open]:bg-accent">
                                     <MoreHorizontalIcon />
                                     <span className="sr-only">More</span>
                                 </Shadcn.SidebarMenuAction>
