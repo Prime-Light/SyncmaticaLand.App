@@ -5,18 +5,9 @@ import * as React from "react";
 import { Shadcn, Prime } from "@/components";
 import {
     LayoutDashboardIcon,
-    ListIcon,
-    ChartBarIcon,
     FolderIcon,
-    UsersIcon,
     CameraIcon,
     FileTextIcon,
-    Settings2Icon,
-    CircleHelpIcon,
-    SearchIcon,
-    DatabaseIcon,
-    FileChartColumnIcon,
-    FileIcon,
     CommandIcon,
 } from "lucide-react";
 
@@ -33,24 +24,9 @@ const data = {
             icon: <LayoutDashboardIcon />,
         },
         {
-            title: "Lifecycle",
-            url: "#",
-            icon: <ListIcon />,
-        },
-        {
-            title: "Analytics",
-            url: "#",
-            icon: <ChartBarIcon />,
-        },
-        {
             title: "Projects",
             url: "#",
             icon: <FolderIcon />,
-        },
-        {
-            title: "Team",
-            url: "#",
-            icon: <UsersIcon />,
         },
     ],
     navClouds: [
@@ -101,40 +77,6 @@ const data = {
             ],
         },
     ],
-    navSecondary: [
-        {
-            title: "Settings",
-            url: "#",
-            icon: <Settings2Icon />,
-        },
-        {
-            title: "Get Help",
-            url: "#",
-            icon: <CircleHelpIcon />,
-        },
-        {
-            title: "Search",
-            url: "#",
-            icon: <SearchIcon />,
-        },
-    ],
-    documents: [
-        {
-            name: "Data Library",
-            url: "#",
-            icon: <DatabaseIcon />,
-        },
-        {
-            name: "Reports",
-            url: "#",
-            icon: <FileChartColumnIcon />,
-        },
-        {
-            name: "Word Assistant",
-            url: "#",
-            icon: <FileIcon />,
-        },
-    ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Shadcn.Sidebar>) {
@@ -156,8 +98,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Shadcn.Side
             </Shadcn.SidebarHeader>
             <Shadcn.SidebarContent>
                 <Prime.NavMain items={data.navMain} />
-                <Prime.NavDocuments items={data.documents} />
-                <Prime.NavSecondary items={data.navSecondary} className="mt-auto" />
             </Shadcn.SidebarContent>
             <Shadcn.SidebarFooter>
                 <Prime.NavUser user={data.user} />
