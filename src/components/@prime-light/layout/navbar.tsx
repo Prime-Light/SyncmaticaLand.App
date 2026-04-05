@@ -12,25 +12,17 @@ import {
     UserKeyIcon,
     UserPlusIcon,
     LogOutIcon,
-    MailWarningIcon,
     SparklesIcon,
     ShieldUserIcon,
 } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
 import { Auth, WrapSchema } from "@/schema";
+import { toast } from "sonner";
 
 interface NavbarProps {
     className?: string;
     initialUser: Auth.Me.Me.Res["user"] | null;
-}
-
-interface CurrentUser {
-    id: string;
-    name: string;
-    email: string;
-    emailVerification: boolean;
-    labels: string[];
 }
 
 const navItems = [
@@ -103,11 +95,9 @@ export function Navbar({ initialUser, className }: NavbarProps) {
     useEffect(() => {
         let mounted = true;
 
-        console.debug("fetch");
         fetch("/api/v1/auth/me", { method: "GET", cache: "no-store" })
             .then(async (res) => {
                 if (!res.ok) return null;
-                console.debug("got user");
                 return (await res.json()) as WrapSchema<Auth.Me.Me.Res>;
             })
             .then((data) => {
@@ -118,7 +108,6 @@ export function Navbar({ initialUser, className }: NavbarProps) {
             })
             .catch(() => {
                 if (!mounted) return;
-                console.debug("err!");
                 setUser(null);
             });
 
@@ -141,6 +130,7 @@ export function Navbar({ initialUser, className }: NavbarProps) {
         startTransition(async () => {
             await logoutAction();
             setUser(null);
+            toast.success("登出成功");
             $router.refresh();
             $router.push("/");
         });

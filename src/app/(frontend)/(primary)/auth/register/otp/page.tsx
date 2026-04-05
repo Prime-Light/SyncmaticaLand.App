@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
+import { toast } from "sonner";
 import { Prime } from "@/components";
 import { IApiErrorResponse } from "@/types/api-error";
 
@@ -10,22 +11,20 @@ export default function Page() {
     const searchParams = useSearchParams();
     const router = useRouter();
 
-    const initialOtp = useMemo(() => searchParams.get("code") ?? undefined, [searchParams]);
-    const email = useMemo(() => searchParams.get("email") ?? undefined, [searchParams]);
+    const [initialOtp] = useState(() => searchParams.get("code") ?? undefined);
+    const [email] = useState(() => searchParams.get("email") ?? undefined);
     const [otp, setOtp] = useState(initialOtp ?? "");
     const [resendTimeout, setResendTimeout] = useState(30);
     const [isPending, setIsPending] = useState(false);
     const [isResending, setIsResending] = useState(false);
-    const [state, setState] = useState<Prime.OtpFormState>({ success: false, message: "" });
 
     useEffect(() => {
-        if (initialOtp) {
-            const url = new URL(window.location.href);
-            url.searchParams.delete("code");
-            url.searchParams.delete("email");
-            router.replace(url.toString(), { scroll: false });
-        }
-    }, [initialOtp, router]);
+        const url = new URL(window.location.href);
+        url.searchParams.delete("code");
+        url.searchParams.delete("email");
+        console.log(initialOtp, email);
+        router.replace(url.toString(), { scroll: false });
+    }, [email, initialOtp, router]);
 
     useEffect(() => {
         if (resendTimeout <= 0) return;
@@ -41,26 +40,25 @@ export default function Page() {
         if (!email || isResending) return;
 
         setIsResending(true);
-        setState({ success: false, message: "" });
 
         try {
             const res = await axios.post("/api/v1/auth/register/otp/resend", {
                 email,
             });
             if (res.data?.data) {
-                setState({ success: true, message: res.data.data.message });
+                toast.success(res.data.data.message);
                 setResendTimeout(30);
             } else {
-                setState({ success: false, message: "重发失败，请稍后重试" });
+                toast.error("重发失败，请稍后重试");
             }
         } catch (err: unknown) {
             const error = err as AxiosError<IApiErrorResponse>;
             const apiError = error.response?.data?.error;
             if (apiError) {
                 const detailMsg = apiError.details?.error ? `: ${apiError.details.error}` : "";
-                setState({ success: false, message: `${apiError.message}${detailMsg}` });
+                toast.error(`${apiError.message}${detailMsg}`);
             } else {
-                setState({ success: false, message: "重发失败，请稍后重试" });
+                toast.error("重发失败，请稍后重试");
             }
         } finally {
             setIsResending(false);
@@ -68,12 +66,11 @@ export default function Page() {
     }, [email, isResending]);
 
     const handleVerify = useCallback(
-        async (e: React.FormEvent<HTMLFormElement>) => {
+        async (e: React.SubmitEvent<HTMLFormElement>) => {
             e.preventDefault();
             if (!email || !otp || otp.length !== 6 || isPending) return;
 
             setIsPending(true);
-            setState({ success: false, message: "" });
 
             try {
                 const res = await axios.post("/api/v1/auth/register/otp/verify", {
@@ -81,10 +78,10 @@ export default function Page() {
                     token: otp,
                 });
                 if (res.data?.data) {
-                    setState({ success: true, message: res.data.data.message });
+                    toast.success(res.data.data.message);
                     router.push("/auth/login");
                 } else {
-                    setState({ success: false, message: "验证失败，请稍后重试" });
+                    toast.error("验证失败，请稍后重试");
                 }
             } catch (err: unknown) {
                 const error = err as AxiosError<IApiErrorResponse>;
@@ -93,9 +90,9 @@ export default function Page() {
                     const detailMsg = apiError.details?.error
                         ? `: ${apiError.details.error}`
                         : "";
-                    setState({ success: false, message: `${apiError.message}${detailMsg}` });
+                    toast.error(`${apiError.message}${detailMsg}`);
                 } else {
-                    setState({ success: false, message: "验证失败，请稍后重试" });
+                    toast.error("验证失败，请稍后重试");
                 }
             } finally {
                 setIsPending(false);
@@ -114,7 +111,6 @@ export default function Page() {
                     resendTimeout={resendTimeout}
                     isPending={isPending}
                     isResending={isResending}
-                    state={state}
                     onResend={handleResend}
                     onVerify={handleVerify}
                 />

@@ -4,28 +4,14 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
-import {
-    AlertCircle,
-    CheckCircle2,
-    Eye,
-    EyeOff,
-    Key,
-    RectangleEllipsis,
-    Stone,
-} from "lucide-react";
+import { toast } from "sonner";
+import { Eye, EyeOff, Key, RectangleEllipsis, Stone } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
 import { IApiErrorResponse } from "@/types/api-error";
 
-type LoginActionState = {
-    success: boolean;
-    message: string;
-};
-
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
     const router = useRouter();
-    const [state, setState] = useState<LoginActionState>({ success: false, message: "" });
-    const [countdown, setCountdown] = useState(3);
     const [captchaSolved, setCaptchaSolved] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
     const [isPending, setIsPending] = useState(false);
@@ -55,14 +41,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             };
 
             setIsPending(true);
-            setState({ success: false, message: "" });
 
             try {
                 const res = await axios.post("/api/v1/auth/login", body);
                 if (res.data?.data) {
-                    setState({ success: true, message: "登录成功" });
+                    toast.success("登录成功");
+                    router.refresh();
+                    router.push("/");
                 } else {
-                    setState({ success: false, message: "登录失败，请稍后重试" });
+                    toast.error("登录失败，请稍后重试");
                 }
             } catch (err: unknown) {
                 const error = err as AxiosError<IApiErrorResponse>;
@@ -71,9 +58,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     const detailMsg = apiError.details?.error
                         ? `: ${apiError.details.error}`
                         : "";
-                    setState({ success: false, message: `${apiError.message}${detailMsg}` });
+                    toast.error(`${apiError.message}${detailMsg}`);
                 } else {
-                    setState({ success: false, message: "登录失败，请稍后重试" });
+                    toast.error("登录失败，请稍后重试");
                 }
             } finally {
                 setIsPending(false);
@@ -83,16 +70,16 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             const email = formData.get("email") as string;
 
             setIsPending(true);
-            setState({ success: false, message: "" });
 
             try {
                 const res = await axios.post("/api/v1/auth/login/otp/resend", {
                     email,
                 });
                 if (res.data?.data) {
+                    toast.success(res.data.data.message);
                     router.push(`/auth/login/otp?email=${encodeURIComponent(email)}`);
                 } else {
-                    setState({ success: false, message: "发送失败，请稍后重试" });
+                    toast.error("发送失败，请稍后重试");
                 }
             } catch (err: unknown) {
                 const error = err as AxiosError<IApiErrorResponse>;
@@ -101,32 +88,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     const detailMsg = apiError.details?.error
                         ? `: ${apiError.details.error}`
                         : "";
-                    setState({ success: false, message: `${apiError.message}${detailMsg}` });
+                    toast.error(`${apiError.message}${detailMsg}`);
                 } else {
-                    setState({ success: false, message: "发送失败，请稍后重试" });
+                    toast.error("发送失败，请稍后重试");
                 }
             } finally {
                 setIsPending(false);
             }
         }
     };
-
-    useEffect(() => {
-        if (!state.success) return;
-
-        const timer = setInterval(() => {
-            setCountdown((prev) => {
-                if (prev <= 1) {
-                    clearInterval(timer);
-                    window.location.assign("/");
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, [state.success]);
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -191,25 +161,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                         <Shadcn.FieldLabel htmlFor="cap">{"人机验证"}</Shadcn.FieldLabel>
                         <Prime.Captcha onSolve={setCaptchaSolved} />
                     </Shadcn.Field>
-                    {state.message && (
-                        <Shadcn.Alert
-                            variant={state.success ? "default" : "destructive"}
-                            className={
-                                state.success ? "border-green-500/50 text-green-600" : ""
-                            }>
-                            {state.success ? <CheckCircle2 /> : <AlertCircle />}
-                            <Shadcn.AlertTitle>
-                                {state.success ? "成功" : "失败"}
-                            </Shadcn.AlertTitle>
-                            <Shadcn.AlertDescription
-                                className={state.success ? "text-green-600/90" : ""}>
-                                {state.message}
-                                {state.success && (
-                                    <span className="ml-1">({`${countdown}秒后跳转首页`})</span>
-                                )}
-                            </Shadcn.AlertDescription>
-                        </Shadcn.Alert>
-                    )}
                     <Shadcn.Field>
                         <Shadcn.Button
                             type="submit"

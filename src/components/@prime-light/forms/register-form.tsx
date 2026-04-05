@@ -2,22 +2,16 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
-import { AlertCircle, Eye, EyeOff, Stone } from "lucide-react";
+import { toast } from "sonner";
+import { Eye, EyeOff, Stone } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
 import { IApiErrorResponse } from "@/types/api-error";
-import { useRouter } from "next/navigation";
-
-type RegisterActionState = {
-    success: boolean;
-    message: string;
-};
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
-    const $router = useRouter();
-
-    const [state, setState] = useState<RegisterActionState>({ success: false, message: "" });
+    const router = useRouter();
     const [captchaSolved, setCaptchaSolved] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
     const [isPending, setIsPending] = useState(false);
@@ -47,24 +41,24 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
         };
 
         setIsPending(true);
-        setState({ success: false, message: "" });
 
         try {
             const res = await axios.post("/api/v1/auth/register", body);
             if (res.data?.data) {
+                toast.success(res.data.data.message || "注册成功，请查收验证邮件");
                 const encodedEmail = encodeURIComponent(body.email);
-                $router.push(`/auth/register/otp?email=${encodedEmail}`);
+                router.push(`/auth/register/otp?email=${encodedEmail}`);
             } else {
-                setState({ success: false, message: "注册失败，请稍后重试 (Type A)" });
+                toast.error("注册失败，请稍后重试");
             }
         } catch (err: unknown) {
             const error = err as AxiosError<IApiErrorResponse>;
             const apiError = error.response?.data?.error;
             if (apiError) {
                 const detailMsg = apiError.details?.error ? `: ${apiError.details.error}` : "";
-                setState({ success: false, message: `${apiError.message}${detailMsg}` });
+                toast.error(`${apiError.message}${detailMsg}`);
             } else {
-                setState({ success: false, message: "注册失败，请稍后重试 (Type B)" });
+                toast.error("注册失败，请稍后重试");
             }
         } finally {
             setIsPending(false);
@@ -135,14 +129,6 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                         <Shadcn.FieldLabel htmlFor="captcha">{"人机验证"}</Shadcn.FieldLabel>
                         <Prime.Captcha onSolve={setCaptchaSolved} />
                     </Shadcn.Field>
-
-                    {state.message && !state.success && (
-                        <Shadcn.Alert variant="destructive">
-                            <AlertCircle />
-                            <Shadcn.AlertTitle>{"失败"}</Shadcn.AlertTitle>
-                            <Shadcn.AlertDescription>{state.message}</Shadcn.AlertDescription>
-                        </Shadcn.Alert>
-                    )}
 
                     <Shadcn.Field>
                         <Shadcn.Button

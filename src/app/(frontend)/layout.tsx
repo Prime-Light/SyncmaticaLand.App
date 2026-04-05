@@ -38,7 +38,7 @@ export default function RootLayout({
                     disableTransitionOnChange>
                     <div className="flex min-h-svh flex-col">
                         <TooltipProvider>{children}</TooltipProvider>
-                        <Shadcn.Toaster />
+                        <Shadcn.Toaster position="bottom-right" duration={3000} />
                     </div>
                 </Prime.ThemeProvider>
             </body>

@@ -1,14 +1,9 @@
 "use client";
 
-import { RefreshCwIcon, Stone, AlertCircle } from "lucide-react";
+import { RefreshCwIcon, Stone } from "lucide-react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
-
-export type OtpFormState = {
-    success: boolean;
-    message: string;
-};
 
 export type OtpFormProps = React.ComponentProps<"div"> & {
     otp: string;
@@ -17,9 +12,8 @@ export type OtpFormProps = React.ComponentProps<"div"> & {
     resendTimeout: number;
     isPending: boolean;
     isResending: boolean;
-    state: OtpFormState;
     onResend: () => void;
-    onVerify: (e: React.FormEvent<HTMLFormElement>) => void;
+    onVerify: (e: React.SubmitEvent<HTMLFormElement>) => void;
 };
 
 export function ReusableOtpForm({
@@ -30,7 +24,6 @@ export function ReusableOtpForm({
     resendTimeout,
     isPending,
     isResending,
-    state,
     onResend,
     onVerify,
     ...props
@@ -88,16 +81,6 @@ export function ReusableOtpForm({
                         </div>
                     </Shadcn.Field>
 
-                    {state.message && (
-                        <Shadcn.Alert variant={state.success ? "default" : "destructive"}>
-                            <AlertCircle />
-                            <Shadcn.AlertTitle>
-                                {state.success ? "成功" : "失败"}
-                            </Shadcn.AlertTitle>
-                            <Shadcn.AlertDescription>{state.message}</Shadcn.AlertDescription>
-                        </Shadcn.Alert>
-                    )}
-
                     <Shadcn.Field>
                         <Shadcn.Button
                             type="submit"
@@ -108,7 +91,7 @@ export function ReusableOtpForm({
                         <div className="text-sm text-muted-foreground">
                             验证失败？{" "}
                             <a
-                                href="#"
+                                href="mailto:admin@chuguang.vip"
                                 className="underline underline-offset-4 transition-colors hover:text-primary">
                                 联系支持团队
                             </a>
