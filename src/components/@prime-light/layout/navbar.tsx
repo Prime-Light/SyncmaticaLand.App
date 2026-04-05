@@ -1,6 +1,18 @@
 "use client";
 
+<<<<<<< New base: remove(navbar): 移除无用导入
 import React, { useEffect, useMemo, useState, useTransition } from "react";
+||||||| Common ancestor
+<<<<<<< ours
+import { useTransition } from "react";
+||||||| ancestor
+import { useEffect, useMemo, useState, useTransition } from "react";
+=======
+import React, { useEffect, useMemo, useState, useTransition } from "react";
+>>>>>>> theirs
+=======
+import { useTransition } from "react";
+>>>>>>> Current commit: remove(navbar): 移除无用导入
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
