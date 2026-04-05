@@ -22,9 +22,9 @@ export class ApiResponse<T> {
         return this;
     }
 
-    build(): NextResponse<{ data: T }> {
+    build(): NextResponse<{ data: T } | null> {
         return NextResponse.json(
-            { data: this._data },
+            this._code === ApiResponseCode.NO_CONTENT ? null : { data: this._data },
             {
                 status: this._code,
             }
@@ -91,7 +91,7 @@ export class ApiError {
 
     /**
      * 构建错误响应
-     * @returns 可直接返回的 `NextReponse<IApiErrorResponse>`
+     * @returns 可直接返回的 `NextResponse<IApiErrorResponse>`
      */
     build(): NextResponse<IApiErrorResponse> {
         return NextResponse.json(

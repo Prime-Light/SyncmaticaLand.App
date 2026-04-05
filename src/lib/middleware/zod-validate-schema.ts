@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import z from "zod";
+import { z } from "zod";
 import { ApiError, ApiErrorCode } from "../api-responses";
 import { IApiErrorResponse } from "@/types/api-error";
 
@@ -11,7 +11,22 @@ export async function parseBody<T>(
     req: NextRequest,
     schema: z.ZodType<T>
 ): Promise<ParseResult<T>> {
-    const body = await req.json();
+    let body: T;
+    try {
+        body = await req.json();
+    } catch (error: unknown) {
+        return {
+            success: false,
+            error: new ApiError()
+                .code(ApiErrorCode.BAD_REQUEST)
+                .message("Invalid request body")
+                .details({
+                    details: error instanceof Error ? error.message : String(error),
+                })
+                .build(),
+        };
+    }
+
     const { data, error, success } = schema.safeParse(body);
 
     if (!success) {
