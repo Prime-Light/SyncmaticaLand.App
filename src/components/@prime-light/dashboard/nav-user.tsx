@@ -9,17 +9,20 @@ import {
     BellIcon,
     LogOutIcon,
 } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { toast } from "sonner";
 
-export function NavUser({
-    user,
-}: {
-    user: {
-        name: string;
-        email: string;
-        avatar: string;
-    };
-}) {
+export function NavUser() {
     const { isMobile } = useSidebar();
+    const { user, userInitials } = useCurrentUser();
+
+    const handleLogout = async () => {
+        await fetch("/api/v1/auth/logout", { method: "POST", cache: "no-store" });
+        toast.success("登出成功");
+        window.location.href = "/";
+    };
+
+    if (!user) return null;
 
     return (
         <Shadcn.SidebarMenu>
@@ -30,13 +33,13 @@ export function NavUser({
                             size="lg"
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
                             <Shadcn.Avatar className="h-8 w-8 rounded-lg grayscale">
-                                <Shadcn.AvatarImage src={user.avatar} alt={user.name} />
+                                <Shadcn.AvatarImage src={user.avatar_url} alt={user.display_name} />
                                 <Shadcn.AvatarFallback className="rounded-lg">
-                                    CN
+                                    {userInitials}
                                 </Shadcn.AvatarFallback>
                             </Shadcn.Avatar>
                             <div className="grid flex-1 text-start text-sm leading-tight">
-                                <span className="truncate font-medium">{user.name}</span>
+                                <span className="truncate font-medium">{user.display_name}</span>
                                 <span className="truncate text-xs text-muted-foreground">
                                     {user.email}
                                 </span>
@@ -52,13 +55,13 @@ export function NavUser({
                         <Shadcn.DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <Shadcn.Avatar className="h-8 w-8 rounded-lg">
-                                    <Shadcn.AvatarImage src={user.avatar} alt={user.name} />
+                                    <Shadcn.AvatarImage src={user.avatar_url} alt={user.display_name} />
                                     <Shadcn.AvatarFallback className="rounded-lg">
-                                        CN
+                                        {userInitials}
                                     </Shadcn.AvatarFallback>
                                 </Shadcn.Avatar>
                                 <div className="grid flex-1 text-start text-sm leading-tight">
-                                    <span className="truncate font-medium">{user.name}</span>
+                                    <span className="truncate font-medium">{user.display_name}</span>
                                     <span className="truncate text-xs text-muted-foreground">
                                         {user.email}
                                     </span>
@@ -81,9 +84,9 @@ export function NavUser({
                             </Shadcn.DropdownMenuItem>
                         </Shadcn.DropdownMenuGroup>
                         <Shadcn.DropdownMenuSeparator />
-                        <Shadcn.DropdownMenuItem>
+                        <Shadcn.DropdownMenuItem variant="destructive" onClick={handleLogout}>
                             <LogOutIcon />
-                            Log out
+                            退出登录
                         </Shadcn.DropdownMenuItem>
                     </Shadcn.DropdownMenuContent>
                 </Shadcn.DropdownMenu>
