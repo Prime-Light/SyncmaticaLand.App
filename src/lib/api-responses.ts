@@ -22,10 +22,13 @@ export class ApiResponse<T> {
         return this;
     }
 
-    build(): NextResponse<T> {
-        return NextResponse.json(this._data, {
-            status: this._code,
-        });
+    build(): NextResponse<{ data: T }> {
+        return NextResponse.json(
+            { data: this._data },
+            {
+                status: this._code,
+            }
+        );
     }
 }
 

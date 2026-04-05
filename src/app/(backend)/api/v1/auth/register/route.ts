@@ -5,12 +5,12 @@ import { BackendApiRouteLogger } from "@/lib/logger";
 import { parseBody } from "@/lib/middleware/zod-validate-schema";
 import { safelyGetEnv } from "@/lib/utils";
 import { ApiResponse, ApiError, ApiErrorCode, ApiResponseCode } from "@/lib/api-responses";
-import { Auth } from "@/schema";
+import { Auth, WrapSchema } from "@/schema";
 import { IApiErrorResponse } from "@/types/api-error";
 
-export type RegisterResult = Auth.Register.Register.Res | IApiErrorResponse;
+export type RegisterResult = WrapSchema<Auth.Register.Register.Res> | IApiErrorResponse;
 
-export async function POST(req: NextRequest): Promise<NextResponse<Auth.Register.Register.Res | IApiErrorResponse>> {
+export async function POST(req: NextRequest): Promise<NextResponse<RegisterResult>> {
     const body = await parseBody(req, Auth.Register.Register.ReqSchema);
 
     const { data, error } = await supabaseClient.auth.signUp({
@@ -51,7 +51,11 @@ export async function POST(req: NextRequest): Promise<NextResponse<Auth.Register
             });
         }
 
-        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("注册失败").details({ error: profileError.message }).build();
+        return new ApiError()
+            .code(ApiErrorCode.BAD_REQUEST)
+            .message("注册失败")
+            .details({ error: `Error Code ${profileError.code}` })
+            .build();
     }
 
     // 3. 注册成功

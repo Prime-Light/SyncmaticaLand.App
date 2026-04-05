@@ -7,6 +7,7 @@ import { AlertCircle, Eye, EyeOff, Stone } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
 import { IApiErrorResponse } from "@/types/api-error";
+import { useRouter } from "next/navigation";
 
 type RegisterActionState = {
     success: boolean;
@@ -14,6 +15,8 @@ type RegisterActionState = {
 };
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
+    const $router = useRouter();
+
     const [state, setState] = useState<RegisterActionState>({ success: false, message: "" });
     const [captchaSolved, setCaptchaSolved] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
@@ -49,13 +52,9 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
         try {
             const res = await axios.post("/api/v1/auth/register", body);
             if (res.data?.data) {
-                setState({ success: true, message: res.data.data.message || "注册成功" });
-            // } else if (res.data?.error) {
-            //     const apiError = res?.data?.error;
-            //     const detailMsg = apiError.details?.error ? `: ${apiError.details.error}` : "";
-            //     setState({ success: false, message: `${apiError.message}${detailMsg}` });
+                $router.push("/auth/register/otp");
             } else {
-                setState({ success: false, message: "注册失败，请稍后重试" });
+                setState({ success: false, message: "注册失败，请稍后重试 (Type A)" });
             }
         } catch (err: unknown) {
             const error = err as AxiosError<IApiErrorResponse>;
@@ -64,7 +63,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                 const detailMsg = apiError.details?.error ? `: ${apiError.details.error}` : "";
                 setState({ success: false, message: `${apiError.message}${detailMsg}` });
             } else {
-                setState({ success: false, message: "注册失败，请稍后重试" });
+                setState({ success: false, message: "注册失败，请稍后重试 (Type B)" });
             }
         } finally {
             setIsPending(false);
