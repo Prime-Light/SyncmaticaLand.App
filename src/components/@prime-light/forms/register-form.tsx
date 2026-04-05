@@ -52,7 +52,8 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
         try {
             const res = await axios.post("/api/v1/auth/register", body);
             if (res.data?.data) {
-                $router.push("/auth/register/otp");
+                const encodedEmail = encodeURIComponent(body.email);
+                $router.push(`/auth/register/otp?email=${encodedEmail}`);
             } else {
                 setState({ success: false, message: "注册失败，请稍后重试 (Type A)" });
             }

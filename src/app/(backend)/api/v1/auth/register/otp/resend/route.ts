@@ -3,11 +3,11 @@ import { supabaseClient } from "@/lib/database/client";
 import { BackendApiRouteLogger } from "@/lib/logger";
 import { parseBody } from "@/lib/middleware/zod-validate-schema";
 import { safelyGetEnv } from "@/lib/utils";
-import { Auth } from "@/schema";
+import { Auth, WrapSchema } from "@/schema";
 import { IApiErrorResponse } from "@/types/api-error";
 import { ApiError, ApiErrorCode, ApiResponse } from "@/lib/api-responses";
 
-export type ResendResult = Auth.Register.Resend.Res | IApiErrorResponse;
+export type ResendResult = WrapSchema<Auth.Register.Resend.Res> | IApiErrorResponse;
 
 export async function POST(req: NextRequest): Promise<NextResponse<ResendResult>> {
     const body = await parseBody(req, Auth.Register.Resend.ReqSchema);
