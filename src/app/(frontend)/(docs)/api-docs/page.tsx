@@ -4,7 +4,7 @@ import { ApiReferenceReact } from "@scalar/api-reference-react";
 import "@scalar/api-reference-react/style.css";
 import "./ui.css";
 import { useCallback, useEffect, useRef } from "react";
-import { Prime, Shadcn } from "@/components";
+import { Shadcn } from "@/components";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import { createRoot } from "react-dom/client";
@@ -91,22 +91,25 @@ export default function DocsPage() {
         const dom = container
             .querySelector('aside[role="navigation"]')
             ?.querySelector("div.darklight-reference");
-        if (!dom) return;
-        const asideBottom = createRoot(dom);
-        asideBottom.render(
-            <div className="w-full">
-                <Link href="/">
-                    <Shadcn.Button className="w-full" variant="outline">
-                        <Home />
-                        <span className="ml-2">返回主页</span>
-                    </Shadcn.Button>
-                </Link>
-            </div>
-        );
+        let asideBottom: ReturnType<typeof createRoot> | null = null;
+        if (dom) {
+            asideBottom = createRoot(dom);
+            asideBottom.render(
+                <div className="w-full">
+                    <Link href="/">
+                        <Shadcn.Button className="w-full" variant="outline">
+                            <Home />
+                            <span className="ml-2">返回主页</span>
+                        </Shadcn.Button>
+                    </Link>
+                </div>
+            );
+        }
 
         // 清理函数
         return () => {
             observer.disconnect();
+            asideBottom?.unmount();
         };
     }, []);
 
