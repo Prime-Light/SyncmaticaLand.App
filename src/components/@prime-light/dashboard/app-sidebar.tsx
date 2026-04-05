@@ -6,70 +6,20 @@ import { Shadcn, Prime } from "@/components";
 import {
     LayoutDashboardIcon,
     FolderIcon,
-    CameraIcon,
-    FileTextIcon,
-    CommandIcon,
+    StoneIcon,
 } from "lucide-react";
 
 const data = {
     navMain: [
         {
-            title: "Dashboard",
+            title: "仪表盘",
             url: "#",
             icon: <LayoutDashboardIcon />,
         },
         {
-            title: "Projects",
+            title: "项目",
             url: "#",
             icon: <FolderIcon />,
-        },
-    ],
-    navClouds: [
-        {
-            title: "Capture",
-            icon: <CameraIcon />,
-            isActive: true,
-            url: "#",
-            items: [
-                {
-                    title: "Active Proposals",
-                    url: "#",
-                },
-                {
-                    title: "Archived",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Proposal",
-            icon: <FileTextIcon />,
-            url: "#",
-            items: [
-                {
-                    title: "Active Proposals",
-                    url: "#",
-                },
-                {
-                    title: "Archived",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Prompts",
-            icon: <FileTextIcon />,
-            url: "#",
-            items: [
-                {
-                    title: "Active Proposals",
-                    url: "#",
-                },
-                {
-                    title: "Archived",
-                    url: "#",
-                },
-            ],
         },
     ],
 };
@@ -84,8 +34,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Shadcn.Side
                             asChild
                             className="data-[slot=sidebar-menu-button]:p-1.5!">
                             <a href="#">
-                                <CommandIcon className="size-5!" />
-                                <span className="text-base font-semibold">Acme Inc.</span>
+                                <StoneIcon className="size-5!" />
+                                <span className="text-base font-semibold">创作者仪表盘</span>
                             </a>
                         </Shadcn.SidebarMenuButton>
                     </Shadcn.SidebarMenuItem>
