@@ -35,9 +35,7 @@ export async function parseBody<T>(
             error: new ApiError()
                 .code(ApiErrorCode.BAD_REQUEST)
                 .message("Invalid request body")
-                .details({
-                    errors: z.treeifyError(error),
-                })
+                .detail("errors", z.treeifyError(error))
                 .build(),
         };
     }
