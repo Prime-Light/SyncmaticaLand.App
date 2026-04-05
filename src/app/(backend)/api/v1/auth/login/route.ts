@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/database/server";
+import { createSupabaseServerClient, supabaseServerAdmin } from "@/lib/database/server";
 import { BackendApiRouteLogger } from "@/lib/logger";
 import { parseBody } from "@/lib/middleware/zod-validate-schema";
 import { ApiResponse, ApiError, ApiErrorCode, ApiResponseCode } from "@/lib/api-responses";
@@ -10,8 +10,9 @@ export type LoginResult = WrapSchema<Auth.Login.Login.Res> | IApiErrorResponse;
 
 export async function POST(req: NextRequest): Promise<NextResponse<LoginResult>> {
     const body = await parseBody(req, Auth.Login.Login.ReqSchema);
+    const supabase = await createSupabaseServerClient();
 
-    const { data, error } = await supabaseServer.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
         email: body.email,
         password: body.password,
     });
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<LoginResult>>
             .build();
     }
 
-    const { data: profile, error: profileError } = await supabaseServer
+    const { data: profile, error: profileError } = await supabaseServerAdmin
         .from("profiles")
         .select("display_name, avatar_url, role")
         .eq("user_id", data.user.id)
@@ -61,7 +62,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<LoginResult>>
                 email: data.user.email ?? body.email,
                 display_name: profile?.display_name ?? "",
                 avatar_url: profile?.avatar_url ?? "",
-                role: profile?.role ?? false,
+                role: profile?.role ?? "user",
             },
         })
         .build();

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseClient } from "@/lib/database/client";
-import { supabaseServer } from "@/lib/database/server";
+import { createSupabaseServerClient, supabaseServerAdmin } from "@/lib/database/server";
 import { BackendApiRouteLogger } from "@/lib/logger";
 import { parseBody } from "@/lib/middleware/zod-validate-schema";
 import { safelyGetEnv } from "@/lib/utils";
@@ -12,8 +11,9 @@ export type RegisterResult = WrapSchema<Auth.Register.Register.Res> | IApiErrorR
 
 export async function POST(req: NextRequest): Promise<NextResponse<RegisterResult>> {
     const body = await parseBody(req, Auth.Register.Register.ReqSchema);
+    const supabase = await createSupabaseServerClient();
 
-    const { data, error } = await supabaseClient.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
         email: body.email,
         password: body.password,
         options: {
@@ -41,8 +41,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<RegisterResul
             .build();
     }
 
-    // 2. 创建用户 profile
-    const { error: profileError } = await supabaseServer.from("profiles").insert({
+    const { error: profileError } = await supabaseServerAdmin.from("profiles").insert({
         user_id: data.user.id,
         display_name: body.display_name,
     });
@@ -52,15 +51,16 @@ export async function POST(req: NextRequest): Promise<NextResponse<RegisterResul
             error: profileError,
         });
 
-        // 回滚：删除已创建的 auth 用户
-        const { error: deleteError } = await supabaseServer.auth.admin.deleteUser(data.user.id);
+        const { error: deleteError } = await supabaseServerAdmin.auth.admin.deleteUser(
+            data.user.id,
+        );
 
         if (deleteError) {
             BackendApiRouteLogger.error(
                 "[CAUTION!] Failed to delete user during rollback. This will result in inconsistent data.",
                 {
                     error: deleteError,
-                }
+                },
             );
         }
 
@@ -71,7 +71,6 @@ export async function POST(req: NextRequest): Promise<NextResponse<RegisterResul
             .build();
     }
 
-    // 3. 注册成功
     return new ApiResponse<Auth.Register.Register.Res>()
         .code(ApiResponseCode.CREATED)
         .data({
