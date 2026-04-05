@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { MonitorCogIcon, MoonIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon } from "lucide-react";
 import { Shadcn } from "../..";
 
 export function ThemeToggle() {

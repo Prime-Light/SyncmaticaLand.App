@@ -1,18 +1,17 @@
-.swagger-ui * {
-    color: var(--color-foreground) !important;
-}
+@layer components {
+    .scalar-mcp-layer {
+        display: none !important;
+    }
 
-.opblock-section-header {
-    background-color: var(--bg-color) !important;
-}
+    .scalar-mcp-layer + div {
+        margin-bottom: 0.4rem !important;
+    }
 
-h4.required::after {
-    color: var(--color-destructive) !important;
-}
+    .scalar-mcp-layer + div a {
+        display: none !important;
+    }
 
-select,
-pre.microlight,
-input,
-textarea {
-    background-color: var(--bg-color) !important;
+    div.section-content > div {
+        margin-bottom: 0.5rem !important;
+    }
 }

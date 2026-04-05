@@ -1,9 +1,12 @@
 onlyBuiltDependencies:
-  - '@scarf/scarf'
-  - '@tree-sitter-grammars/tree-sitter-yaml'
-  - core-js-pure
-  - msw
-  - sharp
-  - tree-sitter
-  - tree-sitter-json
-  - unrs-resolver
+    - "@scarf/scarf"
+    - "@tree-sitter-grammars/tree-sitter-yaml"
+    - core-js
+    - core-js-pure
+    - msw
+    - protobufjs
+    - sharp
+    - tree-sitter
+    - tree-sitter-json
+    - unrs-resolver
+    - vue-demi
