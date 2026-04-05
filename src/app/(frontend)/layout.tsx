@@ -2,7 +2,7 @@ import { Geist_Mono, Inter, Noto_Sans } from "next/font/google";
 
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
-import { Prime } from "@/components";
+import { Prime, Shadcn } from "@/components";
 import { TooltipProvider } from "@/components/@shadcn-ui";
 
 const notoSansHeading = Noto_Sans({ subsets: ["latin"], variable: "--font-heading" });
@@ -38,6 +38,7 @@ export default function RootLayout({
                     disableTransitionOnChange>
                     <div className="flex min-h-svh flex-col">
                         <TooltipProvider>{children}</TooltipProvider>
+                        <Shadcn.Toaster />
                     </div>
                 </Prime.ThemeProvider>
             </body>

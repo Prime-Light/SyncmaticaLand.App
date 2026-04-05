@@ -1,107 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import axios, { AxiosError } from "axios";
 import { RefreshCwIcon, Stone, AlertCircle } from "lucide-react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
-import { IApiErrorResponse } from "@/types/api-error";
 
-type OtpFormState = {
+export type OtpFormState = {
     success: boolean;
     message: string;
 };
 
-export function OtpForm({
+export type OtpFormProps = React.ComponentProps<"div"> & {
+    otp: string;
+    onOtpChange: (otp: string) => void;
+    email?: string;
+    resendTimeout: number;
+    isPending: boolean;
+    isResending: boolean;
+    state: OtpFormState;
+    onResend: () => void;
+    onVerify: (e: React.FormEvent<HTMLFormElement>) => void;
+};
+
+export function ReusableOtpForm({
     className,
-    otp: initialOtp,
+    otp,
+    onOtpChange,
     email,
+    resendTimeout,
+    isPending,
+    isResending,
+    state,
+    onResend,
+    onVerify,
     ...props
-}: React.ComponentProps<"div"> & { otp?: string; email?: string }) {
-    const router = useRouter();
-    const [otp, setOtp] = useState(initialOtp ?? "");
-    const [resendTimeout, setResendTimeout] = useState(30);
-    const [isPending, setIsPending] = useState(false);
-    const [isResending, setIsResending] = useState(false);
-    const [state, setState] = useState<OtpFormState>({ success: false, message: "" });
-
-    useEffect(() => {
-        if (resendTimeout <= 0) return;
-
-        const timer = setTimeout(() => {
-            setResendTimeout((t) => t - 1);
-        }, 1000);
-
-        return () => clearTimeout(timer);
-    }, [resendTimeout]);
-
-    const handleResend = async () => {
-        if (!email || isResending) return;
-
-        setIsResending(true);
-        setState({ success: false, message: "" });
-
-        try {
-            const res = await axios.post("/api/v1/auth/register/otp/resend", {
-                email,
-            });
-            if (res.data?.data) {
-                setState({ success: true, message: res.data.data.message });
-                setResendTimeout(30);
-            } else {
-                setState({ success: false, message: "重发失败，请稍后重试" });
-            }
-        } catch (err: unknown) {
-            const error = err as AxiosError<IApiErrorResponse>;
-            const apiError = error.response?.data?.error;
-            if (apiError) {
-                const detailMsg = apiError.details?.error ? `: ${apiError.details.error}` : "";
-                setState({ success: false, message: `${apiError.message}${detailMsg}` });
-            } else {
-                setState({ success: false, message: "重发失败，请稍后重试" });
-            }
-        } finally {
-            setIsResending(false);
-        }
-    };
-
-    const handleVerify = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!email || !otp || otp.length !== 6 || isPending) return;
-
-        setIsPending(true);
-        setState({ success: false, message: "" });
-
-        try {
-            const res = await axios.post("/api/v1/auth/register/otp/verify", {
-                email,
-                token: otp,
-            });
-            if (res.data?.data) {
-                setState({ success: true, message: res.data.data.message });
-                router.push("/auth/login?verified=true");
-            } else {
-                setState({ success: false, message: "验证失败，请稍后重试" });
-            }
-        } catch (err: unknown) {
-            const error = err as AxiosError<IApiErrorResponse>;
-            const apiError = error.response?.data?.error;
-            if (apiError) {
-                const detailMsg = apiError.details?.error ? `: ${apiError.details.error}` : "";
-                setState({ success: false, message: `${apiError.message}${detailMsg}` });
-            } else {
-                setState({ success: false, message: "验证失败，请稍后重试" });
-            }
-        } finally {
-            setIsPending(false);
-        }
-    };
-
+}: OtpFormProps) {
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
-            <form onSubmit={handleVerify}>
+            <form onSubmit={onVerify}>
                 <Shadcn.FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
                         <div className="flex size-8 items-center justify-center rounded-md">
@@ -120,7 +56,7 @@ export function OtpForm({
                                 size="xs"
                                 disabled={resendTimeout > 0 || isResending || !email}
                                 type="button"
-                                onClick={handleResend}>
+                                onClick={onResend}>
                                 <RefreshCwIcon className={cn(isResending && "animate-spin")} />
                                 {isResending
                                     ? "发送中..."
@@ -136,7 +72,7 @@ export function OtpForm({
                                 required
                                 pattern={REGEXP_ONLY_DIGITS}
                                 value={otp}
-                                onChange={setOtp}>
+                                onChange={onOtpChange}>
                                 <Shadcn.InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
                                     <Shadcn.InputOTPSlot index={0} />
                                     <Shadcn.InputOTPSlot index={1} />

@@ -44,7 +44,7 @@ export default function Page() {
         setState({ success: false, message: "" });
 
         try {
-            const res = await axios.post("/api/v1/auth/register/otp/resend", {
+            const res = await axios.post("/api/v1/auth/login/otp/resend", {
                 email,
             });
             if (res.data?.data) {
@@ -76,13 +76,14 @@ export default function Page() {
             setState({ success: false, message: "" });
 
             try {
-                const res = await axios.post("/api/v1/auth/register/otp/verify", {
+                const res = await axios.post("/api/v1/auth/login/otp/verify", {
                     email,
                     token: otp,
                 });
                 if (res.data?.data) {
                     setState({ success: true, message: res.data.data.message });
-                    router.push("/auth/login");
+                    router.refresh();
+                    router.push("/");
                 } else {
                     setState({ success: false, message: "验证失败，请稍后重试" });
                 }
