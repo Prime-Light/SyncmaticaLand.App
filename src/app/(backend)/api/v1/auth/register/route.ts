@@ -4,8 +4,9 @@ import { supabaseServer } from "@/lib/database/server";
 import { BackendApiRouteLogger } from "@/lib/logger";
 import { parseBody } from "@/lib/middleware/zod-validate-schema";
 import { safelyGetEnv } from "@/lib/utils";
+import { ApiResponse, ApiError, ApiErrorCode, ApiResponseCode } from "@/lib/api-responses";
 import { Auth } from "@/schema";
-import { ApiErrorCode, IApiErrorResponse } from "@/types/api-error";
+import { IApiErrorResponse } from "@/types/api-error";
 
 export type RegisterResult = Auth.Register.Register.Res | IApiErrorResponse;
 
@@ -22,24 +23,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<Auth.Register
 
     if (error) {
         BackendApiRouteLogger.error("Failed to register user", { error });
-        return NextResponse.json({
-            error: {
-                code: ApiErrorCode.BAD_REQUEST,
-                message: "注册失败",
-                details: { error: error.message },
-            },
-        });
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("注册失败").details({ error: error.message }).build();
     }
 
     if (!data.user) {
         BackendApiRouteLogger.error("Failed to register user: no user returned");
-        return NextResponse.json({
-            error: {
-                code: ApiErrorCode.BAD_REQUEST,
-                message: "注册失败",
-                details: { error: "用户创建失败" },
-            },
-        });
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("注册失败").details({ error: "Failed to create user" }).build();
     }
 
     // 2. 创建用户 profile
@@ -57,26 +46,21 @@ export async function POST(req: NextRequest): Promise<NextResponse<Auth.Register
         const { error: deleteError } = await supabaseServer.auth.admin.deleteUser(data.user.id);
 
         if (deleteError) {
-            BackendApiRouteLogger.error("[CAUTION] Failed to delete user during rollback", {
+            BackendApiRouteLogger.error("[CAUTION!] Failed to delete user during rollback. This will result in inconsistent data.", {
                 error: deleteError,
             });
         }
 
-        return NextResponse.json({
-            error: {
-                code: ApiErrorCode.BAD_REQUEST,
-                message: "注册失败",
-                details: { error: profileError.message },
-            },
-        });
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("注册失败").details({ error: profileError.message }).build();
     }
 
     // 3. 注册成功
-    return NextResponse.json({
-        data: {
+    return new ApiResponse<Auth.Register.Register.Res>()
+        .code(ApiResponseCode.CREATED)
+        .data({
             user_id: data.user.id,
             email: body.email,
             message: "验证邮件已发送，请检查邮箱",
-        },
-    });
+        })
+        .build();
 }

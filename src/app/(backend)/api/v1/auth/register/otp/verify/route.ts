@@ -4,7 +4,8 @@ import { BackendApiRouteLogger } from "@/lib/logger";
 import { parseBody } from "@/lib/middleware/zod-validate-schema";
 import { safelyGetEnv } from "@/lib/utils";
 import { Auth } from "@/schema";
-import { ApiErrorCode, IApiErrorResponse } from "@/types/api-error";
+import { IApiErrorResponse } from "@/types/api-error";
+import { ApiError, ApiErrorCode, ApiResponse } from "@/lib/api-responses";
 
 export type VerifyResult = Auth.Register.Verify.Res | IApiErrorResponse;
 
@@ -22,31 +23,19 @@ export async function POST(req: NextRequest): Promise<NextResponse<VerifyResult>
 
     if (error) {
         BackendApiRouteLogger.error("Failed to verify OTP", { error });
-        return NextResponse.json({
-            error: {
-                code: ApiErrorCode.BAD_REQUEST,
-                message: "验证失败",
-                details: { error: error.message },
-            },
-        });
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("验证失败").details({ error: error.message }).build();
     }
 
     if (!data.user) {
         BackendApiRouteLogger.error("Failed to verify OTP: no user returned");
-        return NextResponse.json({
-            error: {
-                code: ApiErrorCode.BAD_REQUEST,
-                message: "验证失败",
-                details: { error: "用户验证失败" },
-            },
-        });
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("验证失败").details({ error: "用户验证失败" }).build();
     }
 
-    return NextResponse.json({
-        data: {
+    return new ApiResponse<Auth.Register.Verify.Res>()
+        .data({
             user_id: data.user.id,
             email: body.email,
             message: "邮箱验证成功",
-        },
-    });
+        })
+        .build();
 }

@@ -10,11 +10,11 @@ import { IApiErrorResponse } from "@/types/api-error";
 
 type RegisterActionState = {
     success: boolean;
-    messageKey: "" | "missing_fields" | "register_success" | "register_failed" | "email_invalid" | "password_short";
+    message: string;
 };
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
-    const [state, setState] = useState<RegisterActionState>({ success: false, messageKey: "" });
+    const [state, setState] = useState<RegisterActionState>({ success: false, message: "" });
     const [captchaSolved, setCaptchaSolved] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
     const [isPending, setIsPending] = useState(false);
@@ -44,37 +44,32 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
         };
 
         setIsPending(true);
-        setState({ success: false, messageKey: "" });
+        setState({ success: false, message: "" });
 
         try {
             const res = await axios.post("/api/v1/auth/register", body);
             if (res.data?.data) {
-                setState({ success: true, messageKey: "register_success" });
+                setState({ success: true, message: res.data.data.message || "注册成功" });
+            // } else if (res.data?.error) {
+            //     const apiError = res?.data?.error;
+            //     const detailMsg = apiError.details?.error ? `: ${apiError.details.error}` : "";
+            //     setState({ success: false, message: `${apiError.message}${detailMsg}` });
             } else {
-                setState({ success: false, messageKey: "register_failed" });
+                setState({ success: false, message: "注册失败，请稍后重试" });
             }
         } catch (err: unknown) {
             const error = err as AxiosError<IApiErrorResponse>;
-            if (error.response?.status === 400 && error.response.data?.error) {
-                const code = error.response.data.error.code;
-                if (code === 400) setState({ success: false, messageKey: "register_failed" });
-                if (code === 401) setState({ success: false, messageKey: "email_invalid" });
+            const apiError = error.response?.data?.error;
+            if (apiError) {
+                const detailMsg = apiError.details?.error ? `: ${apiError.details.error}` : "";
+                setState({ success: false, message: `${apiError.message}${detailMsg}` });
             } else {
-                setState({ success: false, messageKey: "register_failed" });
+                setState({ success: false, message: "注册失败，请稍后重试" });
             }
         } finally {
             setIsPending(false);
         }
     };
-
-    const messageTextByKey: Record<Exclude<RegisterActionState["messageKey"], "">, string> = {
-        missing_fields: "请填写用户名、邮箱和密码",
-        register_success: "注册成功",
-        register_failed: "注册失败，请稍后重试",
-        email_invalid: "邮箱格式错误",
-        password_short: "密码长度不能小于8个字符",
-    };
-    const messageText = state.messageKey ? messageTextByKey[state.messageKey] : "";
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -103,16 +98,22 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                     <Shadcn.Field>
                         <Shadcn.FieldLabel htmlFor="password">{"密码"}</Shadcn.FieldLabel>
                         <div className="relative">
-                            <Shadcn.Input id="password" name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" required className="pr-10" />
+                            <Shadcn.Input
+                                id="password"
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                autoComplete="new-password"
+                                required
+                                className="pr-10"
+                            />
                             <Shadcn.Button
                                 type="button"
                                 variant="ghost"
                                 size="icon"
                                 tabIndex={-1}
                                 aria-label={showPassword ? "隐藏密码" : "显示密码"}
-                                className="absolute right-0 top-0 size-full max-w-10 hover:bg-transparent"
-                                onClick={() => setShowPassword((v) => !v)}
-                            >
+                                className="absolute top-0 right-0 size-full max-w-10 hover:bg-transparent"
+                                onClick={() => setShowPassword((v) => !v)}>
                                 {showPassword ? <EyeOff /> : <Eye />}
                             </Shadcn.Button>
                         </div>
@@ -123,11 +124,11 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
                         <Prime.Captcha onSolve={setCaptchaSolved} />
                     </Shadcn.Field>
 
-                    {messageText && !state.success && (
+                    {state.message && !state.success && (
                         <Shadcn.Alert variant="destructive">
                             <AlertCircle />
                             <Shadcn.AlertTitle>{"失败"}</Shadcn.AlertTitle>
-                            <Shadcn.AlertDescription>{messageText}</Shadcn.AlertDescription>
+                            <Shadcn.AlertDescription>{state.message}</Shadcn.AlertDescription>
                         </Shadcn.Alert>
                     )}
 

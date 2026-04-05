@@ -4,7 +4,8 @@ import { BackendApiRouteLogger } from "@/lib/logger";
 import { parseBody } from "@/lib/middleware/zod-validate-schema";
 import { safelyGetEnv } from "@/lib/utils";
 import { Auth } from "@/schema";
-import { ApiErrorCode, IApiErrorResponse } from "@/types/api-error";
+import { IApiErrorResponse } from "@/types/api-error";
+import { ApiError, ApiErrorCode, ApiResponse } from "@/lib/api-responses";
 
 export type ResendResult = Auth.Register.Resend.Res | IApiErrorResponse;
 
@@ -21,19 +22,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<ResendResult>
 
     if (error) {
         BackendApiRouteLogger.error("Failed to resend verification email", { error });
-        return NextResponse.json({
-            error: {
-                code: ApiErrorCode.BAD_REQUEST,
-                message: "发送失败",
-                details: { error: error.message },
-            },
-        });
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("发送失败").details({ error: error.message }).build();
     }
 
-    return NextResponse.json({
-        data: {
+    return new ApiResponse<Auth.Register.Resend.Res>()
+        .data({
             email: body.email,
             message: "验证邮件已发送，请检查邮箱",
-        },
-    });
+        })
+        .build();
 }

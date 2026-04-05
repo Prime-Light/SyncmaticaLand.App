@@ -18,7 +18,7 @@ export class Logger {
 
     private format(level: LogLevel, message: string, meta?: LogMeta) {
         const timestamp = new Date().toISOString();
-        return `[${timestamp}] [${level.toUpperCase()}] ${this.serviceName} ${message}\n\n  - Meta: ${JSON.stringify(meta)}`;
+        return `[${timestamp}] [${level.toUpperCase()}] ${this.serviceName} ${message}\n  - Meta: ${JSON.stringify(meta)}`;
     }
 
     /**
