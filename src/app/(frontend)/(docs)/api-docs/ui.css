@@ -1,18 +1,22 @@
-.swagger-ui * {
-    color: var(--color-foreground) !important;
-}
+@layer components {
+    .scalar-mcp-layer {
+        display: none !important;
+    }
 
-.opblock-section-header {
-    background-color: var(--bg-color) !important;
-}
+    .scalar-mcp-layer + div a {
+        display: none !important;
+    }
 
-h4.required::after {
-    color: var(--color-destructive) !important;
-}
+    .scalar-mcp-layer + div::before {
+        content: "© 投影共和国 - API 文档";
+        display: block !important;
+        visibility: visible !important;
+        opacity: 75% !important;
+        font-weight: 500 !important;
+        font-size: 12px !important;
+    }
 
-select,
-pre.microlight,
-input,
-textarea {
-    background-color: var(--bg-color) !important;
+    div.section-content > div {
+        margin-bottom: 0.5rem !important;
+    }
 }
