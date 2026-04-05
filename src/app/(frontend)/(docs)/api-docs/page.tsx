@@ -3,10 +3,25 @@
 import { ApiReferenceReact } from "@scalar/api-reference-react";
 import "@scalar/api-reference-react/style.css";
 import "./ui.css";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { Prime, Shadcn } from "@/components";
+import Link from "next/link";
+import { Home } from "lucide-react";
+import { createRoot } from "react-dom/client";
+import { useTheme } from "next-themes";
 
 export default function DocsPage() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const { theme } = useTheme();
+
+    const applyThemeToElement = useCallback(
+        (dom: Element) => {
+            const dark = theme === "dark";
+            dom.classList.remove(`${dark ? "light" : "dark"}-mode`);
+            dom.classList.add(`${dark ? "dark" : "light"}-mode`);
+        },
+        [theme]
+    );
 
     useEffect(() => {
         const container = containerRef.current;
@@ -72,11 +87,51 @@ export default function DocsPage() {
         // 初始执行一次替换
         replaceText(container);
 
+        // 插入额外元素
+        const dom = container
+            .querySelector('aside[role="navigation"]')
+            ?.querySelector("div.darklight-reference");
+        if (!dom) return;
+        const asideBottom = createRoot(dom);
+        asideBottom.render(
+            <div className="w-full">
+                <Link href="/">
+                    <Shadcn.Button className="w-full" variant="outline">
+                        <Home />
+                        <span className="ml-2">返回主页</span>
+                    </Shadcn.Button>
+                </Link>
+            </div>
+        );
+
         // 清理函数
         return () => {
             observer.disconnect();
         };
     }, []);
+
+    // 单向同步主题
+    useEffect(() => {
+        if (theme === "system") return;
+        // 单次操作
+        const apply = () => {
+            applyThemeToElement(document.body);
+            document.querySelectorAll("div.request-card").forEach((el) => {
+                applyThemeToElement(el);
+            });
+        };
+        // 初始跑一遍
+        apply();
+        // 监听 DOM 变化
+        const observer = new MutationObserver(() => {
+            apply();
+        });
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+        });
+        return () => observer.disconnect();
+    }, [theme, applyThemeToElement]);
 
     return (
         <div ref={containerRef} className="max-h-svh">
@@ -87,6 +142,7 @@ export default function DocsPage() {
 
                         hideModels: false, // 是否隐藏 Models 部分
                         hideTestRequestButton: true, // 是否隐藏在线测试按钮
+                        hideDarkModeToggle: true,
                         showSidebar: true, // 显示侧边栏
                         theme: "default", // 'default' | 'purple' | 'solarized' 等
                         layout: "modern", // 布局风格

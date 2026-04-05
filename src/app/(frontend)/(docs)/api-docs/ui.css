@@ -3,17 +3,12 @@
         display: none !important;
     }
 
-    .scalar-mcp-layer + div a {
-        display: none !important;
+    .scalar-mcp-layer + div {
+        margin-bottom: 0.4rem !important;
     }
 
-    .scalar-mcp-layer + div::before {
-        content: "© 投影共和国 - API 文档";
-        display: block !important;
-        visibility: visible !important;
-        opacity: 75% !important;
-        font-weight: 500 !important;
-        font-size: 12px !important;
+    .scalar-mcp-layer + div a {
+        display: none !important;
     }
 
     div.section-content > div {
