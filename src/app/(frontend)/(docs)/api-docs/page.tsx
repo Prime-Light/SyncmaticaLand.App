@@ -1,12 +1,9 @@
 "use client";
 
-// import dynamic from "next/dynamic";
 import { ApiReferenceReact } from "@scalar/api-reference-react";
 import "@scalar/api-reference-react/style.css";
 import "./ui.css";
 import { useEffect, useRef } from "react";
-
-// const Redoc = dynamic(() => import("redoc").then((mod) => mod.RedocStandalone), { ssr: false });
 
 export default function DocsPage() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -29,7 +26,7 @@ export default function DocsPage() {
             " required ": "必须",
             "min length": "最短",
             "max length": "最长",
-            "values": "值",
+            values: "值",
             Example: "样例",
             Search: "搜索",
         };
@@ -40,7 +37,8 @@ export default function DocsPage() {
                 let text = node.textContent || "";
                 Object.keys(translations).forEach((english) => {
                     if (text.includes(english)) {
-                        text = text.replace(new RegExp(english, "g"), translations[english]);
+                        // Use plain substring replacement to avoid regex metacharacter issues in keys
+                        text = text.split(english).join(translations[english]);
                     }
                 });
                 if (text !== node.textContent) {
@@ -55,9 +53,13 @@ export default function DocsPage() {
         // 使用 MutationObserver 监听 DOM 变化（推荐，高效且实时）
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
+                // 处理新增节点
                 mutation.addedNodes.forEach(replaceText);
-                // 也处理已存在的节点（防止首次加载遗漏）
-                replaceText(container);
+
+                // 针对文本内容变化的节点，直接处理变更目标
+                if (mutation.type === "characterData" && mutation.target) {
+                    replaceText(mutation.target as Node);
+                }
             });
         });
 
@@ -78,26 +80,25 @@ export default function DocsPage() {
 
     return (
         <div ref={containerRef} className="max-h-svh">
-            {/* <Redoc specUrl="/api/v1/metadata" /> */}
-            <ApiReferenceReact
-                // @ts-expect-error 安全地绕过类型检查
-                suppressHydrationWarning
-                configuration={{
-                    url: "/api/v1/metadata",
+            <div suppressHydrationWarning>
+                <ApiReferenceReact
+                    configuration={{
+                        url: "/api/v1/metadata",
 
-                    hideModels: false, // 是否隐藏 Models 部分
-                    hideTestRequestButton: true, // 是否隐藏在线测试按钮
-                    showSidebar: true, // 显示侧边栏
-                    theme: "default", // 'default' | 'purple' | 'solarized' 等
-                    layout: "modern", // 布局风格
+                        hideModels: false, // 是否隐藏 Models 部分
+                        hideTestRequestButton: true, // 是否隐藏在线测试按钮
+                        showSidebar: true, // 显示侧边栏
+                        theme: "default", // 'default' | 'purple' | 'solarized' 等
+                        layout: "modern", // 布局风格
 
-                    agent: {
-                        disabled: true, // 完全禁用 AI 功能
-                    },
+                        agent: {
+                            disabled: true, // 完全禁用 AI 功能
+                        },
 
-                    showDeveloperTools: "never",
-                }}
-            />
+                        showDeveloperTools: "never",
+                    }}
+                />
+            </div>
         </div>
     );
 }

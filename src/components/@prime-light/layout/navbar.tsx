@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import React, { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -25,10 +25,17 @@ interface NavbarProps {
     initialUser: Auth.Me.Me.Res["user"] | null;
 }
 
-const navItems = [
+const navItems: Array<{
+    label: string;
+    href: string;
+    // 安全地避免复杂类型
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    icon: any;
+    extraProps?: object;
+}> = [
     { label: "首页", href: "/", icon: HomeIcon },
     { label: "原理图", href: "/schematics", icon: Grid3X3Icon },
-    { label: "API 文档", href: "/api-docs", icon: CodeIcon },
+    { label: "API 文档", href: "/api-docs", icon: CodeIcon, extraProps: { target: "_blank" } },
 ];
 
 // 用户信息头部组件（统一桌面端和移动端）
@@ -181,7 +188,8 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                                     isActive
                                                         ? "bg-accent text-accent-foreground"
                                                         : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                                                )}>
+                                                )}
+                                                {...item.extraProps}>
                                                 <Icon />
                                                 {item.label}
                                             </Link>
