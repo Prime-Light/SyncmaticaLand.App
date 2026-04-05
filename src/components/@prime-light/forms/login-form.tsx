@@ -46,8 +46,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 const res = await axios.post("/api/v1/auth/login", body);
                 if (res.data?.data) {
                     toast.success("登录成功");
-                    router.refresh();
-                    router.push("/");
+                    window.location.assign("/");
                 } else {
                     toast.error("登录失败，请稍后重试");
                 }
