@@ -144,6 +144,8 @@ export default function DocsPage() {
                         hideTestRequestButton: true, // 是否隐藏在线测试按钮
                         hideDarkModeToggle: true,
                         showSidebar: true, // 显示侧边栏
+                        expandAllResponses: true, // 是否展开所有响应体
+                        expandAllModelSections: true, // 是否展开所有模型部分
                         theme: "default", // 'default' | 'purple' | 'solarized' 等
                         layout: "modern", // 布局风格
 
