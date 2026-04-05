@@ -9,9 +9,13 @@ import { IApiErrorResponse } from "@/types/api-error";
 export type LoginResult = WrapSchema<Auth.Login.Login.Res> | IApiErrorResponse;
 
 export async function POST(req: NextRequest): Promise<NextResponse<LoginResult>> {
-    const body = await parseBody(req, Auth.Login.Login.ReqSchema);
-    const supabase = await createSupabaseServerClient();
+    const parseResult = await parseBody(req, Auth.Login.Login.ReqSchema);
+    if (!parseResult.success) {
+        return parseResult.error;
+    }
+    const body = parseResult.body;
 
+    const supabase = await createSupabaseServerClient();
     const { data, error } = await supabase.auth.signInWithPassword({
         email: body.email,
         password: body.password,

@@ -10,7 +10,11 @@ import { ApiError, ApiErrorCode, ApiResponse } from "@/lib/api-responses";
 export type ResendResult = WrapSchema<Auth.Register.Resend.Res> | IApiErrorResponse;
 
 export async function POST(req: NextRequest): Promise<NextResponse<ResendResult>> {
-    const body = await parseBody(req, Auth.Register.Resend.ReqSchema);
+    const parseResult = await parseBody(req, Auth.Register.Resend.ReqSchema);
+    if (!parseResult.success) {
+        return parseResult.error;
+    }
+    const body = parseResult.body;
 
     const { error } = await supabaseClient.auth.resend({
         type: "signup",
@@ -26,7 +30,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ResendResult>
         BackendApiRouteLogger.error("Failed to resend verification email", { error });
         return new ApiError()
             .code(ApiErrorCode.BAD_REQUEST)
-            .message("发送失败")
+            .message("发送验证码失败")
             .details({ error: error.message })
             .build();
     }

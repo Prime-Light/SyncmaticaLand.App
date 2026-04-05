@@ -7,11 +7,13 @@ import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Eye, EyeOff, Key, RectangleEllipsis, Stone } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
+import { useEmailStore } from "@/lib/stores/email";
 import { cn } from "@/lib/utils";
 import { IApiErrorResponse } from "@/types/api-error";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
     const router = useRouter();
+    const emailStore = useEmailStore();
     const [captchaSolved, setCaptchaSolved] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
     const [isPending, setIsPending] = useState(false);
@@ -76,9 +78,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 });
                 if (res.data?.data) {
                     toast.success(res.data.data.message);
-                    router.push(`/auth/login/otp?email=${encodeURIComponent(email)}`);
+                    emailStore.setEmail(email);
+                    router.push(`/auth/login/otp`);
                 } else {
-                    toast.error("发送失败，请稍后重试");
+                    toast.error("发送验证码失败，请稍后重试");
                 }
             } catch (err: unknown) {
                 const error = err as AxiosError<IApiErrorResponse>;
@@ -89,7 +92,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                         : "";
                     toast.error(`${apiError.message}${detailMsg}`);
                 } else {
-                    toast.error("发送失败，请稍后重试");
+                    toast.error("发送验证码失败，请稍后重试");
                 }
             } finally {
                 setIsPending(false);

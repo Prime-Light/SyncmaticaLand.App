@@ -1,31 +1,34 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Prime } from "@/components";
 import { IApiErrorResponse } from "@/types/api-error";
+import { useEmailStore } from "@/lib/stores/email";
 
 export default function Page() {
-    const searchParams = useSearchParams();
     const router = useRouter();
-
-    const [initialOtp] = useState(() => searchParams.get("code") ?? undefined);
-    const [email] = useState(() => searchParams.get("email") ?? undefined);
-    const [otp, setOtp] = useState(initialOtp ?? "");
+    const emailStore = useEmailStore();
+    const [email, setEmail] = useState<string | undefined>(undefined);
+    const [otp, setOtp] = useState("");
     const [resendTimeout, setResendTimeout] = useState(30);
     const [isPending, setIsPending] = useState(false);
     const [isResending, setIsResending] = useState(false);
 
+    const [loaded, setLoaded] = useState(false);
     useEffect(() => {
-        if (initialOtp) {
-            const url = new URL(window.location.href);
-            url.searchParams.delete("code");
-            url.searchParams.delete("email");
-            router.replace(url.toString(), { scroll: false });
+        if (loaded) return;
+
+        if (emailStore.email) {
+            setEmail(emailStore.email);
+            emailStore.setEmail(null);
+            setLoaded(true);
+        } else {
+            router.replace("/auth/login");
         }
-    }, [initialOtp, router]);
+    }, [emailStore, loaded, router]);
 
     useEffect(() => {
         if (resendTimeout <= 0) return;
@@ -107,6 +110,7 @@ export default function Page() {
         <div className="fixed inset-0 flex flex-col items-center justify-center bg-background p-6 md:p-10">
             <div className="w-full max-w-sm">
                 <Prime.ReusableOtpForm
+                    topText="登录验证"
                     otp={otp}
                     onOtpChange={setOtp}
                     email={email}

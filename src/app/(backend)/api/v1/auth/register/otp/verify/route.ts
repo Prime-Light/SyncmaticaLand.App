@@ -10,7 +10,11 @@ import { ApiError, ApiErrorCode, ApiResponse } from "@/lib/api-responses";
 export type VerifyResult = WrapSchema<Auth.Register.Verify.Res> | IApiErrorResponse;
 
 export async function POST(req: NextRequest): Promise<NextResponse<VerifyResult>> {
-    const body = await parseBody(req, Auth.Register.Verify.ReqSchema);
+    const parseResult = await parseBody(req, Auth.Register.Verify.ReqSchema);
+    if (!parseResult.success) {
+        return parseResult.error;
+    }
+    const body = parseResult.body;
 
     const { data, error } = await supabaseClient.auth.verifyOtp({
         email: body.email,

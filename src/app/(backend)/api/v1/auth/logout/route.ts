@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/database/server";
 import { BackendApiRouteLogger } from "@/lib/logger";
+import { ApiError, ApiErrorCode, ApiResponse, ApiResponseCode } from "@/lib/api-responses";
 
 export async function POST(): Promise<NextResponse> {
     const supabase = await createSupabaseServerClient();
@@ -9,8 +10,12 @@ export async function POST(): Promise<NextResponse> {
 
     if (error) {
         BackendApiRouteLogger.error("Failed to logout", { error });
-        return NextResponse.json({ error: { message: error.message } }, { status: 500 });
+        return new ApiError()
+            .code(ApiErrorCode.SERVER_ERROR)
+            .message("登出失败")
+            .details({ detail: error.message })
+            .build();
     }
 
-    return NextResponse.json({ success: true });
+    return new ApiResponse().code(ApiResponseCode.NO_CONTENT).build();
 }

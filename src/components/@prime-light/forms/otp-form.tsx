@@ -14,6 +14,7 @@ export type OtpFormProps = React.ComponentProps<"div"> & {
     isResending: boolean;
     onResend: () => void;
     onVerify: (e: React.SubmitEvent<HTMLFormElement>) => void;
+    topText: string;
 };
 
 export function ReusableOtpForm({
@@ -26,6 +27,7 @@ export function ReusableOtpForm({
     isResending,
     onResend,
     onVerify,
+    topText,
     ...props
 }: OtpFormProps) {
     return (
@@ -36,7 +38,7 @@ export function ReusableOtpForm({
                         <div className="flex size-8 items-center justify-center rounded-md">
                             <Stone className="size-6" />
                         </div>
-                        <h1 className="text-xl font-bold">{"创建账号"}</h1>
+                        <h1 className="text-xl font-bold">{topText}</h1>
                     </div>
 
                     <Shadcn.Field className="mt-4">

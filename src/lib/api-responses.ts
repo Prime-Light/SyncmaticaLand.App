@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 export enum ApiResponseCode {
     OK = 200,
     CREATED = 201,
-    PARTIAL_CONTENT = 202,
     NO_CONTENT = 204,
+    PARTIAL_CONTENT = 206,
 }
 
 export class ApiResponse<T> {

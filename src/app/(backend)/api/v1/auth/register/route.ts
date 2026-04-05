@@ -10,9 +10,13 @@ import { IApiErrorResponse } from "@/types/api-error";
 export type RegisterResult = WrapSchema<Auth.Register.Register.Res> | IApiErrorResponse;
 
 export async function POST(req: NextRequest): Promise<NextResponse<RegisterResult>> {
-    const body = await parseBody(req, Auth.Register.Register.ReqSchema);
-    const supabase = await createSupabaseServerClient();
+    const parseResult = await parseBody(req, Auth.Register.Register.ReqSchema);
+    if (!parseResult.success) {
+        return parseResult.error;
+    }
+    const body = parseResult.body;
 
+    const supabase = await createSupabaseServerClient();
     const { data, error } = await supabase.auth.signUp({
         email: body.email,
         password: body.password,
@@ -52,7 +56,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<RegisterResul
         });
 
         const { error: deleteError } = await supabaseServerAdmin.auth.admin.deleteUser(
-            data.user.id,
+            data.user.id
         );
 
         if (deleteError) {
@@ -60,7 +64,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<RegisterResul
                 "[CAUTION!] Failed to delete user during rollback. This will result in inconsistent data.",
                 {
                     error: deleteError,
-                },
+                }
             );
         }
 

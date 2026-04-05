@@ -7,11 +7,13 @@ import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Eye, EyeOff, Stone } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
+import { useEmailStore } from "@/lib/stores/email";
 import { cn } from "@/lib/utils";
 import { IApiErrorResponse } from "@/types/api-error";
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"div">) {
     const router = useRouter();
+    const emailStore = useEmailStore();
     const [captchaSolved, setCaptchaSolved] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
     const [isPending, setIsPending] = useState(false);
@@ -46,8 +48,8 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
             const res = await axios.post("/api/v1/auth/register", body);
             if (res.data?.data) {
                 toast.success(res.data.data.message || "注册成功，请查收验证邮件");
-                const encodedEmail = encodeURIComponent(body.email);
-                router.push(`/auth/register/otp?email=${encodedEmail}`);
+                emailStore.setEmail(body.email);
+                router.push(`/auth/register/otp`);
             } else {
                 toast.error("注册失败，请稍后重试");
             }
