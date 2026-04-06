@@ -132,7 +132,7 @@ export function UploadSchematicForm() {
                 </Shadcn.CardHeader>
                 <Shadcn.CardContent>
                     {schematicFile ? (
-                        <div className="flex items-center gap-3 rounded-md border border-border bg-muted/50 p-4">
+                        <div className="flex items-center gap-3 border border-border bg-muted/50 p-4">
                             <FileIcon className="text-primary" />
                             <div className="flex flex-1 flex-col gap-0.5">
                                 <span className="text-base font-medium">
@@ -159,7 +159,7 @@ export function UploadSchematicForm() {
                             onDragLeave={() => setIsDraggingSchematic(false)}
                             onDrop={handleSchematicDrop}
                             onClick={() => schematicInputRef.current?.click()}
-                            className={`flex cursor-pointer flex-col items-center gap-3 rounded-md border-2 border-dashed p-8 transition-colors ${
+                            className={`flex cursor-pointer flex-col items-center gap-3 border-2 border-dashed p-8 transition-colors ${
                                 isDraggingSchematic
                                     ? "border-primary bg-primary/5"
                                     : "border-border hover:border-primary/50 hover:bg-muted/50"

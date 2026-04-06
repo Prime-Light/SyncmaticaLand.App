@@ -10,7 +10,7 @@ export default function UploadPage() {
                 } as React.CSSProperties
             }>
             <Prime.AppSidebar variant="inset" />
-            <Shadcn.SidebarInset>
+            <Shadcn.SidebarInset className="h-svh overflow-hidden">
                 <Prime.SiteHeader>
                     <Shadcn.Breadcrumb>
                         <Shadcn.BreadcrumbList>
@@ -28,7 +28,7 @@ export default function UploadPage() {
                         </Shadcn.BreadcrumbList>
                     </Shadcn.Breadcrumb>
                 </Prime.SiteHeader>
-                <div className="flex flex-1 flex-col">
+                <div className="flex flex-1 flex-col overflow-y-auto">
                     <Prime.UploadSchematicForm />
                 </div>
             </Shadcn.SidebarInset>
