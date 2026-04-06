@@ -11,7 +11,23 @@ export default function UploadPage() {
             }>
             <Prime.AppSidebar variant="inset" />
             <Shadcn.SidebarInset>
-                <Prime.SiteHeader />
+                <Prime.SiteHeader>
+                    <Shadcn.Breadcrumb>
+                        <Shadcn.BreadcrumbList>
+                            <Shadcn.BreadcrumbItem>
+                                <Shadcn.BreadcrumbLink
+                                    href="/dashboard"
+                                    className="text-muted-foreground">
+                                    创作者仪表盘
+                                </Shadcn.BreadcrumbLink>
+                            </Shadcn.BreadcrumbItem>
+                            <Shadcn.BreadcrumbSeparator />
+                            <Shadcn.BreadcrumbItem>
+                                <Shadcn.BreadcrumbPage>上传原理图</Shadcn.BreadcrumbPage>
+                            </Shadcn.BreadcrumbItem>
+                        </Shadcn.BreadcrumbList>
+                    </Shadcn.Breadcrumb>
+                </Prime.SiteHeader>
                 <div className="flex flex-1 flex-col">
                     <Prime.UploadSchematicForm />
                 </div>

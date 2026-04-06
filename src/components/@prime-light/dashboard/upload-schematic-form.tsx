@@ -114,8 +114,8 @@ export function UploadSchematicForm() {
             onSubmit={handleSubmit}
             className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-6">
             <div>
-                <h1 className="text-2xl font-bold tracking-tight">上传原理图</h1>
-                <p className="text-sm text-muted-foreground">
+                <h1 className="text-3xl font-bold tracking-tight">上传原理图</h1>
+                <p className="text-base text-muted-foreground">
                     分享你的 Minecraft 建筑原理图，展示你的创意
                 </p>
             </div>
@@ -135,10 +135,10 @@ export function UploadSchematicForm() {
                         <div className="flex items-center gap-3 rounded-md border border-border bg-muted/50 p-4">
                             <FileIcon className="text-primary" />
                             <div className="flex flex-1 flex-col gap-0.5">
-                                <span className="text-sm font-medium">
+                                <span className="text-base font-medium">
                                     {schematicFile.name}
                                 </span>
-                                <span className="text-xs text-muted-foreground">
+                                <span className="text-sm text-muted-foreground">
                                     {formatFileSize(schematicFile.size)}
                                 </span>
                             </div>
@@ -168,10 +168,10 @@ export function UploadSchematicForm() {
                                 <UploadIcon className="text-muted-foreground" />
                             </div>
                             <div className="flex flex-col items-center gap-1 text-center">
-                                <p className="text-sm font-medium">
+                                <p className="text-base font-medium">
                                     拖放文件到此处，或点击浏览
                                 </p>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-sm text-muted-foreground">
                                     .schematic / .schem / .litematic / .nbt
                                 </p>
                             </div>
@@ -287,7 +287,7 @@ export function UploadSchematicForm() {
                                             setTags((prev) => prev.slice(0, -1));
                                         }
                                     }}
-                                    className="min-w-20 flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+                                    className="min-w-20 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
                                 />
                             </div>
                             <Shadcn.FieldDescription>
@@ -351,7 +351,7 @@ export function UploadSchematicForm() {
                                         : "border-border hover:border-primary/50 hover:bg-muted/50"
                                 }`}>
                                 <ImageIcon className="text-muted-foreground" />
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-base text-muted-foreground">
                                     拖放图片到此处，或点击浏览（还可添加{" "}
                                     {5 - previewImages.length} 张）
                                 </p>
