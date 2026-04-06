@@ -7,6 +7,7 @@ import {
     CodeIcon,
     Grid3X3Icon,
     HomeIcon,
+    LayoutDashboardIcon,
     MenuIcon,
     StoneIcon,
     UserKeyIcon,
@@ -90,7 +91,7 @@ export function Navbar({ initialUser, className }: NavbarProps) {
     const $pathname = usePathname();
     const $router = useRouter();
 
-    const { user, userInitials } = useCurrentUser(initialUser);
+    const { user, userInitials, loading } = useCurrentUser(initialUser);
     const [, startTransition] = useTransition();
 
     async function logoutAction() {
@@ -164,7 +165,12 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                             orientation="vertical"
                         />
                         <Shadcn.NavigationMenuList className="gap-1">
-                            {user ? (
+                            {loading ? (
+                                <div className="flex items-center gap-2 px-3 py-1">
+                                    <Shadcn.Skeleton className="size-7 rounded-full" />
+                                    <Shadcn.Skeleton className="hidden lg:block h-3.5 w-16 rounded" />
+                                </div>
+                            ) : user ? (
                                 <Shadcn.DropdownMenu>
                                     <Shadcn.DropdownMenuTrigger asChild>
                                         <Shadcn.Button
@@ -187,6 +193,13 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                             user={user}
                                             userInitials={userInitials}
                                         />
+                                        <Shadcn.DropdownMenuSeparator />
+                                        <Shadcn.DropdownMenuItem asChild>
+                                            <Link href="/dashboard">
+                                                <LayoutDashboardIcon />
+                                                仪表盘
+                                            </Link>
+                                        </Shadcn.DropdownMenuItem>
                                         <Shadcn.DropdownMenuSeparator />
                                         <LogoutItem onLogout={handleLogout} />
                                     </Shadcn.DropdownMenuContent>
@@ -270,9 +283,21 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                             <Shadcn.DropdownMenuSeparator />
 
                             {/* 用户区域 */}
-                            {user ? (
+                            {loading ? (
+                                <div className="flex items-center gap-2 px-2 py-1.5">
+                                    <Shadcn.Skeleton className="size-7 rounded-full" />
+                                    <Shadcn.Skeleton className="h-3.5 w-20 rounded" />
+                                </div>
+                            ) : user ? (
                                 <>
                                     <UserMenuHeader user={user} userInitials={userInitials} />
+                                    <Shadcn.DropdownMenuSeparator />
+                                    <Shadcn.DropdownMenuItem asChild>
+                                        <Link href="/dashboard">
+                                            <LayoutDashboardIcon />
+                                            仪表盘
+                                        </Link>
+                                    </Shadcn.DropdownMenuItem>
                                     <Shadcn.DropdownMenuSeparator />
                                     <LogoutItem onLogout={handleLogout} />
                                 </>
