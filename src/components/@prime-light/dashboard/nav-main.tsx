@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Shadcn } from "@/components";
 import { CirclePlusIcon } from "lucide-react";
 
@@ -18,10 +19,13 @@ export function NavMain({
                 <Shadcn.SidebarMenu>
                     <Shadcn.SidebarMenuItem>
                         <Shadcn.SidebarMenuButton
+                            asChild
                             tooltip="上传原理图"
                             className="bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground">
-                            <CirclePlusIcon />
-                            <span>上传原理图</span>
+                            <Link href="/dashboard/upload">
+                                <CirclePlusIcon />
+                                <span>上传原理图</span>
+                            </Link>
                         </Shadcn.SidebarMenuButton>
                     </Shadcn.SidebarMenuItem>
                 </Shadcn.SidebarMenu>
