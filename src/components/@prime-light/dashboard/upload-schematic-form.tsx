@@ -2,12 +2,7 @@
 
 import * as React from "react";
 import { Shadcn } from "@/components";
-import {
-    UploadIcon,
-    FileIcon,
-    XIcon,
-    ImageIcon,
-} from "lucide-react";
+import { UploadIcon, FileIcon, XIcon, ImageIcon } from "lucide-react";
 
 const CATEGORIES = [
     { value: "building", label: "建筑" },
@@ -47,17 +42,14 @@ export function UploadSchematicForm() {
     const imageInputRef = React.useRef<HTMLInputElement>(null);
 
     // ── Schematic file handlers ──
-    const handleSchematicDrop = React.useCallback(
-        (e: React.DragEvent) => {
-            e.preventDefault();
-            setIsDraggingSchematic(false);
-            const file = e.dataTransfer.files[0];
-            if (file && validateSchematicFile(file)) {
-                setSchematicFile(file);
-            }
-        },
-        [],
-    );
+    const handleSchematicDrop = React.useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDraggingSchematic(false);
+        const file = e.dataTransfer.files[0];
+        if (file && validateSchematicFile(file)) {
+            setSchematicFile(file);
+        }
+    }, []);
 
     const handleSchematicSelect = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +58,7 @@ export function UploadSchematicForm() {
                 setSchematicFile(file);
             }
         },
-        [],
+        []
     );
 
     function validateSchematicFile(file: File): boolean {
@@ -81,31 +73,21 @@ export function UploadSchematicForm() {
     }
 
     // ── Preview image handlers ──
-    const handleImageDrop = React.useCallback(
-        (e: React.DragEvent) => {
-            e.preventDefault();
-            setIsDraggingImage(false);
-            const files = Array.from(e.dataTransfer.files).filter(
-                (f) =>
-                    ACCEPTED_IMAGE_TYPES.includes(f.type) &&
-                    f.size <= MAX_IMAGE_SIZE,
-            );
-            setPreviewImages((prev) => [...prev, ...files].slice(0, 5));
-        },
-        [],
-    );
+    const handleImageDrop = React.useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDraggingImage(false);
+        const files = Array.from(e.dataTransfer.files).filter(
+            (f) => ACCEPTED_IMAGE_TYPES.includes(f.type) && f.size <= MAX_IMAGE_SIZE
+        );
+        setPreviewImages((prev) => [...prev, ...files].slice(0, 5));
+    }, []);
 
-    const handleImageSelect = React.useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            const files = Array.from(e.target.files ?? []).filter(
-                (f) =>
-                    ACCEPTED_IMAGE_TYPES.includes(f.type) &&
-                    f.size <= MAX_IMAGE_SIZE,
-            );
-            setPreviewImages((prev) => [...prev, ...files].slice(0, 5));
-        },
-        [],
-    );
+    const handleImageSelect = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files ?? []).filter(
+            (f) => ACCEPTED_IMAGE_TYPES.includes(f.type) && f.size <= MAX_IMAGE_SIZE
+        );
+        setPreviewImages((prev) => [...prev, ...files].slice(0, 5));
+    }, []);
 
     const removeImage = React.useCallback((index: number) => {
         setPreviewImages((prev) => prev.filter((_, i) => i !== index));
@@ -128,7 +110,9 @@ export function UploadSchematicForm() {
     const isFormValid = !!schematicFile && title.trim().length > 0 && !!category;
 
     return (
-        <form onSubmit={handleSubmit} className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-6">
+        <form
+            onSubmit={handleSubmit}
+            className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-6">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">上传原理图</h1>
                 <p className="text-sm text-muted-foreground">
@@ -214,9 +198,7 @@ export function UploadSchematicForm() {
                 <Shadcn.CardContent>
                     <Shadcn.FieldGroup>
                         <Shadcn.Field>
-                            <Shadcn.FieldLabel htmlFor="title">
-                                标题
-                            </Shadcn.FieldLabel>
+                            <Shadcn.FieldLabel htmlFor="title">标题</Shadcn.FieldLabel>
                             <Shadcn.Input
                                 id="title"
                                 placeholder="为你的原理图起一个名字"
@@ -229,9 +211,7 @@ export function UploadSchematicForm() {
                         </Shadcn.Field>
 
                         <Shadcn.Field>
-                            <Shadcn.FieldLabel htmlFor="description">
-                                描述
-                            </Shadcn.FieldLabel>
+                            <Shadcn.FieldLabel htmlFor="description">描述</Shadcn.FieldLabel>
                             <Shadcn.Textarea
                                 id="description"
                                 placeholder="介绍你的原理图，包括灵感来源、使用方法等"
@@ -245,12 +225,8 @@ export function UploadSchematicForm() {
                         </Shadcn.Field>
 
                         <Shadcn.Field>
-                            <Shadcn.FieldLabel htmlFor="category">
-                                分类
-                            </Shadcn.FieldLabel>
-                            <Shadcn.Select
-                                value={category}
-                                onValueChange={setCategory}>
+                            <Shadcn.FieldLabel htmlFor="category">分类</Shadcn.FieldLabel>
+                            <Shadcn.Select value={category} onValueChange={setCategory}>
                                 <Shadcn.SelectTrigger id="category">
                                     <Shadcn.SelectValue placeholder="选择分类" />
                                 </Shadcn.SelectTrigger>
@@ -269,9 +245,7 @@ export function UploadSchematicForm() {
                         </Shadcn.Field>
 
                         <Shadcn.Field>
-                            <Shadcn.FieldLabel htmlFor="tags">
-                                标签
-                            </Shadcn.FieldLabel>
+                            <Shadcn.FieldLabel htmlFor="tags">标签</Shadcn.FieldLabel>
                             <div className="flex flex-wrap items-center gap-1.5 border border-input bg-transparent px-2.5 py-2 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/50">
                                 {tags.map((tag) => (
                                     <Shadcn.Badge
@@ -282,9 +256,7 @@ export function UploadSchematicForm() {
                                         <button
                                             type="button"
                                             onClick={() =>
-                                                setTags((prev) =>
-                                                    prev.filter((t) => t !== tag),
-                                                )
+                                                setTags((prev) => prev.filter((t) => t !== tag))
                                             }
                                             className="cursor-pointer opacity-60 transition-opacity hover:opacity-100">
                                             <XIcon className="size-3" />
@@ -294,24 +266,16 @@ export function UploadSchematicForm() {
                                 <input
                                     id="tags"
                                     placeholder={
-                                        tags.length === 0
-                                            ? "输入标签后按回车添加"
-                                            : ""
+                                        tags.length === 0 ? "输入标签后按回车添加" : ""
                                     }
                                     value={tagInput}
                                     onChange={(e) => setTagInput(e.target.value)}
                                     onKeyDown={(e) => {
-                                        if (
-                                            e.key === "Enter" &&
-                                            tagInput.trim()
-                                        ) {
+                                        if (e.key === "Enter" && tagInput.trim()) {
                                             e.preventDefault();
                                             const value = tagInput.trim();
                                             if (!tags.includes(value)) {
-                                                setTags((prev) => [
-                                                    ...prev,
-                                                    value,
-                                                ]);
+                                                setTags((prev) => [...prev, value]);
                                             }
                                             setTagInput("");
                                         }
@@ -320,9 +284,7 @@ export function UploadSchematicForm() {
                                             tagInput === "" &&
                                             tags.length > 0
                                         ) {
-                                            setTags((prev) =>
-                                                prev.slice(0, -1),
-                                            );
+                                            setTags((prev) => prev.slice(0, -1));
                                         }
                                     }}
                                     className="min-w-20 flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
@@ -409,9 +371,7 @@ export function UploadSchematicForm() {
 
             {/* ── Submit ── */}
             <div className="flex items-center justify-end gap-3">
-                <Shadcn.Button
-                    type="submit"
-                    disabled={!isFormValid || isSubmitting}>
+                <Shadcn.Button type="submit" disabled={!isFormValid || isSubmitting}>
                     {isSubmitting ? (
                         <>
                             <UploadIcon data-icon="inline-start" className="animate-pulse" />

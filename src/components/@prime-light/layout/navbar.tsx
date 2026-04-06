@@ -168,7 +168,7 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                             {loading ? (
                                 <div className="flex items-center gap-2 px-3 py-1">
                                     <Shadcn.Skeleton className="size-7 rounded-full" />
-                                    <Shadcn.Skeleton className="hidden lg:block h-3.5 w-16 rounded" />
+                                    <Shadcn.Skeleton className="hidden h-3.5 w-16 rounded lg:block" />
                                 </div>
                             ) : user ? (
                                 <Shadcn.DropdownMenu>

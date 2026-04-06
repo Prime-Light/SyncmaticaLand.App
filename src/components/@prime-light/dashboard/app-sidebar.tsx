@@ -3,11 +3,7 @@
 import * as React from "react";
 
 import { Shadcn, Prime } from "@/components";
-import {
-    LayoutDashboardIcon,
-    FolderIcon,
-    StoneIcon,
-} from "lucide-react";
+import { LayoutDashboardIcon, FolderIcon, StoneIcon } from "lucide-react";
 
 const data = {
     navMain: [

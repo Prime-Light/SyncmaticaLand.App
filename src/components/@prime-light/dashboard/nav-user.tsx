@@ -2,10 +2,7 @@
 
 import { Shadcn } from "@/components";
 import { useSidebar } from "@/components/@shadcn-ui/sidebar";
-import {
-    EllipsisVerticalIcon,
-    LogOutIcon,
-} from "lucide-react";
+import { EllipsisVerticalIcon, LogOutIcon } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { toast } from "sonner";
 
@@ -43,13 +40,16 @@ export function NavUser() {
                             size="lg"
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
                             <Shadcn.Avatar className="h-8 w-8 grayscale">
-                                <Shadcn.AvatarImage src={user.avatar_url} alt={user.display_name} />
-                                <Shadcn.AvatarFallback>
-                                    {userInitials}
-                                </Shadcn.AvatarFallback>
+                                <Shadcn.AvatarImage
+                                    src={user.avatar_url}
+                                    alt={user.display_name}
+                                />
+                                <Shadcn.AvatarFallback>{userInitials}</Shadcn.AvatarFallback>
                             </Shadcn.Avatar>
                             <div className="grid flex-1 text-start text-sm leading-tight">
-                                <span className="truncate font-medium">{user.display_name}</span>
+                                <span className="truncate font-medium">
+                                    {user.display_name}
+                                </span>
                                 <span className="truncate text-xs text-muted-foreground">
                                     {user.email}
                                 </span>
@@ -65,13 +65,18 @@ export function NavUser() {
                         <Shadcn.DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <Shadcn.Avatar className="h-8 w-8">
-                                    <Shadcn.AvatarImage src={user.avatar_url} alt={user.display_name} />
+                                    <Shadcn.AvatarImage
+                                        src={user.avatar_url}
+                                        alt={user.display_name}
+                                    />
                                     <Shadcn.AvatarFallback>
                                         {userInitials}
                                     </Shadcn.AvatarFallback>
                                 </Shadcn.Avatar>
                                 <div className="grid flex-1 text-start text-sm leading-tight">
-                                    <span className="truncate font-medium">{user.display_name}</span>
+                                    <span className="truncate font-medium">
+                                        {user.display_name}
+                                    </span>
                                     <span className="truncate text-xs text-muted-foreground">
                                         {user.email}
                                     </span>
