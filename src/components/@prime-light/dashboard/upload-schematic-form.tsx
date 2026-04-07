@@ -4,6 +4,20 @@ import * as React from "react";
 import { Shadcn } from "@/components";
 import { UploadIcon, FileIcon, XIcon, ImageIcon } from "lucide-react";
 
+const MC_VERSIONS: Record<string, string[]> = {
+    "1.21.x": ["1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4", "1.21.5"],
+    "1.20.x": ["1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6"],
+    "1.19.x": ["1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4"],
+    "1.18.x": ["1.18", "1.18.1", "1.18.2"],
+    "1.17.x": ["1.17", "1.17.1"],
+    "1.16.x": ["1.16", "1.16.1", "1.16.2", "1.16.3", "1.16.4", "1.16.5"],
+    "1.15.x": ["1.15", "1.15.1", "1.15.2"],
+    "1.14.x": ["1.14", "1.14.1", "1.14.2", "1.14.3", "1.14.4"],
+    "1.13.x": ["1.13", "1.13.1", "1.13.2"],
+    "1.12.x": ["1.12", "1.12.1", "1.12.2"],
+    "1.8.x": ["1.8", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5", "1.8.6", "1.8.7", "1.8.8", "1.8.9"],
+};
+
 const CATEGORIES = [
     { value: "building", label: "建筑" },
     { value: "redstone", label: "红石" },
@@ -34,6 +48,9 @@ export function UploadSchematicForm() {
     const [tagInput, setTagInput] = React.useState("");
     const [schematicFile, setSchematicFile] = React.useState<File | null>(null);
     const [previewImages, setPreviewImages] = React.useState<File[]>([]);
+    const [mcMajorVersion, setMcMajorVersion] = React.useState("");
+    const [mcMinorVersion, setMcMinorVersion] = React.useState("");
+    const [agreedToTerms, setAgreedToTerms] = React.useState(false);
     const [isDraggingSchematic, setIsDraggingSchematic] = React.useState(false);
     const [isDraggingImage, setIsDraggingImage] = React.useState(false);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -107,7 +124,7 @@ export function UploadSchematicForm() {
         }
     };
 
-    const isFormValid = !!schematicFile && title.trim().length > 0 && !!category;
+    const isFormValid = !!schematicFile && title.trim().length > 0 && !!category && !!mcMinorVersion && agreedToTerms;
 
     return (
         <form
@@ -245,6 +262,51 @@ export function UploadSchematicForm() {
                         </Shadcn.Field>
 
                         <Shadcn.Field>
+                            <Shadcn.FieldLabel>MC 版本</Shadcn.FieldLabel>
+                            <div className="flex gap-3">
+                                <Shadcn.Select
+                                    value={mcMajorVersion}
+                                    onValueChange={(v) => {
+                                        setMcMajorVersion(v);
+                                        setMcMinorVersion("");
+                                    }}>
+                                    <Shadcn.SelectTrigger className="flex-1">
+                                        <Shadcn.SelectValue placeholder="选择大版本" />
+                                    </Shadcn.SelectTrigger>
+                                    <Shadcn.SelectContent>
+                                        <Shadcn.SelectGroup>
+                                            {Object.keys(MC_VERSIONS).map((major) => (
+                                                <Shadcn.SelectItem key={major} value={major}>
+                                                    {major}
+                                                </Shadcn.SelectItem>
+                                            ))}
+                                        </Shadcn.SelectGroup>
+                                    </Shadcn.SelectContent>
+                                </Shadcn.Select>
+                                <Shadcn.Select
+                                    value={mcMinorVersion}
+                                    onValueChange={setMcMinorVersion}
+                                    disabled={!mcMajorVersion}>
+                                    <Shadcn.SelectTrigger className="flex-1">
+                                        <Shadcn.SelectValue placeholder="选择小版本" />
+                                    </Shadcn.SelectTrigger>
+                                    <Shadcn.SelectContent>
+                                        <Shadcn.SelectGroup>
+                                            {(MC_VERSIONS[mcMajorVersion] ?? []).map((minor) => (
+                                                <Shadcn.SelectItem key={minor} value={minor}>
+                                                    {minor}
+                                                </Shadcn.SelectItem>
+                                            ))}
+                                        </Shadcn.SelectGroup>
+                                    </Shadcn.SelectContent>
+                                </Shadcn.Select>
+                            </div>
+                            <Shadcn.FieldDescription>
+                                选择该原理图适用的 Minecraft 版本
+                            </Shadcn.FieldDescription>
+                        </Shadcn.Field>
+
+                        <Shadcn.Field>
                             <Shadcn.FieldLabel htmlFor="tags">标签</Shadcn.FieldLabel>
                             <div className="flex flex-wrap items-center gap-1.5 border border-input bg-transparent px-2.5 py-2 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/50">
                                 {tags.map((tag) => (
@@ -314,7 +376,7 @@ export function UploadSchematicForm() {
                                 {previewImages.map((file, index) => (
                                     <div
                                         key={`${file.name}-${index}`}
-                                        className="group relative aspect-video overflow-hidden rounded-md border border-border">
+                                        className="group relative aspect-video overflow-hidden border border-border">
                                         <img
                                             src={URL.createObjectURL(file)}
                                             alt={file.name}
@@ -345,7 +407,7 @@ export function UploadSchematicForm() {
                                 onDragLeave={() => setIsDraggingImage(false)}
                                 onDrop={handleImageDrop}
                                 onClick={() => imageInputRef.current?.click()}
-                                className={`flex cursor-pointer flex-col items-center gap-3 rounded-md border-2 border-dashed p-6 transition-colors ${
+                                className={`flex cursor-pointer flex-col items-center gap-3 border-2 border-dashed p-6 transition-colors ${
                                     isDraggingImage
                                         ? "border-primary bg-primary/5"
                                         : "border-border hover:border-primary/50 hover:bg-muted/50"
@@ -368,6 +430,24 @@ export function UploadSchematicForm() {
                     </div>
                 </Shadcn.CardContent>
             </Shadcn.Card>
+
+            {/* ── Agreement ── */}
+            <div className="flex items-center gap-3">
+                <Shadcn.Checkbox
+                    id="agree-terms"
+                    checked={agreedToTerms}
+                    onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                />
+                <Shadcn.Label htmlFor="agree-terms" className="cursor-pointer text-sm">
+                    我已阅读并同意{" "}
+                    <a
+                        href="#"
+                        className="text-primary underline underline-offset-2 hover:opacity-80"
+                        onClick={(e) => e.stopPropagation()}>
+                        投影共和国原理图分享协议
+                    </a>
+                </Shadcn.Label>
+            </div>
 
             {/* ── Submit ── */}
             <div className="flex items-center justify-end gap-3">
