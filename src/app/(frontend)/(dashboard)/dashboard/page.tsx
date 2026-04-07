@@ -11,7 +11,7 @@ export default function Page() {
             }>
             <Prime.AppSidebar variant="inset" />
             <Shadcn.SidebarInset>
-                <Prime.SiteHeader />
+                <Prime.SiteHeader breadcrumbs={[{ label: "创作者仪表盘" }]} />
                 <div className="flex flex-1 items-center justify-center">
                     <p className="text-sm text-muted-foreground">仪表盘制作中…</p>
                 </div>

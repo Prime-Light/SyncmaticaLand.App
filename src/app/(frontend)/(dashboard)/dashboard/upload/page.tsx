@@ -3,6 +3,7 @@ import { Prime, Shadcn } from "@/components";
 export default function UploadPage() {
     return (
         <Shadcn.SidebarProvider
+            className="!h-svh !min-h-0 overflow-hidden"
             style={
                 {
                     "--sidebar-width": "calc(var(--spacing) * 72)",
@@ -10,24 +11,13 @@ export default function UploadPage() {
                 } as React.CSSProperties
             }>
             <Prime.AppSidebar variant="inset" />
-            <Shadcn.SidebarInset className="h-svh overflow-hidden">
-                <Prime.SiteHeader>
-                    <Shadcn.Breadcrumb>
-                        <Shadcn.BreadcrumbList>
-                            <Shadcn.BreadcrumbItem>
-                                <Shadcn.BreadcrumbLink
-                                    href="/dashboard"
-                                    className="text-muted-foreground">
-                                    创作者仪表盘
-                                </Shadcn.BreadcrumbLink>
-                            </Shadcn.BreadcrumbItem>
-                            <Shadcn.BreadcrumbSeparator />
-                            <Shadcn.BreadcrumbItem>
-                                <Shadcn.BreadcrumbPage>上传原理图</Shadcn.BreadcrumbPage>
-                            </Shadcn.BreadcrumbItem>
-                        </Shadcn.BreadcrumbList>
-                    </Shadcn.Breadcrumb>
-                </Prime.SiteHeader>
+            <Shadcn.SidebarInset className="overflow-hidden">
+                <Prime.SiteHeader
+                    breadcrumbs={[
+                        { label: "创作者仪表盘", href: "/dashboard" },
+                        { label: "上传原理图" },
+                    ]}
+                />
                 <div className="flex flex-1 flex-col overflow-y-auto">
                     <Prime.UploadSchematicForm />
                 </div>
