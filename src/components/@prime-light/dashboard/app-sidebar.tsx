@@ -3,18 +3,18 @@
 import * as React from "react";
 
 import { Shadcn, Prime } from "@/components";
-import { LayoutDashboardIcon, FolderIcon, StoneIcon } from "lucide-react";
+import { LayoutDashboardIcon, FolderIcon, StoneIcon, HomeIcon } from "lucide-react";
 
 const data = {
     navMain: [
         {
             title: "仪表盘",
-            url: "#",
+            url: "/dashboard",
             icon: <LayoutDashboardIcon />,
         },
         {
             title: "项目",
-            url: "#",
+            url: "/dashboard/projects",
             icon: <FolderIcon />,
         },
     ],
@@ -41,6 +41,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Shadcn.Side
                 <Prime.NavMain items={data.navMain} />
             </Shadcn.SidebarContent>
             <Shadcn.SidebarFooter>
+                <Shadcn.SidebarMenu>
+                    <Shadcn.SidebarMenuItem>
+                        <Shadcn.SidebarMenuButton asChild>
+                            <a href="/">
+                                <HomeIcon />
+                                <span>返回主页</span>
+                            </a>
+                        </Shadcn.SidebarMenuButton>
+                    </Shadcn.SidebarMenuItem>
+                </Shadcn.SidebarMenu>
                 <Prime.NavUser />
             </Shadcn.SidebarFooter>
         </Shadcn.Sidebar>

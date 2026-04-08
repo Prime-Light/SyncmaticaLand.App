@@ -32,9 +32,11 @@ export function NavMain({
                 <Shadcn.SidebarMenu>
                     {items.map((item) => (
                         <Shadcn.SidebarMenuItem key={item.title}>
-                            <Shadcn.SidebarMenuButton tooltip={item.title}>
-                                {item.icon}
-                                <span>{item.title}</span>
+                            <Shadcn.SidebarMenuButton asChild tooltip={item.title}>
+                                <Link href={item.url}>
+                                    {item.icon}
+                                    <span>{item.title}</span>
+                                </Link>
                             </Shadcn.SidebarMenuButton>
                         </Shadcn.SidebarMenuItem>
                     ))}

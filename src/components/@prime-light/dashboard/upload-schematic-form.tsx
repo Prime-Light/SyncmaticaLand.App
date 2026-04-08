@@ -5,7 +5,29 @@ import { Shadcn } from "@/components";
 import { UploadIcon, FileIcon, XIcon, ImageIcon } from "lucide-react";
 
 const MC_VERSIONS: Record<string, string[]> = {
-    "1.21.x": ["1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4", "1.21.5"],
+    "1.21.x": [
+        "1.21",
+        "1.21.1",
+        "1.21.2",
+        "1.21.3",
+        "1.21.4",
+        "1.21.5",
+        "1.21.6",
+        "1.21.7",
+        "1.21.8",
+        "1.21.9",
+        "1.21.10",
+        "1.21.11",
+        "1.21.12",
+        "1.21.13",
+        "1.21.14",
+        "1.21.15",
+        "1.21.16",
+        "1.21.17",
+        "1.21.18",
+        "1.21.19",
+        "1.21.20",
+    ],
     "1.20.x": ["1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6"],
     "1.19.x": ["1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4"],
     "1.18.x": ["1.18", "1.18.1", "1.18.2"],
@@ -15,7 +37,18 @@ const MC_VERSIONS: Record<string, string[]> = {
     "1.14.x": ["1.14", "1.14.1", "1.14.2", "1.14.3", "1.14.4"],
     "1.13.x": ["1.13", "1.13.1", "1.13.2"],
     "1.12.x": ["1.12", "1.12.1", "1.12.2"],
-    "1.8.x": ["1.8", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5", "1.8.6", "1.8.7", "1.8.8", "1.8.9"],
+    "1.8.x": [
+        "1.8",
+        "1.8.1",
+        "1.8.2",
+        "1.8.3",
+        "1.8.4",
+        "1.8.5",
+        "1.8.6",
+        "1.8.7",
+        "1.8.8",
+        "1.8.9",
+    ],
 };
 
 const CATEGORIES = [
@@ -124,7 +157,14 @@ export function UploadSchematicForm() {
         }
     };
 
-    const isFormValid = !!schematicFile && title.trim().length > 0 && !!category && !!mcMinorVersion && agreedToTerms;
+    const isFormValid =
+        !!schematicFile &&
+        title.trim().length > 0 &&
+        description.trim().length > 0 &&
+        !!category &&
+        !!mcMinorVersion &&
+        tags.length > 0 &&
+        agreedToTerms;
 
     return (
         <form
@@ -142,7 +182,11 @@ export function UploadSchematicForm() {
             {/* ── Schematic file upload ── */}
             <Shadcn.Card>
                 <Shadcn.CardHeader>
-                    <Shadcn.CardTitle>原理图文件</Shadcn.CardTitle>
+                    <Shadcn.CardTitle>
+                        <span>
+                            原理图文件<span className="text-destructive">*</span>
+                        </span>
+                    </Shadcn.CardTitle>
                     <Shadcn.CardDescription>
                         支持 .schematic, .schem, .litematic, .nbt 格式，最大 10MB
                     </Shadcn.CardDescription>
@@ -215,7 +259,11 @@ export function UploadSchematicForm() {
                 <Shadcn.CardContent>
                     <Shadcn.FieldGroup>
                         <Shadcn.Field>
-                            <Shadcn.FieldLabel htmlFor="title">标题</Shadcn.FieldLabel>
+                            <Shadcn.FieldLabel htmlFor="title">
+                                <span>
+                                    标题<span className="text-destructive">*</span>
+                                </span>
+                            </Shadcn.FieldLabel>
                             <Shadcn.Input
                                 id="title"
                                 placeholder="为你的原理图起一个名字"
@@ -228,7 +276,11 @@ export function UploadSchematicForm() {
                         </Shadcn.Field>
 
                         <Shadcn.Field>
-                            <Shadcn.FieldLabel htmlFor="description">描述</Shadcn.FieldLabel>
+                            <Shadcn.FieldLabel htmlFor="description">
+                                <span>
+                                    描述<span className="text-destructive">*</span>
+                                </span>
+                            </Shadcn.FieldLabel>
                             <Shadcn.Textarea
                                 id="description"
                                 placeholder="介绍你的原理图，包括灵感来源、使用方法等"
@@ -242,7 +294,11 @@ export function UploadSchematicForm() {
                         </Shadcn.Field>
 
                         <Shadcn.Field>
-                            <Shadcn.FieldLabel htmlFor="category">分类</Shadcn.FieldLabel>
+                            <Shadcn.FieldLabel htmlFor="category">
+                                <span>
+                                    分类<span className="text-destructive">*</span>
+                                </span>
+                            </Shadcn.FieldLabel>
                             <Shadcn.Select value={category} onValueChange={setCategory}>
                                 <Shadcn.SelectTrigger id="category">
                                     <Shadcn.SelectValue placeholder="选择分类" />
@@ -262,7 +318,12 @@ export function UploadSchematicForm() {
                         </Shadcn.Field>
 
                         <Shadcn.Field>
-                            <Shadcn.FieldLabel>MC 版本</Shadcn.FieldLabel>
+                            <Shadcn.FieldLabel>
+                                <span>
+                                    原理图 Minecraft 版本
+                                    <span className="text-destructive">*</span>
+                                </span>
+                            </Shadcn.FieldLabel>
                             <div className="flex gap-3">
                                 <Shadcn.Select
                                     value={mcMajorVersion}
@@ -292,11 +353,15 @@ export function UploadSchematicForm() {
                                     </Shadcn.SelectTrigger>
                                     <Shadcn.SelectContent>
                                         <Shadcn.SelectGroup>
-                                            {(MC_VERSIONS[mcMajorVersion] ?? []).map((minor) => (
-                                                <Shadcn.SelectItem key={minor} value={minor}>
-                                                    {minor}
-                                                </Shadcn.SelectItem>
-                                            ))}
+                                            {(MC_VERSIONS[mcMajorVersion] ?? []).map(
+                                                (minor) => (
+                                                    <Shadcn.SelectItem
+                                                        key={minor}
+                                                        value={minor}>
+                                                        {minor}
+                                                    </Shadcn.SelectItem>
+                                                )
+                                            )}
                                         </Shadcn.SelectGroup>
                                     </Shadcn.SelectContent>
                                 </Shadcn.Select>
@@ -307,7 +372,11 @@ export function UploadSchematicForm() {
                         </Shadcn.Field>
 
                         <Shadcn.Field>
-                            <Shadcn.FieldLabel htmlFor="tags">标签</Shadcn.FieldLabel>
+                            <Shadcn.FieldLabel htmlFor="tags">
+                                <span>
+                                    标签<span className="text-destructive">*</span>
+                                </span>
+                            </Shadcn.FieldLabel>
                             <div className="flex flex-wrap items-center gap-1.5 border border-input bg-transparent px-2.5 py-2 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/50">
                                 {tags.map((tag) => (
                                     <Shadcn.Badge
@@ -363,7 +432,14 @@ export function UploadSchematicForm() {
             {/* ── Preview images ── */}
             <Shadcn.Card>
                 <Shadcn.CardHeader>
-                    <Shadcn.CardTitle>预览图片</Shadcn.CardTitle>
+                    <Shadcn.CardTitle>
+                        <span>
+                            预览图片
+                            <span className="text-sm font-normal text-muted-foreground">
+                                （选填）
+                            </span>
+                        </span>
+                    </Shadcn.CardTitle>
                     <Shadcn.CardDescription>
                         上传最多 5 张预览图片，支持 PNG、JPG、WebP，单张最大 5MB
                     </Shadcn.CardDescription>
