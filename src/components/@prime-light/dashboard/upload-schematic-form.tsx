@@ -386,11 +386,12 @@ export function UploadSchematicForm() {
                                         {tag}
                                         <button
                                             type="button"
+                                            aria-label={`移除标签 ${tag}`}
                                             onClick={() =>
                                                 setTags((prev) => prev.filter((t) => t !== tag))
                                             }
                                             className="cursor-pointer opacity-60 transition-opacity hover:opacity-100">
-                                            <XIcon className="size-3" />
+                                            <XIcon className="size-3" aria-hidden="true" />
                                         </button>
                                     </Shadcn.Badge>
                                 ))}

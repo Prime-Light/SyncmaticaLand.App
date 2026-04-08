@@ -30,11 +30,17 @@ export function useCurrentUser(initialUser?: CurrentUser | null): UseCurrentUser
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // 若服务端已提供有效用户，跳过客户端请求
-        if (initialUser !== undefined && initialUser !== null) return;
+        // 若服务端已提供有效用户，同步 user 状态并跳过客户端请求
+        if (initialUser !== undefined && initialUser !== null) {
+            setUser(initialUser);
+            return;
+        }
 
         // 未检测到本地 token，直接视为未登录
-        if (!hasLocalAuthToken()) return;
+        if (!hasLocalAuthToken()) {
+            setUser(null);
+            return;
+        }
 
         // 检测到 token，请求 API 验证
         setLoading(true);
@@ -44,10 +50,9 @@ export function useCurrentUser(initialUser?: CurrentUser | null): UseCurrentUser
                 if (!res.ok) return null;
                 return (await res.json()) as WrapSchema<Auth.Me.Me.Res>;
             })
-            .then((data) => {
+            .then((data: WrapSchema<Auth.Me.Me.Res> | null) => {
                 if (!mounted) return;
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                setUser((data as any)?.data?.user ?? null);
+                setUser(data?.data?.user ?? null);
             })
             .catch(() => {
                 if (!mounted) return;
@@ -59,7 +64,7 @@ export function useCurrentUser(initialUser?: CurrentUser | null): UseCurrentUser
         return () => {
             mounted = false;
         };
-    }, []);
+    }, [initialUser]);
 
     const userInitials =
         user?.display_name?.trim()?.[0]?.toUpperCase() ??

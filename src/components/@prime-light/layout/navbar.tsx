@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
     CodeIcon,
     Grid3X3Icon,
@@ -89,8 +89,6 @@ function LogoutItem({ onLogout }: { onLogout: () => void }) {
 // 导航栏组件
 export function Navbar({ initialUser, className }: NavbarProps) {
     const $pathname = usePathname();
-    const $router = useRouter();
-
     const { user, userInitials, loading } = useCurrentUser(initialUser);
     const [, startTransition] = useTransition();
 
