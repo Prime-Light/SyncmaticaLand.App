@@ -197,7 +197,7 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                         <Shadcn.DropdownMenuItem asChild>
                                             <Link href="/dashboard">
                                                 <LayoutDashboardIcon />
-                                                仪表盘
+                                                创作者仪表盘
                                             </Link>
                                         </Shadcn.DropdownMenuItem>
                                         <Shadcn.DropdownMenuSeparator />
