@@ -244,6 +244,8 @@ export function UploadSchematicForm() {
                         </div>
                     ) : (
                         <div
+                            role="button"
+                            tabIndex={0}
                             onDragOver={(e) => {
                                 e.preventDefault();
                                 setIsDraggingSchematic(true);
@@ -251,6 +253,12 @@ export function UploadSchematicForm() {
                             onDragLeave={() => setIsDraggingSchematic(false)}
                             onDrop={handleSchematicDrop}
                             onClick={() => schematicInputRef.current?.click()}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    schematicInputRef.current?.click();
+                                }
+                            }}
                             className={`flex cursor-pointer flex-col items-center gap-3 border-2 border-dashed p-8 transition-colors ${
                                 isDraggingSchematic
                                     ? "border-primary bg-primary/5"
@@ -508,6 +516,8 @@ export function UploadSchematicForm() {
                         {/* Upload zone */}
                         {previewImages.length < 5 && (
                             <div
+                                role="button"
+                                tabIndex={0}
                                 onDragOver={(e) => {
                                     e.preventDefault();
                                     setIsDraggingImage(true);
@@ -515,6 +525,12 @@ export function UploadSchematicForm() {
                                 onDragLeave={() => setIsDraggingImage(false)}
                                 onDrop={handleImageDrop}
                                 onClick={() => imageInputRef.current?.click()}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        imageInputRef.current?.click();
+                                    }
+                                }}
                                 className={`flex cursor-pointer flex-col items-center gap-3 border-2 border-dashed p-6 transition-colors ${
                                     isDraggingImage
                                         ? "border-primary bg-primary/5"
