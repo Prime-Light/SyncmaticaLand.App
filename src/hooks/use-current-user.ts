@@ -16,17 +16,19 @@ export interface UseCurrentUserResult {
 /**
  * 获取当前登录用户信息。
  *
- * - 若服务端已提供 `initialUser`，直接使用，跳过客户端请求
- * - 否则始终调用 `/api/v1/auth/me`：401 视为未登录，避免依赖
- *   `document.cookie` 字符串匹配（HttpOnly cookie 下不可读）
+ * - 若服务端已提供非空的 `initialUser`（真实用户对象），直接使用，跳过客户端请求
+ * - `initialUser` 为 `null` 或 `undefined` 均视为"尚未获取"，始终调用
+ *   `/api/v1/auth/me`：401 视为未登录，避免依赖 `document.cookie`
+ *   字符串匹配（HttpOnly cookie 下不可读）
  */
 export function useCurrentUser(initialUser?: CurrentUser | null): UseCurrentUserResult {
     const [user, setUser] = useState<CurrentUser | null>(initialUser ?? null);
-    const [loading, setLoading] = useState(initialUser === undefined);
+    const [loading, setLoading] = useState(initialUser == null);
 
     useEffect(() => {
-        // 若调用方已明确提供 initialUser（含 null），直接同步状态并跳过客户端请求
-        if (initialUser !== undefined) {
+        // 仅当调用方提供了非空用户对象时才跳过请求；
+        // null 或 undefined 均表示"尚未获取"，需要发起客户端请求
+        if (initialUser != null) {
             setUser(initialUser);
             setLoading(false);
             return;
