@@ -64,5 +64,10 @@
         "tailwindcss": "^4.2.2",
         "ts-morph": "^27.0.2",
         "typescript": "^5.9.3"
+    },
+    "pnpm": {
+        "overrides": {
+            "@lezer/common": "1.5.1"
+        }
     }
 }
