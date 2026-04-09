@@ -87,6 +87,7 @@ export function UploadSchematicForm() {
     const [isDraggingSchematic, setIsDraggingSchematic] = React.useState(false);
     const [isDraggingImage, setIsDraggingImage] = React.useState(false);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [sheetOpen, setSheetOpen] = React.useState(false);
 
     const schematicInputRef = React.useRef<HTMLInputElement>(null);
     const imageInputRef = React.useRef<HTMLInputElement>(null);
@@ -234,12 +235,13 @@ export function UploadSchematicForm() {
                                 type="button"
                                 variant="ghost"
                                 size="icon"
+                                aria-label="移除原理图文件"
                                 onClick={() => {
                                     setSchematicFile(null);
                                     if (schematicInputRef.current)
                                         schematicInputRef.current.value = "";
                                 }}>
-                                <XIcon />
+                                <XIcon aria-hidden="true" />
                             </Shadcn.Button>
                         </div>
                     ) : (
@@ -503,9 +505,10 @@ export function UploadSchematicForm() {
                                                 type="button"
                                                 variant="ghost"
                                                 size="icon"
+                                                aria-label={`移除预览图片 ${file.name}`}
                                                 className="text-white hover:text-white"
                                                 onClick={() => removeImage(index)}>
-                                                <XIcon />
+                                                <XIcon aria-hidden="true" />
                                             </Shadcn.Button>
                                         </div>
                                     </div>
@@ -560,11 +563,17 @@ export function UploadSchematicForm() {
                 <Shadcn.Checkbox
                     id="agree-terms"
                     checked={agreedToTerms}
-                    onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                    onCheckedChange={(checked) => {
+                        if (checked) {
+                            setSheetOpen(true);
+                        } else {
+                            setAgreedToTerms(false);
+                        }
+                    }}
                 />
                 <Shadcn.Label htmlFor="agree-terms" className="cursor-pointer text-sm">
                     我已阅读并同意{" "}
-                    <Shadcn.Sheet>
+                    <Shadcn.Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                         <Shadcn.SheetTrigger asChild>
                             <button
                                 type="button"
@@ -640,11 +649,15 @@ export function UploadSchematicForm() {
                                 </section>
                             </div>
                             <Shadcn.SheetFooter className="pt-0">
-                                <Shadcn.SheetClose asChild>
-                                    <Shadcn.Button type="button" className="w-full">
-                                        我已阅读，关闭
-                                    </Shadcn.Button>
-                                </Shadcn.SheetClose>
+                                <Shadcn.Button
+                                    type="button"
+                                    className="w-full"
+                                    onClick={() => {
+                                        setAgreedToTerms(true);
+                                        setSheetOpen(false);
+                                    }}>
+                                    我已阅读并同意
+                                </Shadcn.Button>
                             </Shadcn.SheetFooter>
                         </Shadcn.SheetContent>
                     </Shadcn.Sheet>

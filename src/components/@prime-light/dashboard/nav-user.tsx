@@ -11,9 +11,17 @@ export function NavUser() {
     const { user, loading, userInitials } = useCurrentUser();
 
     const handleLogout = async () => {
-        await fetch("/api/v1/auth/logout", { method: "POST", cache: "no-store" });
-        toast.success("登出成功");
-        window.location.href = "/";
+        try {
+            const res = await fetch("/api/v1/auth/logout", { method: "POST", cache: "no-store" });
+            if (!res.ok) {
+                toast.error("登出失败，请稍后重试");
+                return;
+            }
+            toast.success("登出成功");
+            window.location.href = "/";
+        } catch {
+            toast.error("登出失败，请检查网络连接");
+        }
     };
 
     if (loading)
