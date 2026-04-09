@@ -20,12 +20,24 @@ export interface UseCurrentUserResult {
  * - `initialUser` 为 `null` 或 `undefined` 均视为"尚未获取"，始终调用
  *   `/api/v1/auth/me`：401 视为未登录，避免依赖 `document.cookie`
  *   字符串匹配（HttpOnly cookie 下不可读）
+ * - 当 `skip` 为 `true` 时，不发起任何请求，直接以 `null` 作为用户状态
+ *   （适用于服务端已明确知道用户未认证的场景）
  */
-export function useCurrentUser(initialUser?: CurrentUser | null): UseCurrentUserResult {
+export function useCurrentUser(
+    initialUser?: CurrentUser | null,
+    { skip = false }: { skip?: boolean } = {},
+): UseCurrentUserResult {
     const [user, setUser] = useState<CurrentUser | null>(initialUser ?? null);
-    const [loading, setLoading] = useState(initialUser == null);
+    const [loading, setLoading] = useState(!skip && initialUser == null);
 
     useEffect(() => {
+        // 调用方显式要求跳过请求（如服务端已确认未认证）
+        if (skip) {
+            setUser(null);
+            setLoading(false);
+            return;
+        }
+
         // 仅当调用方提供了非空用户对象时才跳过请求；
         // null 或 undefined 均表示"尚未获取"，需要发起客户端请求
         if (initialUser != null) {
@@ -57,7 +69,7 @@ export function useCurrentUser(initialUser?: CurrentUser | null): UseCurrentUser
         return () => {
             mounted = false;
         };
-    }, [initialUser]);
+    }, [initialUser, skip]);
 
     const userInitials =
         user?.display_name?.trim()?.[0]?.toUpperCase() ??

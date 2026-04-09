@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Shadcn } from "@/components";
 import { UploadIcon, FileIcon, XIcon, ImageIcon } from "lucide-react";
+import { toast } from "sonner";
 
 const MC_VERSIONS: Record<string, string[]> = {
     "1.21.x": [
@@ -80,6 +81,7 @@ export function UploadSchematicForm() {
     const [tags, setTags] = React.useState<string[]>([]);
     const [tagInput, setTagInput] = React.useState("");
     const [schematicFile, setSchematicFile] = React.useState<File | null>(null);
+    const [schematicError, setSchematicError] = React.useState<string | null>(null);
     const [previewImages, setPreviewImages] = React.useState<{ file: File; url: string }[]>([]);
     const [mcMajorVersion, setMcMajorVersion] = React.useState("");
     const [mcMinorVersion, setMcMinorVersion] = React.useState("");
@@ -101,47 +103,69 @@ export function UploadSchematicForm() {
     }, []);
 
     // ── Schematic file handlers ──
+    function validateSchematicFile(file: File): string | null {
+        const ext = "." + file.name.split(".").pop()?.toLowerCase();
+        if (!ACCEPTED_SCHEMATIC_TYPES.includes(ext)) {
+            return `不支持的文件类型 "${ext}"，仅支持 ${ACCEPTED_SCHEMATIC_TYPES.join("、")}`;
+        }
+        if (file.size > MAX_SCHEMATIC_SIZE) {
+            return `文件大小 ${formatFileSize(file.size)} 超过 10MB 限制`;
+        }
+        return null;
+    }
+
+    function handleSchematicValidation(file: File) {
+        const error = validateSchematicFile(file);
+        if (error) {
+            setSchematicError(error);
+            setSchematicFile(null);
+        } else {
+            setSchematicError(null);
+            setSchematicFile(file);
+        }
+    }
+
     const handleSchematicDrop = React.useCallback((e: React.DragEvent) => {
         e.preventDefault();
         setIsDraggingSchematic(false);
         const file = e.dataTransfer.files[0];
-        if (file && validateSchematicFile(file)) {
-            setSchematicFile(file);
-        }
+        if (file) handleSchematicValidation(file);
     }, []);
 
     const handleSchematicSelect = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
-            if (file && validateSchematicFile(file)) {
-                setSchematicFile(file);
-            }
+            if (file) handleSchematicValidation(file);
             e.target.value = "";
         },
         []
     );
 
-    function validateSchematicFile(file: File): boolean {
-        const ext = "." + file.name.split(".").pop()?.toLowerCase();
-        if (!ACCEPTED_SCHEMATIC_TYPES.includes(ext)) {
-            return false;
+    // ── Preview image handlers ──
+    function filterImagesWithFeedback(files: File[]): File[] {
+        const valid: File[] = [];
+        for (const f of files) {
+            if (!ACCEPTED_IMAGE_TYPES.includes(f.type)) {
+                toast.error(`图片 "${f.name}" 格式不支持，仅支持 PNG、JPG、WebP`);
+            } else if (f.size > MAX_IMAGE_SIZE) {
+                toast.error(`图片 "${f.name}" 大小 ${formatFileSize(f.size)} 超过 5MB 限制`);
+            } else {
+                valid.push(f);
+            }
         }
-        if (file.size > MAX_SCHEMATIC_SIZE) {
-            return false;
-        }
-        return true;
+        return valid;
     }
 
-    // ── Preview image handlers ──
     const handleImageDrop = React.useCallback((e: React.DragEvent) => {
         e.preventDefault();
         setIsDraggingImage(false);
-        const files = Array.from(e.dataTransfer.files).filter(
-            (f) => ACCEPTED_IMAGE_TYPES.includes(f.type) && f.size <= MAX_IMAGE_SIZE
-        );
+        const files = filterImagesWithFeedback(Array.from(e.dataTransfer.files));
         setPreviewImages((prev) => {
             const available = 5 - prev.length;
-            if (available <= 0) return prev;
+            if (available <= 0) {
+                if (files.length > 0) toast.error("最多只能上传 5 张预览图片");
+                return prev;
+            }
             const newEntries = files
                 .slice(0, available)
                 .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
@@ -150,12 +174,13 @@ export function UploadSchematicForm() {
     }, []);
 
     const handleImageSelect = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files ?? []).filter(
-            (f) => ACCEPTED_IMAGE_TYPES.includes(f.type) && f.size <= MAX_IMAGE_SIZE
-        );
+        const files = filterImagesWithFeedback(Array.from(e.target.files ?? []));
         setPreviewImages((prev) => {
             const available = 5 - prev.length;
-            if (available <= 0) return prev;
+            if (available <= 0) {
+                if (files.length > 0) toast.error("最多只能上传 5 张预览图片");
+                return prev;
+            }
             const newEntries = files
                 .slice(0, available)
                 .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
@@ -248,6 +273,8 @@ export function UploadSchematicForm() {
                         <div
                             role="button"
                             tabIndex={0}
+                            aria-invalid={!!schematicError}
+                            aria-describedby={schematicError ? "schematic-file-error" : undefined}
                             onDragOver={(e) => {
                                 e.preventDefault();
                                 setIsDraggingSchematic(true);
@@ -262,9 +289,11 @@ export function UploadSchematicForm() {
                                 }
                             }}
                             className={`flex cursor-pointer flex-col items-center gap-3 border-2 border-dashed p-8 transition-colors ${
-                                isDraggingSchematic
-                                    ? "border-primary bg-primary/5"
-                                    : "border-border hover:border-primary/50 hover:bg-muted/50"
+                                schematicError
+                                    ? "border-destructive bg-destructive/5"
+                                    : isDraggingSchematic
+                                      ? "border-primary bg-primary/5"
+                                      : "border-border hover:border-primary/50 hover:bg-muted/50"
                             }`}>
                             <div className="flex size-12 items-center justify-center rounded-full bg-muted">
                                 <UploadIcon className="text-muted-foreground" />
@@ -285,6 +314,11 @@ export function UploadSchematicForm() {
                                 className="hidden"
                             />
                         </div>
+                    )}
+                    {schematicError && (
+                        <p id="schematic-file-error" role="alert" className="mt-2 text-sm text-destructive">
+                            {schematicError}
+                        </p>
                     )}
                 </Shadcn.CardContent>
             </Shadcn.Card>
