@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Prime, Shadcn } from "@/components";
 
 export default function UploadPage() {
@@ -8,7 +9,7 @@ export default function UploadPage() {
                 {
                     "--sidebar-width": "calc(var(--spacing) * 72)",
                     "--header-height": "calc(var(--spacing) * 12)",
-                } as React.CSSProperties
+                } as CSSProperties
             }>
             <Prime.AppSidebar variant="inset" />
             <Shadcn.SidebarInset className="overflow-hidden">
