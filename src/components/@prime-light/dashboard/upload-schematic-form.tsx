@@ -568,6 +568,7 @@ export function UploadSchematicForm() {
                         <Shadcn.SheetTrigger asChild>
                             <button
                                 type="button"
+                                onClick={(e) => e.stopPropagation()}
                                 className="text-primary underline underline-offset-2 hover:opacity-80">
                                 投影共和国原理图分享协议
                             </button>

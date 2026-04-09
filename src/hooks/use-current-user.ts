@@ -22,12 +22,13 @@ export interface UseCurrentUserResult {
  */
 export function useCurrentUser(initialUser?: CurrentUser | null): UseCurrentUserResult {
     const [user, setUser] = useState<CurrentUser | null>(initialUser ?? null);
-    const [loading, setLoading] = useState(initialUser == null);
+    const [loading, setLoading] = useState(initialUser === undefined);
 
     useEffect(() => {
-        // 若服务端已提供有效用户，同步 user 状态并跳过客户端请求
-        if (initialUser !== undefined && initialUser !== null) {
+        // 若调用方已明确提供 initialUser（含 null），直接同步状态并跳过客户端请求
+        if (initialUser !== undefined) {
             setUser(initialUser);
+            setLoading(false);
             return;
         }
 
