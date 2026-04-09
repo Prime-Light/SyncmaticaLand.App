@@ -7,7 +7,7 @@ export type CurrentUser = Auth.Me.Me.Res["user"];
 
 export interface UseCurrentUserResult {
     user: CurrentUser | null;
-    /** 首次加载中（仅当检测到本地 token 时为 true） */
+    /** 首次加载中（未提供 initialUser 时，请求 /api/v1/auth/me 期间为 true） */
     loading: boolean;
     /** 用于显示的首字母（A-Z 或 "U"） */
     userInitials: string;

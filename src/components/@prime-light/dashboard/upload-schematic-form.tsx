@@ -115,6 +115,7 @@ export function UploadSchematicForm() {
             if (file && validateSchematicFile(file)) {
                 setSchematicFile(file);
             }
+            e.target.value = "";
         },
         []
     );
@@ -159,6 +160,7 @@ export function UploadSchematicForm() {
                 .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
             return [...prev, ...newEntries];
         });
+        e.target.value = "";
     }, []);
 
     const removeImage = React.useCallback((index: number) => {
@@ -232,7 +234,11 @@ export function UploadSchematicForm() {
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => setSchematicFile(null)}>
+                                onClick={() => {
+                                    setSchematicFile(null);
+                                    if (schematicInputRef.current)
+                                        schematicInputRef.current.value = "";
+                                }}>
                                 <XIcon />
                             </Shadcn.Button>
                         </div>

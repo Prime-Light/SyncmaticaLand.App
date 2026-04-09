@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 
 import { Shadcn, Prime } from "@/components";
 import { LayoutDashboardIcon, FolderIcon, StoneIcon, HomeIcon } from "lucide-react";
@@ -29,10 +30,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Shadcn.Side
                         <Shadcn.SidebarMenuButton
                             asChild
                             className="data-[slot=sidebar-menu-button]:p-1.5!">
-                            <a href="/dashboard">
+                            <Link href="/dashboard">
                                 <StoneIcon className="size-5!" />
                                 <span className="text-base font-semibold">创作者仪表盘</span>
-                            </a>
+                            </Link>
                         </Shadcn.SidebarMenuButton>
                     </Shadcn.SidebarMenuItem>
                 </Shadcn.SidebarMenu>
@@ -44,10 +45,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Shadcn.Side
                 <Shadcn.SidebarMenu>
                     <Shadcn.SidebarMenuItem>
                         <Shadcn.SidebarMenuButton asChild>
-                            <a href="/">
+                            <Link href="/">
                                 <HomeIcon />
                                 <span>返回主页</span>
-                            </a>
+                            </Link>
                         </Shadcn.SidebarMenuButton>
                     </Shadcn.SidebarMenuItem>
                 </Shadcn.SidebarMenu>
