@@ -29,7 +29,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Shadcn.Side
                         <Shadcn.SidebarMenuButton
                             asChild
                             className="data-[slot=sidebar-menu-button]:p-1.5!">
-                            <a href="#">
+                            <a href="/dashboard">
                                 <StoneIcon className="size-5!" />
                                 <span className="text-base font-semibold">创作者仪表盘</span>
                             </a>

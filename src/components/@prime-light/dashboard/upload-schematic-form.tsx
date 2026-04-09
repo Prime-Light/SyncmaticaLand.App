@@ -80,7 +80,7 @@ export function UploadSchematicForm() {
     const [tags, setTags] = React.useState<string[]>([]);
     const [tagInput, setTagInput] = React.useState("");
     const [schematicFile, setSchematicFile] = React.useState<File | null>(null);
-    const [previewImages, setPreviewImages] = React.useState<File[]>([]);
+    const [previewImages, setPreviewImages] = React.useState<{ file: File; url: string }[]>([]);
     const [mcMajorVersion, setMcMajorVersion] = React.useState("");
     const [mcMinorVersion, setMcMinorVersion] = React.useState("");
     const [agreedToTerms, setAgreedToTerms] = React.useState(false);
@@ -90,6 +90,14 @@ export function UploadSchematicForm() {
 
     const schematicInputRef = React.useRef<HTMLInputElement>(null);
     const imageInputRef = React.useRef<HTMLInputElement>(null);
+    const previewImagesRef = React.useRef(previewImages);
+    previewImagesRef.current = previewImages;
+
+    React.useEffect(() => {
+        return () => {
+            previewImagesRef.current.forEach(({ url }) => URL.revokeObjectURL(url));
+        };
+    }, []);
 
     // ── Schematic file handlers ──
     const handleSchematicDrop = React.useCallback((e: React.DragEvent) => {
@@ -129,33 +137,36 @@ export function UploadSchematicForm() {
         const files = Array.from(e.dataTransfer.files).filter(
             (f) => ACCEPTED_IMAGE_TYPES.includes(f.type) && f.size <= MAX_IMAGE_SIZE
         );
-        setPreviewImages((prev) => [...prev, ...files].slice(0, 5));
+        setPreviewImages((prev) => {
+            const available = 5 - prev.length;
+            if (available <= 0) return prev;
+            const newEntries = files
+                .slice(0, available)
+                .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
+            return [...prev, ...newEntries];
+        });
     }, []);
 
     const handleImageSelect = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files ?? []).filter(
             (f) => ACCEPTED_IMAGE_TYPES.includes(f.type) && f.size <= MAX_IMAGE_SIZE
         );
-        setPreviewImages((prev) => [...prev, ...files].slice(0, 5));
+        setPreviewImages((prev) => {
+            const available = 5 - prev.length;
+            if (available <= 0) return prev;
+            const newEntries = files
+                .slice(0, available)
+                .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
+            return [...prev, ...newEntries];
+        });
     }, []);
 
     const removeImage = React.useCallback((index: number) => {
-        setPreviewImages((prev) => prev.filter((_, i) => i !== index));
+        setPreviewImages((prev) => {
+            URL.revokeObjectURL(prev[index].url);
+            return prev.filter((_, i) => i !== index);
+        });
     }, []);
-
-    // ── Form submit ──
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!schematicFile || !title.trim() || !category) return;
-
-        setIsSubmitting(true);
-        try {
-            // TODO: implement actual upload logic
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
 
     const isFormValid =
         !!schematicFile &&
@@ -165,6 +176,20 @@ export function UploadSchematicForm() {
         !!mcMinorVersion &&
         tags.length > 0 &&
         agreedToTerms;
+
+    // ── Form submit ──
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!isFormValid) return;
+
+        setIsSubmitting(true);
+        try {
+            // TODO: implement actual upload logic
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <form
@@ -450,12 +475,12 @@ export function UploadSchematicForm() {
                         {/* Preview grid */}
                         {previewImages.length > 0 && (
                             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                                {previewImages.map((file, index) => (
+                                {previewImages.map(({ file, url }, index) => (
                                     <div
                                         key={`${file.name}-${index}`}
                                         className="group relative aspect-video overflow-hidden border border-border">
                                         <img
-                                            src={URL.createObjectURL(file)}
+                                            src={url}
                                             alt={file.name}
                                             className="size-full object-cover"
                                         />

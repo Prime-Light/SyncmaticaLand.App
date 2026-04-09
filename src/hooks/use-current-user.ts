@@ -13,21 +13,16 @@ export interface UseCurrentUserResult {
     userInitials: string;
 }
 
-/** 检测浏览器本地是否存在 Supabase auth token cookie */
-function hasLocalAuthToken(): boolean {
-    if (typeof document === "undefined") return false;
-    return /sb-[^=\s]+-auth-token/.test(document.cookie);
-}
-
 /**
  * 获取当前登录用户信息。
  *
- * - 本地有 token → loading = true，调用 `/api/v1/auth/me` 验证后更新
- * - 本地无 token → loading = false，直接返回 user = null（跳过 API 请求）
+ * - 若服务端已提供 `initialUser`，直接使用，跳过客户端请求
+ * - 否则始终调用 `/api/v1/auth/me`：401 视为未登录，避免依赖
+ *   `document.cookie` 字符串匹配（HttpOnly cookie 下不可读）
  */
 export function useCurrentUser(initialUser?: CurrentUser | null): UseCurrentUserResult {
     const [user, setUser] = useState<CurrentUser | null>(initialUser ?? null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(initialUser == null);
 
     useEffect(() => {
         // 若服务端已提供有效用户，同步 user 状态并跳过客户端请求
@@ -36,15 +31,10 @@ export function useCurrentUser(initialUser?: CurrentUser | null): UseCurrentUser
             return;
         }
 
-        // 未检测到本地 token，直接视为未登录
-        if (!hasLocalAuthToken()) {
-            setUser(null);
-            return;
-        }
-
-        // 检测到 token，请求 API 验证
-        setLoading(true);
+        // 始终请求 API：以响应状态（401 = 未登录）为权威判断，
+        // 不依赖 document.cookie（HttpOnly cookie 下无法读取）
         let mounted = true;
+        setLoading(true);
         fetch("/api/v1/auth/me", { method: "GET", cache: "no-store" })
             .then(async (res) => {
                 if (!res.ok) return null;
