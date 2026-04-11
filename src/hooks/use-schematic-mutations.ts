@@ -127,10 +127,14 @@ export interface UseEngagementResult {
 
 export function useEngagement(): UseEngagementResult {
     const engagementAction = useCallback(
-        async (action: string, schematicId: string): Promise<Schematic.Engagement.EngagementRes | null> => {
+        async (
+            action: "upvote" | "star" | "view",
+            schematicId: string,
+            method: "POST" | "DELETE" = "POST"
+        ): Promise<Schematic.Engagement.EngagementRes | null> => {
             try {
                 const res = await fetch(`/api/v1/schematics/${schematicId}/${action}`, {
-                    method: "POST",
+                    method,
                     headers: { "Content-Type": "application/json" },
                 });
 
@@ -148,27 +152,27 @@ export function useEngagement(): UseEngagementResult {
     );
 
     const upvote = useCallback(
-        (schematicId: string) => engagementAction("upvote", schematicId),
+        (schematicId: string) => engagementAction("upvote", schematicId, "POST"),
         [engagementAction],
     );
 
     const unupvote = useCallback(
-        (schematicId: string) => engagementAction("unupvote", schematicId),
+        (schematicId: string) => engagementAction("upvote", schematicId, "DELETE"),
         [engagementAction],
     );
 
     const star = useCallback(
-        (schematicId: string) => engagementAction("star", schematicId),
+        (schematicId: string) => engagementAction("star", schematicId, "POST"),
         [engagementAction],
     );
 
     const unstar = useCallback(
-        (schematicId: string) => engagementAction("unstar", schematicId),
+        (schematicId: string) => engagementAction("star", schematicId, "DELETE"),
         [engagementAction],
     );
 
     const view = useCallback(
-        (schematicId: string) => engagementAction("view", schematicId),
+        (schematicId: string) => engagementAction("view", schematicId, "POST"),
         [engagementAction],
     );
 

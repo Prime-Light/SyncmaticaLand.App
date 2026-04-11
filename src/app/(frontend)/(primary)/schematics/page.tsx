@@ -3,7 +3,8 @@
 import { Prime, Shadcn } from "@/components";
 import { useSchematics, useCategories } from "@/hooks";
 import { Search, Loader2, AlertCircle } from "lucide-react";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import type { Schematic } from "@/schema";
 
 const PAGE_SIZE = 12;
 
@@ -11,6 +12,7 @@ export default function SchematicsIndex() {
     const [selectedTag, setSelectedTag] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [page, setPage] = useState(1);
+    const [accumulatedSchematics, setAccumulatedSchematics] = useState<Schematic.Schematic.Schematic[]>([]);
 
     const { categories, isLoading: categoriesLoading } = useCategories();
     const { schematics, isLoading: schematicsLoading, error, refetch } = useSchematics({
@@ -20,18 +22,33 @@ export default function SchematicsIndex() {
         offset: (page - 1) * PAGE_SIZE,
     });
 
+    useEffect(() => {
+        if (schematics?.schematics) {
+            if (page === 1) {
+                setAccumulatedSchematics(schematics.schematics);
+            } else {
+                setAccumulatedSchematics((prev) => [...prev, ...schematics.schematics]);
+            }
+        }
+    }, [schematics?.schematics, page]);
+
+    useEffect(() => {
+        setAccumulatedSchematics([]);
+        setPage(1);
+    }, [selectedTag]);
+
     const filteredSchematics = useMemo(() => {
-        if (!schematics?.schematics) return [];
-        if (!searchQuery.trim()) return schematics.schematics;
+        if (!accumulatedSchematics) return [];
+        if (!searchQuery.trim()) return accumulatedSchematics;
 
         const query = searchQuery.toLowerCase();
-        return schematics.schematics.filter(
+        return accumulatedSchematics.filter(
             (s) =>
                 s.name.toLowerCase().includes(query) ||
                 s.description?.toLowerCase().includes(query) ||
                 s.tags.some((t) => t.toLowerCase().includes(query))
         );
-    }, [schematics?.schematics, searchQuery]);
+    }, [accumulatedSchematics, searchQuery]);
 
     const handleLoadMore = useCallback(() => {
         setPage((p) => p + 1);
@@ -39,12 +56,10 @@ export default function SchematicsIndex() {
 
     const handleTagChange = useCallback((tagId: string) => {
         setSelectedTag(tagId);
-        setPage(1);
     }, []);
 
     const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
-        setPage(1);
     }, []);
 
     const isLoading = categoriesLoading || schematicsLoading;

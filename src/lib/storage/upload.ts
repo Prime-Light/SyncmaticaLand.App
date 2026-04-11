@@ -12,9 +12,12 @@ export function generateSchematicPath(userId: string, fileName: string): string 
     return `schematics/${userId}/${timestamp}_${fileName}`;
 }
 
-export function generateImagePath(userId: string, schematicId: string, fileName: string): string {
+export function generateImagePath(userId: string, schematicId: string | null, fileName: string): string {
     const timestamp = Date.now();
-    return `images/${userId}/${schematicId}/${timestamp}_${fileName}`;
+    if (schematicId) {
+        return `images/${userId}/${schematicId}/${timestamp}_${fileName}`;
+    }
+    return `images/${userId}/temp/${timestamp}_${fileName}`;
 }
 
 export async function uploadSchematicFile(
@@ -45,7 +48,7 @@ export async function uploadSchematicFile(
 export async function uploadImageFile(
     file: File | Buffer,
     userId: string,
-    schematicId: string,
+    schematicId: string | null,
     fileName: string
 ): Promise<{ url: string; error: Error | null }> {
     const path = generateImagePath(userId, schematicId, fileName);

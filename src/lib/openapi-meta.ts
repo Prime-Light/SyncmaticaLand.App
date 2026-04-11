@@ -568,6 +568,9 @@ export const openApiDocument = createDocument({
                                 files: z.array(z.object({})).meta({
                                     description: "预览图片文件数组",
                                 }),
+                                schematic_id: z.string().optional().meta({
+                                    description: "蓝图ID（可选，用于关联图片）",
+                                }),
                             }),
                         },
                     },

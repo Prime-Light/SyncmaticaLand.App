@@ -44,14 +44,6 @@ export async function POST(request: Request): Promise<NextResponse<MultiUploadRe
 
     const schematicId = formData.get("schematic_id") as string | null;
 
-    if (!schematicId) {
-        BackendApiRouteLogger.warn("No schematic_id provided in upload request");
-        return new ApiError()
-            .code(ApiErrorCode.BAD_REQUEST)
-            .message("未提供 schematic_id")
-            .build();
-    }
-
     const files = formData.getAll("files") as File[];
 
     if (!files || files.length === 0) {
