@@ -7,6 +7,7 @@ import { UploadIcon, FileIcon, XIcon, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useCreateSchematic } from "@/hooks";
 import { Schematic, WrapSchema } from "@/schema";
+import { useCallback } from "react";
 
 const MC_VERSIONS: Record<string, string[]> = {
     "1.21.x": [
@@ -164,7 +165,7 @@ export function UploadSchematicForm() {
         return null;
     }
 
-    function handleSchematicValidation(file: File) {
+    const handleSchematicValidation = useCallback((file: File) => {
         const error = validateSchematicFile(file);
         if (error) {
             setSchematicError(error);
@@ -173,14 +174,17 @@ export function UploadSchematicForm() {
             setSchematicError(null);
             setSchematicFile(file);
         }
-    }
-
-    const handleSchematicDrop = React.useCallback((e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDraggingSchematic(false);
-        const file = e.dataTransfer.files[0];
-        if (file) handleSchematicValidation(file);
     }, []);
+
+    const handleSchematicDrop = React.useCallback(
+        (e: React.DragEvent) => {
+            e.preventDefault();
+            setIsDraggingSchematic(false);
+            const file = e.dataTransfer.files[0];
+            if (file) handleSchematicValidation(file);
+        },
+        [handleSchematicValidation]
+    );
 
     const handleSchematicSelect = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -188,7 +192,7 @@ export function UploadSchematicForm() {
             if (file) handleSchematicValidation(file);
             e.target.value = "";
         },
-        []
+        [handleSchematicValidation]
     );
 
     // ── Preview image handlers ──
@@ -281,7 +285,7 @@ export function UploadSchematicForm() {
             const result = await createSchematic({
                 name: title.trim(),
                 description: description.trim() || null,
-                status: "published",
+                status: "draft",
                 format,
                 mc_version: mcMinorVersion,
                 tags,
@@ -357,8 +361,10 @@ export function UploadSchematicForm() {
                         <div
                             role="button"
                             tabIndex={0}
-                            aria-invalid={!!schematicError}
-                            aria-describedby={schematicError ? "schematic-file-error" : undefined}
+                            // aria-invalid={!!schematicError}
+                            aria-describedby={
+                                schematicError ? "schematic-file-error" : undefined
+                            }
                             onDragOver={(e) => {
                                 e.preventDefault();
                                 setIsDraggingSchematic(true);
@@ -400,7 +406,10 @@ export function UploadSchematicForm() {
                         </div>
                     )}
                     {schematicError && (
-                        <p id="schematic-file-error" role="alert" className="mt-2 text-sm text-destructive">
+                        <p
+                            id="schematic-file-error"
+                            role="alert"
+                            className="mt-2 text-sm text-destructive">
                             {schematicError}
                         </p>
                     )}
@@ -613,6 +622,7 @@ export function UploadSchematicForm() {
                                     <div
                                         key={`${file.name}-${index}`}
                                         className="group relative aspect-video overflow-hidden border border-border">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img
                                             src={url}
                                             alt={file.name}
@@ -700,7 +710,9 @@ export function UploadSchematicForm() {
                                 投影共和国原理图分享协议
                             </button>
                         </Shadcn.SheetTrigger>
-                        <Shadcn.SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto">
+                        <Shadcn.SheetContent
+                            side="right"
+                            className="w-full overflow-y-auto sm:max-w-lg">
                             <Shadcn.SheetHeader className="pb-2">
                                 <Shadcn.SheetTitle className="text-base font-semibold">
                                     投影共和国原理图分享协议
@@ -709,29 +721,40 @@ export function UploadSchematicForm() {
                                     最后更新：2026 年 4 月 9 日
                                 </Shadcn.SheetDescription>
                             </Shadcn.SheetHeader>
-                            <div className="px-4 pb-6 text-xs/relaxed text-foreground space-y-4">
+                            <div className="space-y-4 px-4 pb-6 text-xs/relaxed text-foreground">
                                 <p className="text-muted-foreground">
                                     在上传原理图之前，请仔细阅读以下协议。上传即表示您已阅读、理解并同意受本协议约束。
                                 </p>
 
                                 <section className="space-y-1.5">
-                                    <h3 className="font-semibold text-sm">一、定义</h3>
-                                    <p>「投影共和国」（下称「本平台」）是一个用于分享 Minecraft 建筑原理图的社区平台。</p>
-                                    <p>「原理图」是指使用 Schematica、Litematica、WorldEdit 等工具导出的建筑蓝图文件（如 .schematic、.schem、.litematic、.nbt 等格式）。</p>
+                                    <h3 className="text-sm font-semibold">一、定义</h3>
+                                    <p>
+                                        「投影共和国」（下称「本平台」）是一个用于分享 Minecraft
+                                        建筑原理图的社区平台。
+                                    </p>
+                                    <p>
+                                        「原理图」是指使用 Schematica、Litematica、WorldEdit
+                                        等工具导出的建筑蓝图文件（如
+                                        .schematic、.schem、.litematic、.nbt 等格式）。
+                                    </p>
                                     <p>「用户」是指注册并使用本平台的任何个人或组织。</p>
                                 </section>
 
                                 <section className="space-y-1.5">
-                                    <h3 className="font-semibold text-sm">二、上传资格</h3>
+                                    <h3 className="text-sm font-semibold">二、上传资格</h3>
                                     <p>您须年满 16 周岁或在监护人同意下方可上传内容。</p>
-                                    <p>您须对上传的原理图文件及预览图片拥有合法的所有权或充分的授权。</p>
+                                    <p>
+                                        您须对上传的原理图文件及预览图片拥有合法的所有权或充分的授权。
+                                    </p>
                                 </section>
 
                                 <section className="space-y-1.5">
-                                    <h3 className="font-semibold text-sm">三、内容规范</h3>
-                                    <p>您保证上传的原理图为您的原创作品，或已获得原作者的明确授权。</p>
+                                    <h3 className="text-sm font-semibold">三、内容规范</h3>
+                                    <p>
+                                        您保证上传的原理图为您的原创作品，或已获得原作者的明确授权。
+                                    </p>
                                     <p>严禁上传以下内容：</p>
-                                    <ul className="list-disc list-inside space-y-0.5 pl-2 text-muted-foreground">
+                                    <ul className="list-inside list-disc space-y-0.5 pl-2 text-muted-foreground">
                                         <li>侵犯他人知识产权的内容；</li>
                                         <li>包含恶意代码或命令方块滥用脚本的文件；</li>
                                         <li>具有歧视性、侮辱性或政治敏感性的建筑；</li>
@@ -740,29 +763,42 @@ export function UploadSchematicForm() {
                                 </section>
 
                                 <section className="space-y-1.5">
-                                    <h3 className="font-semibold text-sm">四、知识产权授权</h3>
-                                    <p>您保留上传内容的版权。但您在提交原理图的同时，授予本平台全球范围内免费、非独占、可再授权的权利，用于展示、传播、存储及推广您的原理图。</p>
-                                    <p>平台不会将您的原理图用于商业销售，但可在社区活动或推广中展示或引用。</p>
+                                    <h3 className="text-sm font-semibold">四、知识产权授权</h3>
+                                    <p>
+                                        您保留上传内容的版权。但您在提交原理图的同时，授予本平台全球范围内免费、非独占、可再授权的权利，用于展示、传播、存储及推广您的原理图。
+                                    </p>
+                                    <p>
+                                        平台不会将您的原理图用于商业销售，但可在社区活动或推广中展示或引用。
+                                    </p>
                                 </section>
 
                                 <section className="space-y-1.5">
-                                    <h3 className="font-semibold text-sm">五、侵权投诉</h3>
-                                    <p>如您认为平台上的某原理图侵犯了您的版权，可通过平台提供的举报功能或发送邮件至官方邮箱提起投诉。我们将在 7 个工作日内处理有效投诉。</p>
+                                    <h3 className="text-sm font-semibold">五、侵权投诉</h3>
+                                    <p>
+                                        如您认为平台上的某原理图侵犯了您的版权，可通过平台提供的举报功能或发送邮件至官方邮箱提起投诉。我们将在
+                                        7 个工作日内处理有效投诉。
+                                    </p>
                                 </section>
 
                                 <section className="space-y-1.5">
-                                    <h3 className="font-semibold text-sm">六、免责声明</h3>
-                                    <p>本平台对用户上传的原理图质量、安全性及适用性不作任何保证，使用原理图所产生的任何后果由下载者自行承担。</p>
-                                    <p>用户因上传违规内容所引发的法律责任，由上传者本人独立承担，与本平台无关。</p>
+                                    <h3 className="text-sm font-semibold">六、免责声明</h3>
+                                    <p>
+                                        本平台对用户上传的原理图质量、安全性及适用性不作任何保证，使用原理图所产生的任何后果由下载者自行承担。
+                                    </p>
+                                    <p>
+                                        用户因上传违规内容所引发的法律责任，由上传者本人独立承担，与本平台无关。
+                                    </p>
                                 </section>
 
                                 <section className="space-y-1.5">
-                                    <h3 className="font-semibold text-sm">七、协议修改</h3>
-                                    <p>本平台保留随时修改本协议的权利。修改后的协议将在平台公告后生效。继续使用本平台即视为接受修改后的协议。</p>
+                                    <h3 className="text-sm font-semibold">七、协议修改</h3>
+                                    <p>
+                                        本平台保留随时修改本协议的权利。修改后的协议将在平台公告后生效。继续使用本平台即视为接受修改后的协议。
+                                    </p>
                                 </section>
 
                                 <section className="space-y-1.5">
-                                    <h3 className="font-semibold text-sm">八、联系我们</h3>
+                                    <h3 className="text-sm font-semibold">八、联系我们</h3>
                                     <p>如有任何疑问，欢迎通过平台官方渠道与我们联系。</p>
                                 </section>
                             </div>
@@ -783,7 +819,9 @@ export function UploadSchematicForm() {
             </div>
 
             <div className="flex items-center justify-end gap-3">
-                <Shadcn.Button type="submit" disabled={!isFormValid || isSubmitting || isCreating}>
+                <Shadcn.Button
+                    type="submit"
+                    disabled={!isFormValid || isSubmitting || isCreating}>
                     {isSubmitting || isCreating ? (
                         <>
                             <UploadIcon data-icon="inline-start" className="animate-pulse" />

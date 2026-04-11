@@ -4,7 +4,7 @@ import { Prime, Shadcn } from "@/components";
 export default function UploadPage() {
     return (
         <Shadcn.SidebarProvider
-            className="!h-svh !min-h-0 overflow-hidden"
+            className="h-svh! min-h-0! overflow-hidden"
             style={
                 {
                     "--sidebar-width": "calc(var(--spacing) * 72)",
