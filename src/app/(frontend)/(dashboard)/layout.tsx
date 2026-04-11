@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/database/server";
+import { createSupabaseServerClient } from "@/lib/database";
 
 export default async function DashboardLayout({
     children,

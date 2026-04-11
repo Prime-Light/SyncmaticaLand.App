@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/database/server";
+import { createSupabaseServerClient } from "@/lib/database";
 import { BackendApiRouteLogger } from "@/lib/logger";
 import { ApiError, ApiErrorCode, ApiResponseCode } from "@/lib/api-responses";
 

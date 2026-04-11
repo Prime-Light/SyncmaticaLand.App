@@ -1,9 +1,12 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Shadcn } from "@/components";
 import { UploadIcon, FileIcon, XIcon, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useCreateSchematic } from "@/hooks";
+import { Schematic, WrapSchema } from "@/schema";
 
 const MC_VERSIONS: Record<string, string[]> = {
     "1.21.x": [
@@ -63,10 +66,17 @@ const CATEGORIES = [
     { value: "other", label: "其他" },
 ] as const;
 
-const MAX_SCHEMATIC_SIZE = 10 * 1024 * 1024; // 10MB
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_SCHEMATIC_SIZE = 10 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_SCHEMATIC_TYPES = [".schematic", ".schem", ".litematic", ".nbt"];
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
+
+const FORMAT_MAP: Record<string, Schematic.Schematic.ProjectFormat> = {
+    ".litematic": "litematic",
+    ".schem": "schem",
+    ".schematic": "schem",
+    ".nbt": "nbt",
+};
 
 function formatFileSize(bytes: number): string {
     if (bytes < 1024) return `${bytes} B`;
@@ -74,7 +84,47 @@ function formatFileSize(bytes: number): string {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+async function uploadSchematicFile(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("/api/v1/schematics/upload", {
+        method: "POST",
+        body: formData,
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData?.error?.message || `上传失败: ${res.status}`);
+    }
+
+    const result = (await res.json()) as WrapSchema<Schematic.Upload.UploadRes>;
+    return result.data.file_url;
+}
+
+async function uploadImages(files: File[]): Promise<string[]> {
+    if (files.length === 0) return [];
+
+    const formData = new FormData();
+    files.forEach((file) => formData.append("files", file));
+
+    const res = await fetch("/api/v1/schematics/upload/images", {
+        method: "POST",
+        body: formData,
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData?.error?.message || `图片上传失败: ${res.status}`);
+    }
+
+    const result = (await res.json()) as WrapSchema<Schematic.Upload.MultiUploadRes>;
+    return result.data.files.map((f) => f.file_url);
+}
+
 export function UploadSchematicForm() {
+    const router = useRouter();
+    const { createSchematic, isLoading: isCreating } = useCreateSchematic();
     const [title, setTitle] = React.useState("");
     const [description, setDescription] = React.useState("");
     const [category, setCategory] = React.useState("");
@@ -205,15 +255,49 @@ export function UploadSchematicForm() {
         tags.length > 0 &&
         agreedToTerms;
 
-    // ── Form submit ──
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!isFormValid) return;
+        if (!isFormValid || !schematicFile) return;
 
         setIsSubmitting(true);
         try {
-            // TODO: implement actual upload logic
-            await new Promise((resolve) => setTimeout(resolve, 1500));
+            const ext = "." + schematicFile.name.split(".").pop()?.toLowerCase();
+            const format = FORMAT_MAP[ext];
+            if (!format) {
+                toast.error("无法识别文件格式");
+                return;
+            }
+
+            toast.info("正在上传原理图文件...");
+            const fileUrl = await uploadSchematicFile(schematicFile);
+
+            let imageUrls: string[] = [];
+            if (previewImages.length > 0) {
+                toast.info("正在上传预览图片...");
+                imageUrls = await uploadImages(previewImages.map((p) => p.file));
+            }
+
+            toast.info("正在创建原理图记录...");
+            const result = await createSchematic({
+                name: title.trim(),
+                description: description.trim() || null,
+                status: "published",
+                format,
+                mc_version: mcMinorVersion,
+                tags,
+                file_url: fileUrl,
+                images: imageUrls,
+            });
+
+            if (result) {
+                toast.success("原理图发布成功！");
+                router.push(`/schematics/${result.schematic.id}`);
+            } else {
+                toast.error("创建原理图记录失败");
+            }
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "上传失败，请重试";
+            toast.error(message);
         } finally {
             setIsSubmitting(false);
         }
@@ -698,10 +782,9 @@ export function UploadSchematicForm() {
                 </Shadcn.Label>
             </div>
 
-            {/* ── Submit ── */}
             <div className="flex items-center justify-end gap-3">
-                <Shadcn.Button type="submit" disabled={!isFormValid || isSubmitting}>
-                    {isSubmitting ? (
+                <Shadcn.Button type="submit" disabled={!isFormValid || isSubmitting || isCreating}>
+                    {isSubmitting || isCreating ? (
                         <>
                             <UploadIcon data-icon="inline-start" className="animate-pulse" />
                             上传中…

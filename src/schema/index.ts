@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export * as Auth from "./auth";
+export * as Schematic from "./schematic";
 
 export function WrappingSchema<T>(schema: z.ZodType<T>) {
     return z.object({
