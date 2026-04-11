@@ -16,7 +16,7 @@ export async function GET(): Promise<NextResponse<MeResult>> {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-        BackendApiRouteLogger.error("Failed to get current user", { error: authError });
+        BackendApiRouteLogger.warn("Failed to get current user", { error: authError });
         return new ApiError()
             .code(ApiErrorCode.UNAUTHORIZED)
             .message("未授权访问")

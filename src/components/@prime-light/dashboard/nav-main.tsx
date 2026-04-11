@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { Shadcn } from "@/components";
-import { CirclePlusIcon, MailIcon } from "lucide-react";
+import { CirclePlusIcon } from "lucide-react";
 
 export function NavMain({
     items,
@@ -16,28 +17,26 @@ export function NavMain({
         <Shadcn.SidebarGroup>
             <Shadcn.SidebarGroupContent className="flex flex-col gap-2">
                 <Shadcn.SidebarMenu>
-                    <Shadcn.SidebarMenuItem className="flex items-center gap-2">
+                    <Shadcn.SidebarMenuItem>
                         <Shadcn.SidebarMenuButton
-                            tooltip="Quick Create"
-                            className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground">
-                            <CirclePlusIcon />
-                            <span>Quick Create</span>
+                            asChild
+                            tooltip="上传原理图"
+                            className="bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground">
+                            <Link href="/dashboard/upload">
+                                <CirclePlusIcon />
+                                <span>上传原理图</span>
+                            </Link>
                         </Shadcn.SidebarMenuButton>
-                        <Shadcn.Button
-                            size="icon"
-                            className="size-8 group-data-[collapsible=icon]:opacity-0"
-                            variant="outline">
-                            <MailIcon />
-                            <span className="sr-only">Inbox</span>
-                        </Shadcn.Button>
                     </Shadcn.SidebarMenuItem>
                 </Shadcn.SidebarMenu>
                 <Shadcn.SidebarMenu>
                     {items.map((item) => (
                         <Shadcn.SidebarMenuItem key={item.title}>
-                            <Shadcn.SidebarMenuButton tooltip={item.title}>
-                                {item.icon}
-                                <span>{item.title}</span>
+                            <Shadcn.SidebarMenuButton asChild tooltip={item.title}>
+                                <Link href={item.url}>
+                                    {item.icon}
+                                    <span>{item.title}</span>
+                                </Link>
                             </Shadcn.SidebarMenuButton>
                         </Shadcn.SidebarMenuItem>
                     ))}

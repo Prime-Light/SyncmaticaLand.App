@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useMemo, useState, useTransition } from "react";
+import { useTransition } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
     CodeIcon,
     Grid3X3Icon,
     HomeIcon,
+    LayoutDashboardIcon,
     MenuIcon,
     StoneIcon,
     UserKeyIcon,
@@ -17,8 +18,9 @@ import {
 } from "lucide-react";
 import { Prime, Shadcn } from "@/components";
 import { cn } from "@/lib/utils";
-import { Auth, WrapSchema } from "@/schema";
+import { Auth } from "@/schema";
 import { toast } from "sonner";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface NavbarProps {
     className?: string;
@@ -87,40 +89,8 @@ function LogoutItem({ onLogout }: { onLogout: () => void }) {
 // 导航栏组件
 export function Navbar({ initialUser, className }: NavbarProps) {
     const $pathname = usePathname();
-    const $router = useRouter();
-
-    const [user, setUser] = useState<Auth.Me.Me.Res["user"] | null>(initialUser);
+    const { user, userInitials, loading } = useCurrentUser(initialUser);
     const [, startTransition] = useTransition();
-
-    useEffect(() => {
-        let mounted = true;
-
-        fetch("/api/v1/auth/me", { method: "GET", cache: "no-store" })
-            .then(async (res) => {
-                if (!res.ok) return null;
-                return (await res.json()) as WrapSchema<Auth.Me.Me.Res>;
-            })
-            .then((data) => {
-                if (!mounted) return;
-                // ***烦死了这是什么东西，这很安全，ESLint 和 TS 一棒子打飞！
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                setUser((data as any).data.user ?? null);
-            })
-            .catch(() => {
-                if (!mounted) return;
-                setUser(null);
-            });
-
-        return () => {
-            mounted = false;
-        };
-    }, []);
-
-    const userInitials = useMemo(() => {
-        const seed = user?.display_name?.trim() || user?.email?.trim() || "";
-        if (!seed) return "U";
-        return seed[0].toUpperCase();
-    }, [user]);
 
     async function logoutAction() {
         await fetch("/api/v1/auth/logout", { method: "POST", cache: "no-store" });
@@ -129,10 +99,8 @@ export function Navbar({ initialUser, className }: NavbarProps) {
     const handleLogout = () => {
         startTransition(async () => {
             await logoutAction();
-            setUser(null);
             toast.success("登出成功");
-            $router.refresh();
-            $router.push("/");
+            window.location.href = "/";
         });
     };
 
@@ -195,7 +163,12 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                             orientation="vertical"
                         />
                         <Shadcn.NavigationMenuList className="gap-1">
-                            {user ? (
+                            {loading ? (
+                                <div className="flex items-center gap-2 px-3 py-1">
+                                    <Shadcn.Skeleton className="size-7 rounded-full" />
+                                    <Shadcn.Skeleton className="hidden h-3.5 w-16 rounded lg:block" />
+                                </div>
+                            ) : user ? (
                                 <Shadcn.DropdownMenu>
                                     <Shadcn.DropdownMenuTrigger asChild>
                                         <Shadcn.Button
@@ -218,6 +191,13 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                                             user={user}
                                             userInitials={userInitials}
                                         />
+                                        <Shadcn.DropdownMenuSeparator />
+                                        <Shadcn.DropdownMenuItem asChild>
+                                            <Link href="/dashboard">
+                                                <LayoutDashboardIcon />
+                                                创作者仪表盘
+                                            </Link>
+                                        </Shadcn.DropdownMenuItem>
                                         <Shadcn.DropdownMenuSeparator />
                                         <LogoutItem onLogout={handleLogout} />
                                     </Shadcn.DropdownMenuContent>
@@ -301,9 +281,21 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                             <Shadcn.DropdownMenuSeparator />
 
                             {/* 用户区域 */}
-                            {user ? (
+                            {loading ? (
+                                <div className="flex items-center gap-2 px-2 py-1.5">
+                                    <Shadcn.Skeleton className="size-7 rounded-full" />
+                                    <Shadcn.Skeleton className="h-3.5 w-20 rounded" />
+                                </div>
+                            ) : user ? (
                                 <>
                                     <UserMenuHeader user={user} userInitials={userInitials} />
+                                    <Shadcn.DropdownMenuSeparator />
+                                    <Shadcn.DropdownMenuItem asChild>
+                                        <Link href="/dashboard">
+                                            <LayoutDashboardIcon />
+                                            仪表盘
+                                        </Link>
+                                    </Shadcn.DropdownMenuItem>
                                     <Shadcn.DropdownMenuSeparator />
                                     <LogoutItem onLogout={handleLogout} />
                                 </>

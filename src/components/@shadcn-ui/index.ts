@@ -30,6 +30,8 @@ export { Label } from "./label";
 
 export { NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport } from "./navigation-menu";
 
+export { Progress } from "./progress";
+
 export { RadioGroup, RadioGroupItem } from "./radio-group";
 
 export { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue } from "./select";
@@ -47,6 +49,8 @@ export { Toaster } from "./sonner";
 export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "./table";
 
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
+
+export { Textarea } from "./textarea";
 
 export { Toggle } from "./toggle";
 
