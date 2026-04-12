@@ -21,6 +21,7 @@ export const openApiDocument = createDocument({
     tags: [
         { name: "🔒 用户认证", description: "认证相关接口" },
         { name: "📝 蓝图管理", description: "蓝图相关接口" },
+        { name: "📁 分类管理", description: "分类相关接口（管理员可写）" },
     ],
     paths: {
         "/api/v1/auth/login": {
@@ -607,7 +608,7 @@ export const openApiDocument = createDocument({
             get: {
                 summary: "获取分类列表",
                 description: "获取所有蓝图分类",
-                tags: ["📝 蓝图管理"],
+                tags: ["📁 分类管理"],
                 responses: {
                     "200": {
                         description: "获取成功",
@@ -619,12 +620,223 @@ export const openApiDocument = createDocument({
                     },
                 },
             },
+            post: {
+                summary: "创建分类",
+                description: "创建新的蓝图分类（需要管理员权限）",
+                tags: ["📁 分类管理"],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: Schemas.Schematic.Category.CreateCategoryReqSchema,
+                        },
+                    },
+                },
+                responses: {
+                    "201": {
+                        description: "创建成功",
+                        content: {
+                            "application/json": {
+                                schema: Schemas.Schematic.Category.CategoryResSchema,
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "请求参数错误",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "未授权",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "权限不足",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                    "409": {
+                        description: "分类名称或 slug 已存在",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        "/api/v1/categories/{id}": {
+            get: {
+                summary: "获取分类详情",
+                description: "根据ID获取分类详细信息",
+                tags: ["📁 分类管理"],
+                parameters: [
+                    {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        description: "分类ID (UUID)",
+                        schema: { type: "string", format: "uuid" },
+                    },
+                ],
+                responses: {
+                    "200": {
+                        description: "获取成功",
+                        content: {
+                            "application/json": {
+                                schema: Schemas.Schematic.Category.CategoryResSchema,
+                            },
+                        },
+                    },
+                    "404": {
+                        description: "分类不存在",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                },
+            },
+            patch: {
+                summary: "更新分类",
+                description: "更新分类信息（需要管理员权限）",
+                tags: ["📁 分类管理"],
+                parameters: [
+                    {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        description: "分类ID (UUID)",
+                        schema: { type: "string", format: "uuid" },
+                    },
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: Schemas.Schematic.Category.UpdateCategoryReqSchema,
+                        },
+                    },
+                },
+                responses: {
+                    "200": {
+                        description: "更新成功",
+                        content: {
+                            "application/json": {
+                                schema: Schemas.Schematic.Category.CategoryResSchema,
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "请求参数错误",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "未授权",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "权限不足",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                    "404": {
+                        description: "分类不存在",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                    "409": {
+                        description: "分类名称或 slug 已存在",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                },
+            },
+            delete: {
+                summary: "删除分类",
+                description: "删除指定的分类（需要管理员权限）",
+                tags: ["📁 分类管理"],
+                parameters: [
+                    {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        description: "分类ID (UUID)",
+                        schema: { type: "string", format: "uuid" },
+                    },
+                ],
+                responses: {
+                    "200": {
+                        description: "删除成功",
+                        content: {
+                            "application/json": {
+                                schema: z.object({
+                                    success: z.boolean(),
+                                }),
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "未授权",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "权限不足",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                    "404": {
+                        description: "分类不存在",
+                        content: {
+                            "application/json": {
+                                schema: ErrorSchema,
+                            },
+                        },
+                    },
+                },
+            },
         },
         "/api/v1/categories/{id}/schematics": {
             get: {
                 summary: "获取分类下的蓝图",
                 description: "根据分类ID获取该分类下的所有蓝图",
-                tags: ["📝 蓝图管理"],
+                tags: ["📁 分类管理"],
                 parameters: [
                     {
                         name: "id",

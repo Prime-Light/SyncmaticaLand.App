@@ -44,3 +44,53 @@ export const CategoryListResSchema = z.object({
 });
 
 export type CategoryListRes = z.infer<typeof CategoryListResSchema>;
+
+export const CreateCategoryReqSchema = z.object({
+    name: z.string().min(1).max(100).meta({
+        description: "Category name (required)",
+        example: "Medieval",
+    }),
+    slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/).meta({
+        description: "Category slug for URL routing (required, lowercase letters, numbers, and hyphens only)",
+        example: "medieval",
+    }),
+    description: z.string().max(500).nullable().optional().meta({
+        description: "Category description (optional)",
+        example: "Medieval style builds including castles, villages, and fortresses",
+    }),
+    icon_url: z.string().url().nullable().optional().meta({
+        description: "Category icon URL (optional)",
+        example: "https://example.com/icons/medieval.png",
+    }),
+});
+
+export type CreateCategoryReq = z.infer<typeof CreateCategoryReqSchema>;
+
+export const UpdateCategoryReqSchema = z.object({
+    name: z.string().min(1).max(100).optional().meta({
+        description: "Category name",
+        example: "Medieval",
+    }),
+    slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/).optional().meta({
+        description: "Category slug for URL routing (lowercase letters, numbers, and hyphens only)",
+        example: "medieval",
+    }),
+    description: z.string().max(500).nullable().optional().meta({
+        description: "Category description",
+        example: "Medieval style builds including castles, villages, and fortresses",
+    }),
+    icon_url: z.string().url().nullable().optional().meta({
+        description: "Category icon URL",
+        example: "https://example.com/icons/medieval.png",
+    }),
+});
+
+export type UpdateCategoryReq = z.infer<typeof UpdateCategoryReqSchema>;
+
+export const CategoryResSchema = z.object({
+    category: CategorySchema.meta({
+        description: "Category data",
+    }),
+});
+
+export type CategoryRes = z.infer<typeof CategoryResSchema>;

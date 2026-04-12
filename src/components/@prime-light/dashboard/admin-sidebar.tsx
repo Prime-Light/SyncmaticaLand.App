@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 
 import { Shadcn, Prime } from "@/components";
-import { LayoutDashboardIcon, FolderIcon, StoneIcon, HomeIcon, ScaleIcon, TagsIcon } from "lucide-react";
+import { LayoutDashboardIcon, TagsIcon , StoneIcon, ScaleIcon, FolderIcon, HomeIcon } from "lucide-react";
 import { CurrentUser } from "@/hooks/use-current-user";
 
 const data = [
@@ -47,7 +47,7 @@ const data = [
     },
 ];
 
-export function AppSidebar({
+export function AdminSidebar({
     currentUser,
     ...props
 }: React.ComponentProps<typeof Shadcn.Sidebar> & { currentUser?: CurrentUser }) {
@@ -59,9 +59,9 @@ export function AppSidebar({
                         <Shadcn.SidebarMenuButton
                             asChild
                             className="data-[slot=sidebar-menu-button]:p-1.5!">
-                            <Link href="/dashboard">
+                            <Link href="/admin">
                                 <StoneIcon className="size-5!" />
-                                <span className="text-base font-semibold">仪表盘</span>
+                                <span className="text-base font-semibold">管理员面板</span>
                             </Link>
                         </Shadcn.SidebarMenuButton>
                     </Shadcn.SidebarMenuItem>

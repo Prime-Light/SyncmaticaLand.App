@@ -19,4 +19,16 @@ export {
     type SchematicListRes,
 } from "./_self";
 
+export {
+    CategorySchema,
+    CategoryListResSchema,
+    type CategoryListRes,
+    CreateCategoryReqSchema,
+    type CreateCategoryReq,
+    UpdateCategoryReqSchema,
+    type UpdateCategoryReq,
+    CategoryResSchema,
+    type CategoryRes,
+} from "./category";
+
 export type { Schematic as SchematicType } from "./_self";

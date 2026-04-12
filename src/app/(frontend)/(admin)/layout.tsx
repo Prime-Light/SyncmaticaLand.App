@@ -3,7 +3,7 @@ import { createSupabaseServerClient, supabaseServerAdmin } from "@/lib/database"
 import { Shadcn, Prime } from "@/components";
 import { CurrentUser } from "@/hooks/use-current-user";
 
-export default async function DashboardLayout({
+export default async function AdminLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
@@ -31,6 +31,10 @@ export default async function DashboardLayout({
         role: profile?.role ?? "user",
     };
 
+    if (currentUser.role !== "admin") {
+        redirect("/dashboard");
+    }
+
     return (
         <Shadcn.SidebarProvider
             style={
@@ -39,7 +43,7 @@ export default async function DashboardLayout({
                     "--header-height": "calc(var(--spacing) * 12)",
                 } as React.CSSProperties
             }>
-            <Prime.AppSidebar variant="inset" currentUser={currentUser} />
+            <Prime.AdminSidebar variant="inset" currentUser={currentUser} />
             <Shadcn.SidebarInset>{children}</Shadcn.SidebarInset>
         </Shadcn.SidebarProvider>
     );

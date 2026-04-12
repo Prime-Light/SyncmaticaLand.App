@@ -1,10 +1,15 @@
 // AUTO-GENERATED FILE. DO NOT EDIT
 
+export { AdminSidebar } from "./dashboard/admin-sidebar";
+export { AdminStats, type AdminStatsProps } from "./dashboard/admin-stats";
 export { AppSidebar } from "./dashboard/app-sidebar";
+export { DashboardStats, type DashboardStatsProps } from "./dashboard/dashboard-stats";
 export { NavDocuments } from "./dashboard/nav-documents";
 export { NavMain } from "./dashboard/nav-main";
 export { NavSecondary } from "./dashboard/nav-secondary";
 export { NavUser } from "./dashboard/nav-user";
+export { RecentProjects, type RecentProjectsProps } from "./dashboard/recent-projects";
+export { RecentActivity, type RecentActivityProps } from "./dashboard/recent-activity";
 export { SiteHeader } from "./dashboard/site-header";
 export { UploadSchematicForm } from "./dashboard/upload-schematic-form";
 
