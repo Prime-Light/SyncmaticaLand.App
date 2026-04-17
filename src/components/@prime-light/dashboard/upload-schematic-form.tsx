@@ -285,7 +285,7 @@ export function UploadSchematicForm() {
             const result = await createSchematic({
                 name: title.trim(),
                 description: description.trim() || null,
-                status: "draft",
+                status: "under_review",
                 format,
                 mc_version: mcMinorVersion,
                 tags,

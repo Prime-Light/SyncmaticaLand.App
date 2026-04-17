@@ -31,7 +31,7 @@ export const SchematicSchema = z.object({
         description: "Schematic description",
         example: "A beautiful medieval castle with towers and walls",
     }),
-    status: ProjectStatusSchema.default("draft"),
+    status: ProjectStatusSchema.default("under_review"),
     format: ProjectFormatSchema,
     mc_version: z.string().meta({
         description: "Minecraft version",
@@ -82,7 +82,7 @@ export const CreateSchematicReqSchema = z.object({
         description: "Schematic description",
         example: "A beautiful medieval castle with towers and walls",
     }),
-    status: ProjectStatusSchema.optional().default("draft"),
+    status: ProjectStatusSchema.optional().default("under_review"),
     format: ProjectFormatSchema,
     mc_version: z.string().min(1, "Minecraft version is required").meta({
         description: "Minecraft version",
