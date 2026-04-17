@@ -58,7 +58,7 @@ export function NavMain({ items, currentUser }: { items: SectionItem[]; currentU
                 </Shadcn.SidebarMenu>
                 {filteredItems.map((sItem) => (
                     <Shadcn.SidebarMenu key={sItem.text}>
-                        <SidebarGroup>
+                        <SidebarGroup className="p-0">
                             <SidebarGroupLabel>{sItem.text}</SidebarGroupLabel>
                             {sItem.items
                                 .filter((item) => hasRequiredRole(userRole, item.requiredRole ?? sItem.requiredRole ?? "user"))
