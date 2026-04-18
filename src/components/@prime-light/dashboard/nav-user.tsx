@@ -24,7 +24,7 @@ function UserMenuHeader({
         <Shadcn.DropdownMenuLabel className="space-y-2">
             <div className="flex items-center gap-2">
                 <Shadcn.Avatar size="sm">
-                    <Shadcn.AvatarImage src={user.avatar_url} />
+                    <Shadcn.AvatarImage src={user.avatar_url} alt={user.display_name} />
                     <Shadcn.AvatarFallback>{userInitials}</Shadcn.AvatarFallback>
                 </Shadcn.Avatar>
                 <div className="min-w-0 flex-1">

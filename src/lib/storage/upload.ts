@@ -50,7 +50,7 @@ export async function uploadSchematicFile(
     });
 
     if (error) {
-        return { url: "", error: error };
+        return { url: "", error: new Error(error.message) };
     }
 
     const { data: urlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(path);

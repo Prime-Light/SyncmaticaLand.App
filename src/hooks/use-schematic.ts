@@ -23,10 +23,12 @@ export function useSchematic(id: string): UseSchematicResult {
             return;
         }
 
+        let mounted = true;
+        setIsLoading(true);
         hasFetchedRef.current = false;
 
         const executeFetch = async () => {
-            if (hasFetchedRef.current) return;
+            if (!mounted || hasFetchedRef.current) return;
             hasFetchedRef.current = true;
 
             try {
@@ -34,20 +36,28 @@ export function useSchematic(id: string): UseSchematicResult {
                     method: "GET",
                     cache: "no-store",
                 });
+                if (!mounted) return;
+
                 if (!res.ok) {
                     throw new Error(`Failed to fetch schematic: ${res.status}`);
                 }
                 const data = (await res.json()) as WrapSchema<Schematic.Schematic.SchematicRes>;
+                if (!mounted) return;
+
                 setSchematic(data.data);
                 setIsLoading(false);
                 setError(null);
             } catch (err) {
+                if (!mounted) return;
                 setError(err instanceof Error ? err : new Error(String(err)));
                 setIsLoading(false);
             }
         };
 
         executeFetch();
+        return () => {
+            mounted = false;
+        };
     }, [id]);
 
     useEffect(() => {

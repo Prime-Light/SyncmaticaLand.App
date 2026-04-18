@@ -24,13 +24,16 @@ export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResu
     );
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const [refetchToken, setRefetchToken] = useState(0);
     const hasFetchedRef = useRef(false);
 
     useEffect(() => {
         hasFetchedRef.current = false;
+        let mounted = true;
+        setIsLoading(true);
 
         const executeFetch = async () => {
-            if (hasFetchedRef.current) return;
+            if (!mounted || hasFetchedRef.current) return;
             hasFetchedRef.current = true;
 
             const params = new URLSearchParams();
@@ -45,27 +48,30 @@ export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResu
 
             try {
                 const res = await fetch(url, { method: "GET", cache: "no-store" });
+                if (!mounted) return;
+
                 if (!res.ok) {
                     throw new Error(`Failed to fetch schematics: ${res.status}`);
                 }
                 const data = (await res.json()) as WrapSchema<Schematic.Schematic.SchematicListRes>;
+                if (!mounted) return;
+
                 setSchematics(data.data);
                 setIsLoading(false);
                 setError(null);
             } catch (err) {
+                if (!mounted) return;
                 setError(err instanceof Error ? err : new Error(String(err)));
                 setIsLoading(false);
             }
         };
 
         executeFetch();
-    }, [options?.status, options?.category_id, options?.author_id, options?.limit, options?.offset]);
+        return () => { mounted = false; };
+    }, [options?.status, options?.category_id, options?.author_id, options?.limit, options?.offset, refetchToken]);
 
     const refetch = () => {
-        hasFetchedRef.current = false;
-        setSchematics(null);
-        setIsLoading(true);
-        setError(null);
+        setRefetchToken(prev => prev + 1);
     };
 
     return { schematics, isLoading, error, refetch };
