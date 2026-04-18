@@ -138,13 +138,12 @@ export interface UseEngagementResult {
     unupvote: (schematicId: string) => Promise<Schematic.Engagement.EngagementRes | null>;
     star: (schematicId: string) => Promise<Schematic.Engagement.EngagementRes | null>;
     unstar: (schematicId: string) => Promise<Schematic.Engagement.EngagementRes | null>;
-    view: (schematicId: string) => Promise<Schematic.Engagement.EngagementRes | null>;
 }
 
 export function useEngagement(): UseEngagementResult {
     const engagementAction = useCallback(
         async (
-            action: "upvote" | "star" | "view",
+            action: "upvote" | "star",
             schematicId: string,
             method: "POST" | "DELETE" = "POST"
         ): Promise<Schematic.Engagement.EngagementRes | null> => {
@@ -188,10 +187,5 @@ export function useEngagement(): UseEngagementResult {
         [engagementAction]
     );
 
-    const view = useCallback(
-        (schematicId: string) => engagementAction("view", schematicId, "POST"),
-        [engagementAction]
-    );
-
-    return { upvote, unupvote, star, unstar, view };
+    return { upvote, unupvote, star, unstar };
 }

@@ -352,7 +352,7 @@ function PageShell({
 
 export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
     const { schematic: res, isLoading, error, refetch } = useSchematic(id);
-    const { upvote, unupvote, star, unstar, view } = useEngagement();
+    const { upvote, unupvote, star, unstar } = useEngagement();
 
     const [upvoted, setUpvoted] = useState(false);
     const [starred, setStarred] = useState(false);
@@ -368,11 +368,6 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
             setStarCount(res.schematic.starred);
         }
     }, [res?.schematic]);
-
-    useEffect(() => {
-        if (id) view(id);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
 
     // 初始化点赞和收藏的本地状态
     useEffect(() => {

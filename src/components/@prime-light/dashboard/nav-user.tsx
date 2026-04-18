@@ -2,9 +2,68 @@
 
 import { Shadcn } from "@/components";
 import { useSidebar } from "@/components/@shadcn-ui/sidebar";
-import { EllipsisVerticalIcon, LogOutIcon } from "lucide-react";
+import {
+    EllipsisVerticalIcon,
+    LogOutIcon,
+    ShieldUserIcon,
+    SparklesIcon,
+} from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { toast } from "sonner";
+import { Auth } from "@/schema";
+
+// 用户信息头部组件（统一桌面端和移动端）
+function UserMenuHeader({
+    user,
+    userInitials,
+}: {
+    user: Auth.Me.Me.Res["user"];
+    userInitials: string;
+}) {
+    return (
+        <Shadcn.DropdownMenuLabel className="space-y-2">
+            <div className="flex items-center gap-2">
+                <Shadcn.Avatar size="sm">
+                    <Shadcn.AvatarImage src={user.avatar_url} />
+                    <Shadcn.AvatarFallback>{userInitials}</Shadcn.AvatarFallback>
+                </Shadcn.Avatar>
+                <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                        <span className="truncate text-sm font-medium">
+                            {user.display_name || "用户"}
+                        </span>
+                        {user.role === "admin" && (
+                            <Shadcn.Badge
+                                variant="outline"
+                                className="h-5 gap-1 border-red-500/50 bg-red-500/10 px-1.5 text-[10px] text-red-700 dark:text-red-300">
+                                <ShieldUserIcon />
+                                管理员
+                            </Shadcn.Badge>
+                        )}
+                        {user.role === "creator" && (
+                            <Shadcn.Badge
+                                variant="outline"
+                                className="h-5 gap-1 border-purple-500/50 bg-purple-500/10 px-1.5 text-[10px] text-purple-700 dark:text-purple-300">
+                                <SparklesIcon />
+                                创作者
+                            </Shadcn.Badge>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </Shadcn.DropdownMenuLabel>
+    );
+}
+
+// 退出登录组件
+function LogoutItem({ onLogout }: { onLogout: () => void }) {
+    return (
+        <Shadcn.DropdownMenuItem variant="destructive" onClick={onLogout}>
+            <LogOutIcon />
+            退出登录
+        </Shadcn.DropdownMenuItem>
+    );
+}
 
 export function NavUser() {
     const { isMobile } = useSidebar();
@@ -82,44 +141,18 @@ export function NavUser() {
                                 <span className="truncate font-medium">
                                     {user.display_name}
                                 </span>
-                                <span className="truncate text-xs text-muted-foreground">
-                                    {user.email}
-                                </span>
                             </div>
                             <EllipsisVerticalIcon className="ms-auto size-4" />
                         </Shadcn.SidebarMenuButton>
                     </Shadcn.DropdownMenuTrigger>
                     <Shadcn.DropdownMenuContent
-                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
+                        className="w-64"
                         side={isMobile ? "bottom" : "right"}
                         align="end"
                         sideOffset={4}>
-                        <Shadcn.DropdownMenuLabel className="p-0 font-normal">
-                            <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <Shadcn.Avatar className="h-8 w-8">
-                                    <Shadcn.AvatarImage
-                                        src={user.avatar_url}
-                                        alt={user.display_name}
-                                    />
-                                    <Shadcn.AvatarFallback>
-                                        {userInitials}
-                                    </Shadcn.AvatarFallback>
-                                </Shadcn.Avatar>
-                                <div className="grid flex-1 text-start text-sm leading-tight">
-                                    <span className="truncate font-medium">
-                                        {user.display_name}
-                                    </span>
-                                    <span className="truncate text-xs text-muted-foreground">
-                                        {user.email}
-                                    </span>
-                                </div>
-                            </div>
-                        </Shadcn.DropdownMenuLabel>
+                        <UserMenuHeader user={user} userInitials={userInitials} />
                         <Shadcn.DropdownMenuSeparator />
-                        <Shadcn.DropdownMenuItem variant="destructive" onClick={handleLogout}>
-                            <LogOutIcon />
-                            退出登录
-                        </Shadcn.DropdownMenuItem>
+                        <LogoutItem onLogout={handleLogout} />
                     </Shadcn.DropdownMenuContent>
                 </Shadcn.DropdownMenu>
             </Shadcn.SidebarMenuItem>
