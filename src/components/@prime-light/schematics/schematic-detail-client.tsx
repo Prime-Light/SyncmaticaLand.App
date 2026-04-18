@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
     Heart,
     Star,
@@ -47,20 +47,6 @@ function formatDate(iso: string): string {
     });
 }
 
-function getLocalEngagement(id: string) {
-    if (typeof window === "undefined") return { upvoted: false, starred: false };
-    try {
-        const localUpvotes = JSON.parse(localStorage.getItem("syncmaticaland_upvotes") || "{}");
-        const localStars = JSON.parse(localStorage.getItem("syncmaticaland_stars") || "{}");
-        return {
-            upvoted: !!localUpvotes[id],
-            starred: !!localStars[id],
-        };
-    } catch {
-        return { upvoted: false, starred: false };
-    }
-}
-
 type DescriptionCardProps =
     | { skeleton: true }
     | { skeleton?: false; description: string | null };
@@ -70,11 +56,7 @@ function DescriptionCard(props: DescriptionCardProps) {
         <Shadcn.Card className="mt-6">
             <Shadcn.CardHeader>
                 <Shadcn.CardTitle className="text-base">
-                    {props.skeleton ? (
-                        <Shadcn.Skeleton className="h-5 w-32" />
-                    ) : (
-                        "关于此原理图"
-                    )}
+                    {props.skeleton ? <Shadcn.Skeleton className="h-5 w-32" /> : "关于此原理图"}
                 </Shadcn.CardTitle>
             </Shadcn.CardHeader>
             <Shadcn.CardContent>
@@ -85,7 +67,7 @@ function DescriptionCard(props: DescriptionCardProps) {
                         <Shadcn.Skeleton className="h-4 w-3/4" />
                     </div>
                 ) : (
-                    <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+                    <p className="text-sm leading-relaxed whitespace-pre-line text-muted-foreground">
                         {props.description}
                     </p>
                 )}
@@ -120,7 +102,9 @@ function TitleAuthor(props: TitleAuthorProps) {
                                 {props.authorInitial}
                             </span>
                         </div>
-                        <span className="text-sm text-muted-foreground">{props.authorName}</span>
+                        <span className="text-sm text-muted-foreground">
+                            {props.authorName}
+                        </span>
                     </div>
                 </>
             )}
@@ -146,12 +130,16 @@ function StatsRow(props: StatsRowProps) {
             ) : (
                 <>
                     <div className="flex flex-col items-center">
-                        <span className="text-lg font-bold">{formatCount(props.upvoteCount)}</span>
+                        <span className="text-lg font-bold">
+                            {formatCount(props.upvoteCount)}
+                        </span>
                         <span className="text-xs text-muted-foreground">点赞</span>
                     </div>
                     <Shadcn.Separator orientation="vertical" className="h-10" />
                     <div className="flex flex-col items-center">
-                        <span className="text-lg font-bold">{formatCount(props.starCount)}</span>
+                        <span className="text-lg font-bold">
+                            {formatCount(props.starCount)}
+                        </span>
                         <span className="text-xs text-muted-foreground">收藏</span>
                     </div>
                     <Shadcn.Separator orientation="vertical" className="h-10" />
@@ -231,7 +219,9 @@ function ActionButtons(props: ActionButtonsProps) {
                             ) : (
                                 <Star
                                     data-icon="inline-start"
-                                    className={cn(props.starred && "fill-yellow-500 text-yellow-500")}
+                                    className={cn(
+                                        props.starred && "fill-yellow-500 text-yellow-500"
+                                    )}
                                 />
                             )}
                             {props.starred ? "已收藏" : "收藏"}
@@ -347,14 +337,31 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
     const { schematic: res, isLoading, error, refetch } = useSchematic(id);
     const { upvote, unupvote, star, unstar } = useEngagement();
 
-    const localEngagement = useMemo(() => getLocalEngagement(id), [id]);
-    const [upvoted, setUpvoted] = useState(localEngagement.upvoted);
-    const [starred, setStarred] = useState(localEngagement.starred);
+    const [upvoted, setUpvoted] = useState(false);
+    const [starred, setStarred] = useState(false);
     const [upvoteDelta, setUpvoteDelta] = useState(0);
     const [starDelta, setStarDelta] = useState(0);
     const [upvoteLoading, setUpvoteLoading] = useState(false);
     const [starLoading, setStarLoading] = useState(false);
     const [copied, setCopied] = useState(false);
+
+    useEffect(() => {
+        const fetchUserActions = async () => {
+            try {
+                const response = await fetch(`/api/v1/schematics/${id}/status`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.data) {
+                        setUpvoted(result.data.has_upvoted);
+                        setStarred(result.data.has_starred);
+                    }
+                }
+            } catch {
+                // Silently fail - states remain false
+            }
+        };
+        fetchUserActions();
+    }, [id]);
 
     const { upvoteCount, starCount } = useMemo(() => {
         const schematic = res?.schematic;
@@ -373,7 +380,9 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
             setUpvoted(newState);
             setUpvoteDelta((prev) => prev + (newState ? 1 : -1));
             try {
-                const localUpvotes = JSON.parse(localStorage.getItem("syncmaticaland_upvotes") || "{}");
+                const localUpvotes = JSON.parse(
+                    localStorage.getItem("syncmaticaland_upvotes") || "{}"
+                );
                 if (newState) {
                     localUpvotes[id] = true;
                 } else {
@@ -394,7 +403,9 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
             setStarred(newState);
             setStarDelta((prev) => prev + (newState ? 1 : -1));
             try {
-                const localStars = JSON.parse(localStorage.getItem("syncmaticaland_stars") || "{}");
+                const localStars = JSON.parse(
+                    localStorage.getItem("syncmaticaland_stars") || "{}"
+                );
                 if (newState) {
                     localStars[id] = true;
                 } else {
@@ -478,7 +489,10 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
         <PageShell
             leftCol={
                 <>
-                    <Prime.ImageGallery images={schematicData.images} name={schematicData.name} />
+                    <Prime.ImageGallery
+                        images={schematicData.images}
+                        name={schematicData.name}
+                    />
                     {schematicData.description && (
                         <DescriptionCard description={schematicData.description} />
                     )}
