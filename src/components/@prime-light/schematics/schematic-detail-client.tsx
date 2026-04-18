@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
     Heart,
     Star,
@@ -21,7 +21,6 @@ import { Shadcn, Prime } from "@/components";
 import { useSchematic, useEngagement } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import type { Schematic } from "@/schema";
 
 type SchematicDetailClientProps = {
     id: string;
@@ -48,7 +47,19 @@ function formatDate(iso: string): string {
     });
 }
 
-// ─── 子组件：描述卡片 ────────────────────────────────────────────────────────
+function getLocalEngagement(id: string) {
+    if (typeof window === "undefined") return { upvoted: false, starred: false };
+    try {
+        const localUpvotes = JSON.parse(localStorage.getItem("syncmaticaland_upvotes") || "{}");
+        const localStars = JSON.parse(localStorage.getItem("syncmaticaland_stars") || "{}");
+        return {
+            upvoted: !!localUpvotes[id],
+            starred: !!localStars[id],
+        };
+    } catch {
+        return { upvoted: false, starred: false };
+    }
+}
 
 type DescriptionCardProps =
     | { skeleton: true }
@@ -83,8 +94,6 @@ function DescriptionCard(props: DescriptionCardProps) {
     );
 }
 
-// ─── 子组件：标题与作者 ──────────────────────────────────────────────────────
-
 type TitleAuthorProps =
     | { skeleton: true }
     | { skeleton?: false; name: string; authorName: string; authorInitial: string };
@@ -96,9 +105,7 @@ function TitleAuthor(props: TitleAuthorProps) {
                 <>
                     <Shadcn.Skeleton className="h-9 w-3/4 rounded" />
                     <div className="mt-3 flex items-center gap-2">
-                        {/* 头像圆圈：size-8 */}
                         <Shadcn.Skeleton className="size-8 rounded-full" />
-                        {/* 作者名 */}
                         <Shadcn.Skeleton className="h-4 w-24 rounded" />
                     </div>
                 </>
@@ -121,14 +128,11 @@ function TitleAuthor(props: TitleAuthorProps) {
     );
 }
 
-// ─── 子组件：数据统计（点赞 / 收藏 / 浏览） ─────────────────────────────────
-
 type StatsRowProps =
     | { skeleton: true }
     | { skeleton?: false; upvoteCount: number; starCount: number; viewed: number };
 
 function StatsRow(props: StatsRowProps) {
-    // 单个统计块尺寸：数字 text-lg(~28px) + label text-xs(~16px) + gap-0.5 → 约 h-10 总高
     return (
         <div className="flex gap-4">
             {props.skeleton ? (
@@ -161,8 +165,6 @@ function StatsRow(props: StatsRowProps) {
     );
 }
 
-// ─── 子组件：操作按钮区 ──────────────────────────────────────────────────────
-
 type ActionButtonsProps =
     | { skeleton: true }
     | {
@@ -180,7 +182,6 @@ type ActionButtonsProps =
       };
 
 function ActionButtons(props: ActionButtonsProps) {
-    // Button size="lg" → h-9；size="default" → h-8；size="icon" → size-8
     return (
         <div className="flex flex-col gap-3">
             {props.skeleton ? (
@@ -254,8 +255,6 @@ function ActionButtons(props: ActionButtonsProps) {
     );
 }
 
-// ─── 子组件：元数据行 ────────────────────────────────────────────────────────
-
 type MetaRowProps =
     | { skeleton: true }
     | {
@@ -267,12 +266,10 @@ type MetaRowProps =
       };
 
 function MetaRows(props: MetaRowProps) {
-    // 每行高度：icon size-4(16px) + text-sm(20px) + items-center → 约 h-5 内容高
     return (
         <div className="flex flex-col gap-3 text-sm">
             {props.skeleton ? (
                 <>
-                    {/* 4 行元数据，每行结构：icon + label + badge/value */}
                     {[0, 1, 2, 3].map((i) => (
                         <div key={i} className="flex items-center gap-2">
                             <Shadcn.Skeleton className="size-4 rounded" />
@@ -320,8 +317,6 @@ function MetaRows(props: MetaRowProps) {
     );
 }
 
-// ─── 页面框架（返回链接 + 两列网格）────────────────────────────────────────
-
 function PageShell({
     leftCol,
     rightCol,
@@ -348,39 +343,26 @@ function PageShell({
     );
 }
 
-// ─── 主组件 ─────────────────────────────────────────────────────────────────
-
 export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
     const { schematic: res, isLoading, error, refetch } = useSchematic(id);
     const { upvote, unupvote, star, unstar } = useEngagement();
 
-    const [upvoted, setUpvoted] = useState(false);
-    const [starred, setStarred] = useState(false);
-    const [upvoteCount, setUpvoteCount] = useState(0);
-    const [starCount, setStarCount] = useState(0);
+    const localEngagement = useMemo(() => getLocalEngagement(id), [id]);
+    const [upvoted, setUpvoted] = useState(localEngagement.upvoted);
+    const [starred, setStarred] = useState(localEngagement.starred);
+    const [upvoteDelta, setUpvoteDelta] = useState(0);
+    const [starDelta, setStarDelta] = useState(0);
     const [upvoteLoading, setUpvoteLoading] = useState(false);
     const [starLoading, setStarLoading] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    useEffect(() => {
-        if (res?.schematic) {
-            setUpvoteCount(res.schematic.upvotes);
-            setStarCount(res.schematic.starred);
-        }
-    }, [res?.schematic]);
-
-    // 初始化点赞和收藏的本地状态
-    useEffect(() => {
-        if (!id) return;
-        try {
-            const localUpvotes = JSON.parse(localStorage.getItem("syncmaticaland_upvotes") || "{}");
-            const localStars = JSON.parse(localStorage.getItem("syncmaticaland_stars") || "{}");
-            if (localUpvotes[id]) setUpvoted(true);
-            if (localStars[id]) setStarred(true);
-        } catch {
-            // 忽略解析错误
-        }
-    }, [id]);
+    const { upvoteCount, starCount } = useMemo(() => {
+        const schematic = res?.schematic;
+        return {
+            upvoteCount: (schematic?.upvotes ?? 0) + upvoteDelta,
+            starCount: (schematic?.starred ?? 0) + starDelta,
+        };
+    }, [res?.schematic, upvoteDelta, starDelta]);
 
     const handleUpvote = useCallback(async () => {
         if (upvoteLoading) return;
@@ -389,7 +371,7 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
         if (result) {
             const newState = !upvoted;
             setUpvoted(newState);
-            setUpvoteCount((prev) => result.new_count ?? (prev + (newState ? 1 : -1)));
+            setUpvoteDelta((prev) => prev + (newState ? 1 : -1));
             try {
                 const localUpvotes = JSON.parse(localStorage.getItem("syncmaticaland_upvotes") || "{}");
                 if (newState) {
@@ -410,7 +392,7 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
         if (result) {
             const newState = !starred;
             setStarred(newState);
-            setStarCount((prev) => result.new_count ?? (prev + (newState ? 1 : -1)));
+            setStarDelta((prev) => prev + (newState ? 1 : -1));
             try {
                 const localStars = JSON.parse(localStorage.getItem("syncmaticaland_stars") || "{}");
                 if (newState) {
@@ -438,9 +420,8 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
     const handleDownload = useCallback(() => {
         if (!res?.schematic?.file_url) return;
         window.open(res.schematic.file_url, "_blank", "noopener,noreferrer");
-    }, [res?.schematic?.file_url]);
+    }, [res]);
 
-    // ---- 加载骨架（与真实布局共用同一套 PageShell + 子组件结构）----
     if (isLoading) {
         return (
             <PageShell
@@ -464,7 +445,6 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
         );
     }
 
-    // ---- 错误状态 ----
     if (error || !res) {
         return (
             <main className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-4">
@@ -487,10 +467,10 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
         );
     }
 
-    const { schematic, categories } = res;
+    const { schematic: schematicData, categories } = res;
     const authorName =
-        typeof schematic.author_name === "string" && schematic.author_name.trim()
-            ? schematic.author_name.trim()
+        typeof schematicData.author_name === "string" && schematicData.author_name.trim()
+            ? schematicData.author_name.trim()
             : "未知作者";
     const authorInitial = authorName.charAt(0).toUpperCase();
 
@@ -498,16 +478,16 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
         <PageShell
             leftCol={
                 <>
-                    <Prime.ImageGallery images={schematic.images} name={schematic.name} />
-                    {schematic.description && (
-                        <DescriptionCard description={schematic.description} />
+                    <Prime.ImageGallery images={schematicData.images} name={schematicData.name} />
+                    {schematicData.description && (
+                        <DescriptionCard description={schematicData.description} />
                     )}
                 </>
             }
             rightCol={
                 <>
                     <TitleAuthor
-                        name={schematic.name}
+                        name={schematicData.name}
                         authorName={authorName}
                         authorInitial={authorInitial}
                     />
@@ -515,13 +495,13 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                     <StatsRow
                         upvoteCount={upvoteCount}
                         starCount={starCount}
-                        viewed={schematic.viewed}
+                        viewed={schematicData.viewed}
                     />
 
                     <Shadcn.Separator />
 
                     <ActionButtons
-                        fileUrl={schematic.file_url}
+                        fileUrl={schematicData.file_url}
                         upvoted={upvoted}
                         upvoteLoading={upvoteLoading}
                         starred={starred}
@@ -536,10 +516,10 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                     <Shadcn.Separator />
 
                     <MetaRows
-                        format={schematic.format}
-                        mcVersion={schematic.mc_version}
-                        viewed={schematic.viewed}
-                        createdAt={schematic.created_at}
+                        format={schematicData.format}
+                        mcVersion={schematicData.mc_version}
+                        viewed={schematicData.viewed}
+                        createdAt={schematicData.created_at}
                     />
 
                     {categories && categories.length > 0 && (
@@ -558,7 +538,7 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                         </>
                     )}
 
-                    {schematic.tags.length > 0 && (
+                    {schematicData.tags.length > 0 && (
                         <>
                             <Shadcn.Separator />
                             <div>
@@ -567,7 +547,7 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                                     标签
                                 </p>
                                 <div className="flex flex-wrap gap-1.5">
-                                    {schematic.tags.map((tag) => (
+                                    {schematicData.tags.map((tag) => (
                                         <Shadcn.Badge key={tag} variant="secondary">
                                             {tag}
                                         </Shadcn.Badge>

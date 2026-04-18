@@ -7,9 +7,17 @@ export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const ACCEPTED_SCHEMATIC_TYPES = [".schematic", ".schem", ".litematic", ".nbt"];
 export const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
-export function generateSchematicPath(userId: string, fileName: string): string {
+async function sha256(str: string) {
+    const data = new TextEncoder().encode(str);
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(hash))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+}
+
+export async function generateSchematicPath(userId: string, fileName: string): Promise<string> {
     const timestamp = Date.now();
-    return `schematics/${userId}/${timestamp}_${fileName}`;
+    return `schematics/${userId}/${timestamp}_${await sha256(fileName)}`;
 }
 
 export function generateImagePath(
@@ -29,7 +37,7 @@ export async function uploadSchematicFile(
     userId: string,
     fileName: string
 ): Promise<{ url: string; error: Error | null }> {
-    const path = generateSchematicPath(userId, fileName);
+    const path = await generateSchematicPath(userId, fileName);
 
     const isServer = typeof window === "undefined";
     const supabase = isServer ? supabaseServerAdmin : supabaseClient;
@@ -42,7 +50,7 @@ export async function uploadSchematicFile(
     });
 
     if (error) {
-        return { url: "", error: new Error(error.message) };
+        return { url: "", error: error };
     }
 
     const { data: urlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(path);

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabaseServerAdmin } from "@/lib/database";
+import { createSupabaseServerClient } from "@/lib/database";
 import { ApiResponse, ApiError, ApiErrorCode, ApiResponseCode } from "@/lib/api-responses";
 import { BackendApiRouteLogger } from "@/lib/logger";
 import { Schematic } from "@/schema";
@@ -12,8 +12,9 @@ export async function POST(
     { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<StarResult>> {
     const { id: schematic_id } = await params;
+    const supabase = await createSupabaseServerClient();
 
-    const { data, error } = await supabaseServerAdmin.rpc("rpc__schematic_increment_starred", {
+    const { data, error } = await supabase.rpc("rpc__schematic_increment_starred", {
         schematic_id,
     });
 
@@ -40,8 +41,9 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<StarResult>> {
     const { id: schematic_id } = await params;
+    const supabase = await createSupabaseServerClient();
 
-    const { data, error } = await supabaseServerAdmin.rpc("rpc__schematic_decrement_starred", {
+    const { data, error } = await supabase.rpc("rpc__schematic_decrement_starred", {
         schematic_id,
     });
 
@@ -62,3 +64,4 @@ export async function DELETE(
         })
         .build();
 }
+

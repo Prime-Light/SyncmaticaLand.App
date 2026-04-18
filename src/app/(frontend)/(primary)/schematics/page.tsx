@@ -3,8 +3,7 @@
 import { Prime, Shadcn } from "@/components";
 import { useSchematics, useCategories } from "@/hooks";
 import { Search, Loader2, AlertCircle } from "lucide-react";
-import { useState, useMemo, useCallback, useEffect } from "react";
-import type { Schematic } from "@/schema";
+import { useState, useMemo, useCallback } from "react";
 
 const PAGE_SIZE = 12;
 
@@ -12,9 +11,6 @@ export default function SchematicsIndex() {
     const [selectedTag, setSelectedTag] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [page, setPage] = useState(1);
-    const [accumulatedSchematics, setAccumulatedSchematics] = useState<
-        Schematic.Schematic.Schematic[]
-    >([]);
 
     const { categories, isLoading: categoriesLoading } = useCategories();
     const {
@@ -29,20 +25,10 @@ export default function SchematicsIndex() {
         offset: (page - 1) * PAGE_SIZE,
     });
 
-    useEffect(() => {
-        if (schematics?.schematics) {
-            if (page === 1) {
-                setAccumulatedSchematics(schematics.schematics);
-            } else {
-                setAccumulatedSchematics((prev) => [...prev, ...schematics.schematics]);
-            }
-        }
-    }, [schematics?.schematics, page]);
-
-    useEffect(() => {
-        setAccumulatedSchematics([]);
-        setPage(1);
-    }, [selectedTag]);
+    const accumulatedSchematics = useMemo(() => {
+        if (!schematics?.schematics) return [];
+        return schematics.schematics;
+    }, [schematics]);
 
     const filteredSchematics = useMemo(() => {
         if (!accumulatedSchematics) return [];
@@ -63,6 +49,7 @@ export default function SchematicsIndex() {
 
     const handleTagChange = useCallback((tagId: string) => {
         setSelectedTag(tagId);
+        setPage(1);
     }, []);
 
     const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

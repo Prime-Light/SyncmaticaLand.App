@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Schematic, WrapSchema } from "@/schema";
 
 export interface UseSchematicResult {
@@ -14,46 +14,45 @@ export function useSchematic(id: string): UseSchematicResult {
     const [schematic, setSchematic] = useState<Schematic.Schematic.SchematicRes | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const hasFetchedRef = useRef(false);
 
-    const fetchData = useCallback(() => {
+    const doFetch = useCallback(() => {
         if (!id) {
             setSchematic(null);
             setIsLoading(false);
-            return () => {};
+            return;
         }
 
-        let mounted = true;
-        setIsLoading(true);
-        setError(null);
+        hasFetchedRef.current = false;
 
-        fetch(`/api/v1/schematics/${id}`, { method: "GET", cache: "no-store" })
-            .then(async (res) => {
+        const executeFetch = async () => {
+            if (hasFetchedRef.current) return;
+            hasFetchedRef.current = true;
+
+            try {
+                const res = await fetch(`/api/v1/schematics/${id}`, {
+                    method: "GET",
+                    cache: "no-store",
+                });
                 if (!res.ok) {
                     throw new Error(`Failed to fetch schematic: ${res.status}`);
                 }
-                return (await res.json()) as WrapSchema<Schematic.Schematic.SchematicRes>;
-            })
-            .then((data) => {
-                if (!mounted) return;
+                const data = (await res.json()) as WrapSchema<Schematic.Schematic.SchematicRes>;
                 setSchematic(data.data);
-            })
-            .catch((err) => {
-                if (!mounted) return;
+                setIsLoading(false);
+                setError(null);
+            } catch (err) {
                 setError(err instanceof Error ? err : new Error(String(err)));
-            })
-            .finally(() => {
-                if (mounted) setIsLoading(false);
-            });
-
-        return () => {
-            mounted = false;
+                setIsLoading(false);
+            }
         };
+
+        executeFetch();
     }, [id]);
 
     useEffect(() => {
-        const cleanup = fetchData();
-        return cleanup;
-    }, [fetchData]);
+        doFetch();
+    }, [doFetch]);
 
-    return { schematic, isLoading, error, refetch: fetchData };
+    return { schematic, isLoading, error, refetch: doFetch };
 }

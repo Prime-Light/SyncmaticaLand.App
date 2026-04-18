@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Auth, WrapSchema } from "@/schema";
 
 export type CurrentUser = Auth.Me.Me.Res["user"];
@@ -27,29 +27,25 @@ export function useCurrentUser(
     initialUser?: CurrentUser | null,
     { skip = false }: { skip?: boolean } = {}
 ): UseCurrentUserResult {
-    const [user, setUser] = useState<CurrentUser | null>(initialUser ?? null);
-    const [loading, setLoading] = useState(!skip && initialUser == null);
+    const [user, setUser] = useState<CurrentUser | null>(() => {
+        if (skip) return null;
+        return initialUser ?? null;
+    });
+    const [loading, setLoading] = useState(() => {
+        if (skip) return false;
+        return initialUser == null;
+    });
+    const hasFetched = useRef(false);
 
     useEffect(() => {
-        // 调用方显式要求跳过请求（如服务端已确认未认证）
-        if (skip) {
-            setUser(null);
-            setLoading(false);
-            return;
-        }
+        if (skip) return;
 
-        // 仅当调用方提供了非空用户对象时才跳过请求；
-        // null 或 undefined 均表示"尚未获取"，需要发起客户端请求
-        if (initialUser != null) {
-            setUser(initialUser);
-            setLoading(false);
-            return;
-        }
+        if (initialUser != null) return;
 
-        // 始终请求 API：以响应状态（401 = 未登录）为权威判断，
-        // 不依赖 document.cookie（HttpOnly cookie 下无法读取）
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+
         let mounted = true;
-        setLoading(true);
         fetch("/api/v1/auth/me", { method: "GET", cache: "no-store" })
             .then(async (res) => {
                 if (!res.ok) return null;
@@ -58,13 +54,12 @@ export function useCurrentUser(
             .then((data: WrapSchema<Auth.Me.Me.Res> | null) => {
                 if (!mounted) return;
                 setUser(data?.data?.user ?? null);
+                setLoading(false);
             })
             .catch(() => {
                 if (!mounted) return;
                 setUser(null);
-            })
-            .finally(() => {
-                if (mounted) setLoading(false);
+                setLoading(false);
             });
         return () => {
             mounted = false;
