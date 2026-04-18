@@ -13,7 +13,12 @@ export interface DeleteCategoryDialogProps {
     onSuccess: () => void;
 }
 
-export function DeleteCategoryDialog({ category, open, onOpenChange, onSuccess }: DeleteCategoryDialogProps) {
+export function DeleteCategoryDialog({
+    category,
+    open,
+    onOpenChange,
+    onSuccess,
+}: DeleteCategoryDialogProps) {
     const { deleteCategory, isLoading } = useDeleteCategory(category?.id ?? "");
 
     const handleDelete = async () => {
@@ -32,11 +37,12 @@ export function DeleteCategoryDialog({ category, open, onOpenChange, onSuccess }
 
     return (
         <Shadcn.Sheet open={open} onOpenChange={onOpenChange}>
-            <Shadcn.SheetContent side="bottom" className="sm:max-w-md sm:mx-auto">
+            <Shadcn.SheetContent side="bottom" className="sm:mx-auto sm:max-w-md">
                 <Shadcn.SheetHeader>
                     <Shadcn.SheetTitle>确认删除</Shadcn.SheetTitle>
                     <Shadcn.SheetDescription>
-                        确定要删除分类 <strong>&ldquo;{category?.name}&rdquo;</strong> 吗？此操作无法撤销。
+                        确定要删除分类 <strong>&ldquo;{category?.name}&rdquo;</strong>{" "}
+                        吗？此操作无法撤销。
                     </Shadcn.SheetDescription>
                 </Shadcn.SheetHeader>
                 <div className="flex items-center justify-end gap-3 p-4">

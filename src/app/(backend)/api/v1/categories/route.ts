@@ -5,9 +5,7 @@ import { BackendApiRouteLogger } from "@/lib/logger";
 import { Schematic, WrapSchema } from "@/schema";
 import { IApiErrorResponse } from "@/types/api-error";
 
-export type CategoriesResult =
-    | { data: Schematic.Category.CategoryListRes }
-    | IApiErrorResponse;
+export type CategoriesResult = { data: Schematic.Category.CategoryListRes } | IApiErrorResponse;
 
 export type CategoryCreateResult =
     | WrapSchema<Schematic.Category.CategoryRes>
@@ -82,7 +80,9 @@ export async function POST(request: Request): Promise<NextResponse<CategoryCreat
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-        BackendApiRouteLogger.warn("Unauthorized create category attempt", { error: authError });
+        BackendApiRouteLogger.warn("Unauthorized create category attempt", {
+            error: authError,
+        });
         return new ApiError()
             .code(ApiErrorCode.UNAUTHORIZED)
             .message("未授权访问")
@@ -99,10 +99,7 @@ export async function POST(request: Request): Promise<NextResponse<CategoryCreat
     try {
         body = await request.json();
     } catch {
-        return new ApiError()
-            .code(ApiErrorCode.BAD_REQUEST)
-            .message("无效的请求体")
-            .build();
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("无效的请求体").build();
     }
 
     const parseResult = Schematic.Category.CreateCategoryReqSchema.safeParse(body);

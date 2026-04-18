@@ -5,9 +5,7 @@ import { BackendApiRouteLogger } from "@/lib/logger";
 import { type SchematicListRes, type SchematicType } from "@/schema/schematic";
 import { IApiErrorResponse } from "@/types/api-error";
 
-export type CategorySchematicsResult =
-    | { data: SchematicListRes }
-    | IApiErrorResponse;
+export type CategorySchematicsResult = { data: SchematicListRes } | IApiErrorResponse;
 
 export async function GET(
     request: NextRequest,

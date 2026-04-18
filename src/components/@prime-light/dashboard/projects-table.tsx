@@ -3,7 +3,14 @@
 import * as React from "react";
 import Link from "next/link";
 import { Shadcn } from "@/components";
-import { EyeIcon, ThumbsUpIcon, StarIcon, MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import {
+    EyeIcon,
+    ThumbsUpIcon,
+    StarIcon,
+    MoreHorizontalIcon,
+    PencilIcon,
+    Trash2Icon,
+} from "lucide-react";
 import { Schematic } from "@/schema";
 
 export interface ProjectsTableProps {
@@ -20,7 +27,10 @@ const statusLabels: Record<Schematic.Schematic.ProjectStatus, string> = {
     rejected: "已拒绝",
 };
 
-const statusVariants: Record<Schematic.Schematic.ProjectStatus, "secondary" | "default" | "outline" | "destructive"> = {
+const statusVariants: Record<
+    Schematic.Schematic.ProjectStatus,
+    "secondary" | "default" | "outline" | "destructive"
+> = {
     draft: "secondary",
     published: "default",
     under_review: "outline",
@@ -28,11 +38,7 @@ const statusVariants: Record<Schematic.Schematic.ProjectStatus, "secondary" | "d
 };
 
 function StatusBadge({ status }: { status: Schematic.Schematic.ProjectStatus }) {
-    return (
-        <Shadcn.Badge variant={statusVariants[status]}>
-            {statusLabels[status]}
-        </Shadcn.Badge>
-    );
+    return <Shadcn.Badge variant={statusVariants[status]}>{statusLabels[status]}</Shadcn.Badge>;
 }
 
 function formatDate(dateString: string): string {
@@ -48,11 +54,20 @@ function canEdit(status: Schematic.Schematic.ProjectStatus): boolean {
     return status === "draft" || status === "under_review" || status === "rejected";
 }
 
-function canDelete(status: Schematic.Schematic.ProjectStatus, authorId: string, currentUserId: string): boolean {
+function canDelete(
+    status: Schematic.Schematic.ProjectStatus,
+    authorId: string,
+    currentUserId: string
+): boolean {
     return (status === "draft" || status === "rejected") && authorId === currentUserId;
 }
 
-export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: ProjectsTableProps) {
+export function ProjectsTable({
+    projects,
+    currentUserId,
+    onEdit,
+    onDelete,
+}: ProjectsTableProps) {
     const [currentPage, setCurrentPage] = React.useState(1);
     const pageSize = 10;
 
@@ -79,9 +94,7 @@ export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: Pro
         <Shadcn.Card>
             <Shadcn.CardHeader>
                 <Shadcn.CardTitle>我的项目</Shadcn.CardTitle>
-                <Shadcn.CardDescription>
-                    共 {projects.length} 个项目
-                </Shadcn.CardDescription>
+                <Shadcn.CardDescription>共 {projects.length} 个项目</Shadcn.CardDescription>
             </Shadcn.CardHeader>
             <Shadcn.CardContent>
                 <Shadcn.Table>
@@ -99,7 +112,11 @@ export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: Pro
                     <Shadcn.TableBody>
                         {paginatedProjects.map((project) => {
                             const editable = canEdit(project.status);
-                            const deletable = canDelete(project.status, project.author_id, currentUserId);
+                            const deletable = canDelete(
+                                project.status,
+                                project.author_id,
+                                currentUserId
+                            );
 
                             return (
                                 <Shadcn.TableRow key={project.id}>
@@ -152,7 +169,9 @@ export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: Pro
                                                 <Shadcn.DropdownMenuItem
                                                     variant="destructive"
                                                     disabled={!deletable}
-                                                    onClick={() => deletable && onDelete(project)}>
+                                                    onClick={() =>
+                                                        deletable && onDelete(project)
+                                                    }>
                                                     <Trash2Icon />
                                                     删除
                                                 </Shadcn.DropdownMenuItem>

@@ -16,7 +16,8 @@ export function CategoriesPageClient({ initialCategories }: CategoriesPageClient
     const [categories, setCategories] = React.useState(initialCategories);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-    const [selectedCategory, setSelectedCategory] = React.useState<Schematic.Category.Category | null>(null);
+    const [selectedCategory, setSelectedCategory] =
+        React.useState<Schematic.Category.Category | null>(null);
     const [updatingCategoryId, setUpdatingCategoryId] = React.useState<string | null>(null);
 
     const { updateCategory } = useUpdateCategory(updatingCategoryId ?? "");
@@ -31,34 +32,33 @@ export function CategoriesPageClient({ initialCategories }: CategoriesPageClient
         setDeleteDialogOpen(true);
     }, []);
 
-    const handleUpdate = React.useCallback(async (id: string, data: Schematic.Category.UpdateCategoryReq): Promise<boolean> => {
-        setUpdatingCategoryId(id);
+    const handleUpdate = React.useCallback(
+        async (id: string, data: Schematic.Category.UpdateCategoryReq): Promise<boolean> => {
+            setUpdatingCategoryId(id);
 
-        try {
-            const result = await updateCategory(data);
+            try {
+                const result = await updateCategory(data);
 
-            if (result) {
-                setCategories((prev) =>
-                    prev.map((c) =>
-                        c.id === id
-                            ? { ...c, ...result.category }
-                            : c
-                    )
-                );
-                toast.success("分类更新成功");
-                return true;
-            } else {
-                toast.error("更新分类失败");
+                if (result) {
+                    setCategories((prev) =>
+                        prev.map((c) => (c.id === id ? { ...c, ...result.category } : c))
+                    );
+                    toast.success("分类更新成功");
+                    return true;
+                } else {
+                    toast.error("更新分类失败");
+                    return false;
+                }
+            } catch (err) {
+                const message = err instanceof Error ? err.message : "更新失败，请重试";
+                toast.error(message);
                 return false;
+            } finally {
+                setUpdatingCategoryId(null);
             }
-        } catch (err) {
-            const message = err instanceof Error ? err.message : "更新失败，请重试";
-            toast.error(message);
-            return false;
-        } finally {
-            setUpdatingCategoryId(null);
-        }
-    }, [updateCategory]);
+        },
+        [updateCategory]
+    );
 
     const handleCreateSuccess = React.useCallback(() => {
         window.location.reload();

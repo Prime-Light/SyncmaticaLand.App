@@ -28,7 +28,12 @@ function StatCard({ title, value, icon }: StatCardProps) {
     );
 }
 
-export function DashboardStats({ totalProjects, totalViews, totalUpvotes, totalStars }: DashboardStatsProps) {
+export function DashboardStats({
+    totalProjects,
+    totalViews,
+    totalUpvotes,
+    totalStars,
+}: DashboardStatsProps) {
     const stats: StatCardProps[] = [
         {
             title: "项目总数",

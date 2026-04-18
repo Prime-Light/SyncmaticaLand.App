@@ -13,38 +13,58 @@ export interface AuditPageClientProps {
     initialStatusFilter: Schematic.Schematic.ProjectStatus | "all";
 }
 
-export function AuditPageClient({ initialProjects, initialStatusFilter }: AuditPageClientProps) {
+export function AuditPageClient({
+    initialProjects,
+    initialStatusFilter,
+}: AuditPageClientProps) {
     const [projects, setProjects] = React.useState(initialProjects);
-    const [statusFilter, setStatusFilter] = React.useState<Schematic.Schematic.ProjectStatus | "all">(initialStatusFilter);
-    const [selectedProject, setSelectedProject] = React.useState<(Schematic.Schematic.Schematic & { author_name: string }) | null>(null);
+    const [statusFilter, setStatusFilter] = React.useState<
+        Schematic.Schematic.ProjectStatus | "all"
+    >(initialStatusFilter);
+    const [selectedProject, setSelectedProject] = React.useState<
+        (Schematic.Schematic.Schematic & { author_name: string }) | null
+    >(null);
     const [detailOpen, setDetailOpen] = React.useState(false);
     const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
     const [confirmAction, setConfirmAction] = React.useState<"approve" | "reject" | null>(null);
-    const [confirmProject, setConfirmProject] = React.useState<(Schematic.Schematic.Schematic & { author_name: string }) | null>(null);
+    const [confirmProject, setConfirmProject] = React.useState<
+        (Schematic.Schematic.Schematic & { author_name: string }) | null
+    >(null);
 
-    const { updateSchematic, isLoading: isUpdating } = useUpdateSchematic(confirmProject?.id ?? "");
+    const { updateSchematic, isLoading: isUpdating } = useUpdateSchematic(
+        confirmProject?.id ?? ""
+    );
 
     const filteredProjects = React.useMemo(() => {
         if (statusFilter === "all") return projects;
         return projects.filter((p) => p.status === statusFilter);
     }, [projects, statusFilter]);
 
-    const handleViewDetails = React.useCallback((project: Schematic.Schematic.Schematic & { author_name: string }) => {
-        setSelectedProject(project);
-        setDetailOpen(true);
-    }, []);
+    const handleViewDetails = React.useCallback(
+        (project: Schematic.Schematic.Schematic & { author_name: string }) => {
+            setSelectedProject(project);
+            setDetailOpen(true);
+        },
+        []
+    );
 
-    const handleApprove = React.useCallback((project: Schematic.Schematic.Schematic & { author_name: string }) => {
-        setConfirmProject(project);
-        setConfirmAction("approve");
-        setConfirmDialogOpen(true);
-    }, []);
+    const handleApprove = React.useCallback(
+        (project: Schematic.Schematic.Schematic & { author_name: string }) => {
+            setConfirmProject(project);
+            setConfirmAction("approve");
+            setConfirmDialogOpen(true);
+        },
+        []
+    );
 
-    const handleReject = React.useCallback((project: Schematic.Schematic.Schematic & { author_name: string }) => {
-        setConfirmProject(project);
-        setConfirmAction("reject");
-        setConfirmDialogOpen(true);
-    }, []);
+    const handleReject = React.useCallback(
+        (project: Schematic.Schematic.Schematic & { author_name: string }) => {
+            setConfirmProject(project);
+            setConfirmAction("reject");
+            setConfirmDialogOpen(true);
+        },
+        []
+    );
 
     const handleConfirmAction = async () => {
         if (!confirmProject || !confirmAction) return;
@@ -102,7 +122,7 @@ export function AuditPageClient({ initialProjects, initialStatusFilter }: AuditP
             />
 
             <Shadcn.Sheet open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-                <Shadcn.SheetContent side="bottom" className="sm:max-w-md sm:mx-auto">
+                <Shadcn.SheetContent side="bottom" className="sm:mx-auto sm:max-w-md">
                     <Shadcn.SheetHeader>
                         <Shadcn.SheetTitle>
                             {confirmAction === "approve" ? "确认批准" : "确认拒绝"}
@@ -123,7 +143,11 @@ export function AuditPageClient({ initialProjects, initialStatusFilter }: AuditP
                             onClick={handleConfirmAction}
                             disabled={isUpdating}
                             variant={confirmAction === "reject" ? "destructive" : "default"}>
-                            {isUpdating ? "处理中..." : confirmAction === "approve" ? "批准" : "拒绝"}
+                            {isUpdating
+                                ? "处理中..."
+                                : confirmAction === "approve"
+                                  ? "批准"
+                                  : "拒绝"}
                         </Shadcn.Button>
                     </div>
                 </Shadcn.SheetContent>

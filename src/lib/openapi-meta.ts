@@ -285,10 +285,10 @@ export const openApiDocument = createDocument({
                         in: "query",
                         required: false,
                         description: "按状态筛选",
-                        schema: { 
-                            type: "string", 
+                        schema: {
+                            type: "string",
                             enum: ["draft", "published", "under_review", "rejected"],
-                            description: "原理图状态"
+                            description: "原理图状态",
                         },
                     },
                     {

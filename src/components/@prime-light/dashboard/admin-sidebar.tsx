@@ -4,7 +4,14 @@ import * as React from "react";
 import Link from "next/link";
 
 import { Shadcn, Prime } from "@/components";
-import { LayoutDashboardIcon, TagsIcon , StoneIcon, ScaleIcon, FolderIcon, HomeIcon } from "lucide-react";
+import {
+    LayoutDashboardIcon,
+    TagsIcon,
+    StoneIcon,
+    ScaleIcon,
+    FolderIcon,
+    HomeIcon,
+} from "lucide-react";
 import { CurrentUser } from "@/hooks/use-current-user";
 
 const data = [

@@ -12,10 +12,17 @@ export default function SchematicsIndex() {
     const [selectedTag, setSelectedTag] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [page, setPage] = useState(1);
-    const [accumulatedSchematics, setAccumulatedSchematics] = useState<Schematic.Schematic.Schematic[]>([]);
+    const [accumulatedSchematics, setAccumulatedSchematics] = useState<
+        Schematic.Schematic.Schematic[]
+    >([]);
 
     const { categories, isLoading: categoriesLoading } = useCategories();
-    const { schematics, isLoading: schematicsLoading, error, refetch } = useSchematics({
+    const {
+        schematics,
+        isLoading: schematicsLoading,
+        error,
+        refetch,
+    } = useSchematics({
         status: "published",
         category_id: selectedTag !== "all" ? selectedTag : undefined,
         limit: PAGE_SIZE,

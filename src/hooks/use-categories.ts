@@ -10,7 +10,9 @@ export interface UseCategoriesResult {
 }
 
 export function useCategories(): UseCategoriesResult {
-    const [categories, setCategories] = useState<Schematic.Category.CategoryListRes | null>(null);
+    const [categories, setCategories] = useState<Schematic.Category.CategoryListRes | null>(
+        null
+    );
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 

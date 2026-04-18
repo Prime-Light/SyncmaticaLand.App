@@ -25,11 +25,15 @@ export function SiteHeader({ children, breadcrumbs, title }: SiteHeaderProps) {
                                 {index > 0 && <Shadcn.BreadcrumbSeparator />}
                                 <Shadcn.BreadcrumbItem>
                                     {item.href ? (
-                                        <Shadcn.BreadcrumbLink asChild className="text-muted-foreground">
+                                        <Shadcn.BreadcrumbLink
+                                            asChild
+                                            className="text-muted-foreground">
                                             <Link href={item.href}>{item.label}</Link>
                                         </Shadcn.BreadcrumbLink>
                                     ) : (
-                                        <Shadcn.BreadcrumbPage>{item.label}</Shadcn.BreadcrumbPage>
+                                        <Shadcn.BreadcrumbPage>
+                                            {item.label}
+                                        </Shadcn.BreadcrumbPage>
                                     )}
                                 </Shadcn.BreadcrumbItem>
                             </React.Fragment>

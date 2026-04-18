@@ -178,10 +178,7 @@ export async function PATCH(
     const isAuthor = schematic.author_id === user.id;
 
     if (!isAdmin && !isAuthor) {
-        return new ApiError()
-            .code(ApiErrorCode.FORBIDDEN)
-            .message("无权修改此原理图")
-            .build();
+        return new ApiError().code(ApiErrorCode.FORBIDDEN).message("无权修改此原理图").build();
     }
 
     if (isAuthor && !isAdmin) {
@@ -197,10 +194,7 @@ export async function PATCH(
     try {
         body = await request.json();
     } catch {
-        return new ApiError()
-            .code(ApiErrorCode.BAD_REQUEST)
-            .message("无效的请求体")
-            .build();
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("无效的请求体").build();
     }
 
     const parseResult = Schematic.Schematic.UpdateSchematicReqSchema.safeParse(body);
@@ -223,10 +217,12 @@ export async function PATCH(
 
     const updateData: Record<string, unknown> = {};
     if (validatedData.name !== undefined) updateData.name = validatedData.name;
-    if (validatedData.description !== undefined) updateData.description = validatedData.description;
+    if (validatedData.description !== undefined)
+        updateData.description = validatedData.description;
     if (validatedData.status !== undefined) updateData.status = validatedData.status;
     if (validatedData.format !== undefined) updateData.format = validatedData.format;
-    if (validatedData.mc_version !== undefined) updateData.mc_version = validatedData.mc_version;
+    if (validatedData.mc_version !== undefined)
+        updateData.mc_version = validatedData.mc_version;
     if (validatedData.tags !== undefined) updateData.tags = validatedData.tags;
     if (validatedData.file_url !== undefined) updateData.file_url = validatedData.file_url;
     if (validatedData.images !== undefined) updateData.images = validatedData.images;
@@ -253,10 +249,13 @@ export async function PATCH(
     let categories: Array<{ id: string; name: string; slug: string }> = [];
 
     if (body.category_ids !== undefined) {
-        const { error: categoryError } = await supabaseServerAdmin.rpc("rpc__schematic_set_categories", {
-            schematic_id: schematicId,
-            category_ids: body.category_ids,
-        });
+        const { error: categoryError } = await supabaseServerAdmin.rpc(
+            "rpc__schematic_set_categories",
+            {
+                schematic_id: schematicId,
+                category_ids: body.category_ids,
+            }
+        );
 
         if (categoryError) {
             BackendApiRouteLogger.warn("Failed to set categories for schematic", {
@@ -272,9 +271,12 @@ export async function PATCH(
         .eq("id", schematicId)
         .single();
 
-    const { data: categoryData } = await supabaseServerAdmin.rpc("rpc__schematic_get_categories", {
-        schematic_id: schematicId,
-    });
+    const { data: categoryData } = await supabaseServerAdmin.rpc(
+        "rpc__schematic_get_categories",
+        {
+            schematic_id: schematicId,
+        }
+    );
 
     if (categoryData) {
         categories = categoryData.map((c: { id: string; name: string; slug: string }) => ({
@@ -359,10 +361,7 @@ export async function DELETE(
     const isAuthor = schematic.author_id === user.id;
 
     if (!isAdmin && !isAuthor) {
-        return new ApiError()
-            .code(ApiErrorCode.FORBIDDEN)
-            .message("无权删除此原理图")
-            .build();
+        return new ApiError().code(ApiErrorCode.FORBIDDEN).message("无权删除此原理图").build();
     }
 
     if (isAuthor && !isAdmin) {

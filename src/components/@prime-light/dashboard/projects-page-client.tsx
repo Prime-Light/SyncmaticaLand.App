@@ -14,15 +14,22 @@ export interface ProjectsPageClientProps {
     currentUserId: string;
 }
 
-export function ProjectsPageClient({ projects: initialProjects, currentUserId }: ProjectsPageClientProps) {
+export function ProjectsPageClient({
+    projects: initialProjects,
+    currentUserId,
+}: ProjectsPageClientProps) {
     const router = useRouter();
     const [projects, setProjects] = React.useState(initialProjects);
-    const [editingProject, setEditingProject] = React.useState<Schematic.Schematic.Schematic | null>(null);
-    const [deletingProject, setDeletingProject] = React.useState<Schematic.Schematic.Schematic | null>(null);
+    const [editingProject, setEditingProject] =
+        React.useState<Schematic.Schematic.Schematic | null>(null);
+    const [deletingProject, setDeletingProject] =
+        React.useState<Schematic.Schematic.Schematic | null>(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
-    const { deleteSchematic, isLoading: isDeleting } = useDeleteSchematic(deletingProject?.id ?? "");
+    const { deleteSchematic, isLoading: isDeleting } = useDeleteSchematic(
+        deletingProject?.id ?? ""
+    );
 
     const handleEdit = React.useCallback((project: Schematic.Schematic.Schematic) => {
         setEditingProject(project);
@@ -81,14 +88,16 @@ export function ProjectsPageClient({ projects: initialProjects, currentUserId }:
                         <Shadcn.SheetTitle className="text-base font-semibold">
                             确认删除
                         </Shadcn.SheetTitle>
-                        <Shadcn.SheetDescription>
-                            此操作无法撤销
-                        </Shadcn.SheetDescription>
+                        <Shadcn.SheetDescription>此操作无法撤销</Shadcn.SheetDescription>
                     </Shadcn.SheetHeader>
 
                     <div className="flex flex-col gap-4 p-4">
                         <p className="text-sm text-muted-foreground">
-                            确定要删除项目 <span className="font-medium text-foreground">&ldquo;{deletingProject?.name}&rdquo;</span> 吗？删除后将无法恢复。
+                            确定要删除项目{" "}
+                            <span className="font-medium text-foreground">
+                                &ldquo;{deletingProject?.name}&rdquo;
+                            </span>{" "}
+                            吗？删除后将无法恢复。
                         </p>
 
                         <div className="flex items-center justify-end gap-3">

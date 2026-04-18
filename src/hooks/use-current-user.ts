@@ -25,7 +25,7 @@ export interface UseCurrentUserResult {
  */
 export function useCurrentUser(
     initialUser?: CurrentUser | null,
-    { skip = false }: { skip?: boolean } = {},
+    { skip = false }: { skip?: boolean } = {}
 ): UseCurrentUserResult {
     const [user, setUser] = useState<CurrentUser | null>(initialUser ?? null);
     const [loading, setLoading] = useState(!skip && initialUser == null);

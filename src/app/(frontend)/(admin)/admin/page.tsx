@@ -93,10 +93,7 @@ export default async function AdminPage() {
     return (
         <>
             <Prime.SiteHeader
-                breadcrumbs={[
-                    { label: "管理后台", href: "/admin" },
-                    { label: "概览" },
-                ]}
+                breadcrumbs={[{ label: "管理后台", href: "/admin" }, { label: "概览" }]}
             />
             <div className="flex flex-1 flex-col gap-4 p-4">
                 <AdminStats

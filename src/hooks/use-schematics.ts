@@ -19,7 +19,9 @@ export interface UseSchematicsResult {
 }
 
 export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResult {
-    const [schematics, setSchematics] = useState<Schematic.Schematic.SchematicListRes | null>(null);
+    const [schematics, setSchematics] = useState<Schematic.Schematic.SchematicListRes | null>(
+        null
+    );
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
@@ -60,7 +62,13 @@ export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResu
         return () => {
             mounted = false;
         };
-    }, [options?.status, options?.category_id, options?.author_id, options?.limit, options?.offset]);
+    }, [
+        options?.status,
+        options?.category_id,
+        options?.author_id,
+        options?.limit,
+        options?.offset,
+    ]);
 
     useEffect(() => {
         const cleanup = fetchData();

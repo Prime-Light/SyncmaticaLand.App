@@ -12,7 +12,10 @@ export function NavUser() {
 
     const handleLogout = async () => {
         try {
-            const res = await fetch("/api/v1/auth/logout", { method: "POST", cache: "no-store" });
+            const res = await fetch("/api/v1/auth/logout", {
+                method: "POST",
+                cache: "no-store",
+            });
             if (!res.ok) {
                 toast.error("登出失败，请稍后重试");
                 return;

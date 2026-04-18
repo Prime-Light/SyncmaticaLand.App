@@ -41,10 +41,7 @@ export default async function ProjectsPage() {
     return (
         <>
             <Prime.SiteHeader
-                breadcrumbs={[
-                    { label: "创作者仪表盘", href: "/dashboard" },
-                    { label: "项目" },
-                ]}
+                breadcrumbs={[{ label: "创作者仪表盘", href: "/dashboard" }, { label: "项目" }]}
             />
             <div className="flex flex-1 flex-col gap-4 p-4">
                 <ProjectsPageClient projects={sortedSchematics} currentUserId={user.id} />

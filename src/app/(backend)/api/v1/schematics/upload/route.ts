@@ -44,10 +44,7 @@ export async function POST(request: Request): Promise<NextResponse<UploadResult>
 
     if (!file) {
         BackendApiRouteLogger.warn("No file provided in upload request");
-        return new ApiError()
-            .code(ApiErrorCode.BAD_REQUEST)
-            .message("未提供文件")
-            .build();
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("未提供文件").build();
     }
 
     if (file.size > MAX_SCHEMATIC_SIZE) {
