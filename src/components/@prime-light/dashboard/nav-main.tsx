@@ -32,7 +32,13 @@ interface SectionItem {
     requiredRole?: UserRole;
 }
 
-export function NavMain({ items, currentUser }: { items: SectionItem[]; currentUser?: CurrentUser }) {
+export function NavMain({
+    items,
+    currentUser,
+}: {
+    items: SectionItem[];
+    currentUser?: CurrentUser;
+}) {
     const userRole = currentUser?.role as UserRole | undefined;
 
     const filteredItems = items.filter((sItem) => {
@@ -61,7 +67,12 @@ export function NavMain({ items, currentUser }: { items: SectionItem[]; currentU
                         <SidebarGroup className="p-0">
                             <SidebarGroupLabel>{sItem.text}</SidebarGroupLabel>
                             {sItem.items
-                                .filter((item) => hasRequiredRole(userRole, item.requiredRole ?? sItem.requiredRole ?? "user"))
+                                .filter((item) =>
+                                    hasRequiredRole(
+                                        userRole,
+                                        item.requiredRole ?? sItem.requiredRole ?? "user"
+                                    )
+                                )
                                 .map((item) => (
                                     <Shadcn.SidebarMenuItem key={item.title}>
                                         <Shadcn.SidebarMenuButton asChild tooltip={item.title}>

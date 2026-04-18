@@ -19,7 +19,12 @@ interface EditableCellProps {
     multiline?: boolean;
 }
 
-function EditableCell({ value, onSave, placeholder = "点击编辑", multiline = false }: EditableCellProps) {
+function EditableCell({
+    value,
+    onSave,
+    placeholder = "点击编辑",
+    multiline = false,
+}: EditableCellProps) {
     const [isEditing, setIsEditing] = React.useState(false);
     const [editValue, setEditValue] = React.useState(value ?? "");
     const [isSaving, setIsSaving] = React.useState(false);
@@ -131,7 +136,12 @@ function formatDate(dateString: string): string {
     });
 }
 
-export function CategoriesTable({ categories, onEdit, onDelete, onUpdate }: CategoriesTableProps) {
+export function CategoriesTable({
+    categories,
+    onEdit,
+    onDelete,
+    onUpdate,
+}: CategoriesTableProps) {
     const [currentPage, setCurrentPage] = React.useState(1);
     const pageSize = 10;
 
@@ -154,7 +164,11 @@ export function CategoriesTable({ categories, onEdit, onDelete, onUpdate }: Cate
         );
     }
 
-    const handleFieldUpdate = async (id: string, field: keyof Schematic.Category.UpdateCategoryReq, value: string) => {
+    const handleFieldUpdate = async (
+        id: string,
+        field: keyof Schematic.Category.UpdateCategoryReq,
+        value: string
+    ) => {
         const data: Schematic.Category.UpdateCategoryReq = { [field]: value || null };
         return await onUpdate(id, data);
     };
@@ -183,7 +197,9 @@ export function CategoriesTable({ categories, onEdit, onDelete, onUpdate }: Cate
                                 <Shadcn.TableCell className="font-medium">
                                     <EditableCell
                                         value={category.name}
-                                        onSave={(value) => handleFieldUpdate(category.id, "name", value)}
+                                        onSave={(value) =>
+                                            handleFieldUpdate(category.id, "name", value)
+                                        }
                                     />
                                 </Shadcn.TableCell>
                                 <Shadcn.TableCell>
@@ -194,7 +210,9 @@ export function CategoriesTable({ categories, onEdit, onDelete, onUpdate }: Cate
                                 <Shadcn.TableCell>
                                     <EditableCell
                                         value={category.description}
-                                        onSave={(value) => handleFieldUpdate(category.id, "description", value)}
+                                        onSave={(value) =>
+                                            handleFieldUpdate(category.id, "description", value)
+                                        }
                                         placeholder="添加描述"
                                         multiline
                                     />
@@ -202,7 +220,9 @@ export function CategoriesTable({ categories, onEdit, onDelete, onUpdate }: Cate
                                 <Shadcn.TableCell>
                                     <EditableCell
                                         value={category.icon_url}
-                                        onSave={(value) => handleFieldUpdate(category.id, "icon_url", value)}
+                                        onSave={(value) =>
+                                            handleFieldUpdate(category.id, "icon_url", value)
+                                        }
                                         placeholder="添加图标 URL"
                                     />
                                 </Shadcn.TableCell>
@@ -218,7 +238,8 @@ export function CategoriesTable({ categories, onEdit, onDelete, onUpdate }: Cate
                                             </Shadcn.Button>
                                         </Shadcn.DropdownMenuTrigger>
                                         <Shadcn.DropdownMenuContent align="end">
-                                            <Shadcn.DropdownMenuItem onClick={() => onEdit(category)}>
+                                            <Shadcn.DropdownMenuItem
+                                                onClick={() => onEdit(category)}>
                                                 <PencilIcon />
                                                 编辑
                                             </Shadcn.DropdownMenuItem>

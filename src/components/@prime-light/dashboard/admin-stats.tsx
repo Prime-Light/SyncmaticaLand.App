@@ -28,7 +28,12 @@ function StatCard({ title, value, icon }: StatCardProps) {
     );
 }
 
-export function AdminStats({ totalUsers, totalSchematics, pendingReviews, totalViews }: AdminStatsProps) {
+export function AdminStats({
+    totalUsers,
+    totalSchematics,
+    pendingReviews,
+    totalViews,
+}: AdminStatsProps) {
     const stats: StatCardProps[] = [
         {
             title: "用户总数",

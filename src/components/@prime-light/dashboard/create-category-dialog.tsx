@@ -26,7 +26,11 @@ export interface CreateCategoryDialogProps {
     onSuccess: () => void;
 }
 
-export function CreateCategoryDialog({ open, onOpenChange, onSuccess }: CreateCategoryDialogProps) {
+export function CreateCategoryDialog({
+    open,
+    onOpenChange,
+    onSuccess,
+}: CreateCategoryDialogProps) {
     const { createCategory, isLoading } = useCreateCategory();
 
     const [name, setName] = React.useState("");
@@ -101,9 +105,7 @@ export function CreateCategoryDialog({ open, onOpenChange, onSuccess }: CreateCa
                     <Shadcn.SheetTitle className="text-base font-semibold">
                         新建分类
                     </Shadcn.SheetTitle>
-                    <Shadcn.SheetDescription>
-                        创建一个新的原理图分类
-                    </Shadcn.SheetDescription>
+                    <Shadcn.SheetDescription>创建一个新的原理图分类</Shadcn.SheetDescription>
                 </Shadcn.SheetHeader>
 
                 <form onSubmit={handleSubmit} className="flex flex-1 flex-col gap-4 p-4">

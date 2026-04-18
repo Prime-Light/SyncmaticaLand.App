@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import { Shadcn } from "@/components";
-import { CheckCircleIcon, XCircleIcon, EyeIcon, ThumbsUpIcon, StarIcon, ImageIcon } from "lucide-react";
+import {
+    CheckCircleIcon,
+    XCircleIcon,
+    EyeIcon,
+    ThumbsUpIcon,
+    StarIcon,
+    ImageIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useUpdateSchematic } from "@/hooks";
 import { Schematic } from "@/schema";
@@ -14,7 +21,10 @@ const statusLabels: Record<Schematic.Schematic.ProjectStatus, string> = {
     rejected: "已拒绝",
 };
 
-const statusVariants: Record<Schematic.Schematic.ProjectStatus, "secondary" | "default" | "outline" | "destructive"> = {
+const statusVariants: Record<
+    Schematic.Schematic.ProjectStatus,
+    "secondary" | "default" | "outline" | "destructive"
+> = {
     draft: "secondary",
     published: "default",
     under_review: "outline",
@@ -46,7 +56,12 @@ export interface AuditDetailDialogProps {
     onSuccess: () => void;
 }
 
-export function AuditDetailDialog({ project, open, onOpenChange, onSuccess }: AuditDetailDialogProps) {
+export function AuditDetailDialog({
+    project,
+    open,
+    onOpenChange,
+    onSuccess,
+}: AuditDetailDialogProps) {
     const { updateSchematic, isLoading: isUpdating } = useUpdateSchematic(project?.id ?? "");
     const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -92,7 +107,9 @@ export function AuditDetailDialog({ project, open, onOpenChange, onSuccess }: Au
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-lg font-semibold">{project.name}</h3>
-                            <p className="text-sm text-muted-foreground">作者: {project.author_name}</p>
+                            <p className="text-sm text-muted-foreground">
+                                作者: {project.author_name}
+                            </p>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -125,7 +142,7 @@ export function AuditDetailDialog({ project, open, onOpenChange, onSuccess }: Au
                         {project.description && (
                             <div>
                                 <h4 className="mb-1 text-sm font-medium">描述</h4>
-                                <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+                                <p className="text-sm whitespace-pre-wrap text-muted-foreground">
                                     {project.description}
                                 </p>
                             </div>

@@ -100,7 +100,9 @@ export async function PATCH(
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-        BackendApiRouteLogger.warn("Unauthorized update category attempt", { error: authError });
+        BackendApiRouteLogger.warn("Unauthorized update category attempt", {
+            error: authError,
+        });
         return new ApiError()
             .code(ApiErrorCode.UNAUTHORIZED)
             .message("未授权访问")
@@ -135,10 +137,7 @@ export async function PATCH(
     try {
         body = await request.json();
     } catch {
-        return new ApiError()
-            .code(ApiErrorCode.BAD_REQUEST)
-            .message("无效的请求体")
-            .build();
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("无效的请求体").build();
     }
 
     const parseResult = Schematic.Category.UpdateCategoryReqSchema.safeParse(body);
@@ -155,7 +154,8 @@ export async function PATCH(
     const updateData: Record<string, unknown> = {};
     if (validatedData.name !== undefined) updateData.name = validatedData.name;
     if (validatedData.slug !== undefined) updateData.slug = validatedData.slug;
-    if (validatedData.description !== undefined) updateData.description = validatedData.description;
+    if (validatedData.description !== undefined)
+        updateData.description = validatedData.description;
     if (validatedData.icon_url !== undefined) updateData.icon_url = validatedData.icon_url;
 
     if (Object.keys(updateData).length > 0) {
@@ -219,7 +219,9 @@ export async function DELETE(
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-        BackendApiRouteLogger.warn("Unauthorized delete category attempt", { error: authError });
+        BackendApiRouteLogger.warn("Unauthorized delete category attempt", {
+            error: authError,
+        });
         return new ApiError()
             .code(ApiErrorCode.UNAUTHORIZED)
             .message("未授权访问")

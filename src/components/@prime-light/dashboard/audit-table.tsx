@@ -3,7 +3,13 @@
 import * as React from "react";
 import Link from "next/link";
 import { Shadcn } from "@/components";
-import { EyeIcon, ThumbsUpIcon, MoreHorizontalIcon, CheckCircleIcon, XCircleIcon } from "lucide-react";
+import {
+    EyeIcon,
+    ThumbsUpIcon,
+    MoreHorizontalIcon,
+    CheckCircleIcon,
+    XCircleIcon,
+} from "lucide-react";
 import { Schematic } from "@/schema";
 
 export interface AuditTableProps {
@@ -22,7 +28,10 @@ const statusLabels: Record<Schematic.Schematic.ProjectStatus, string> = {
     rejected: "已拒绝",
 };
 
-const statusVariants: Record<Schematic.Schematic.ProjectStatus, "secondary" | "default" | "outline" | "destructive"> = {
+const statusVariants: Record<
+    Schematic.Schematic.ProjectStatus,
+    "secondary" | "default" | "outline" | "destructive"
+> = {
     draft: "secondary",
     published: "default",
     under_review: "outline",
@@ -30,11 +39,7 @@ const statusVariants: Record<Schematic.Schematic.ProjectStatus, "secondary" | "d
 };
 
 function StatusBadge({ status }: { status: Schematic.Schematic.ProjectStatus }) {
-    return (
-        <Shadcn.Badge variant={statusVariants[status]}>
-            {statusLabels[status]}
-        </Shadcn.Badge>
-    );
+    return <Shadcn.Badge variant={statusVariants[status]}>{statusLabels[status]}</Shadcn.Badge>;
 }
 
 function formatDate(dateString: string): string {
@@ -78,14 +83,18 @@ export function AuditTable({
                     </div>
                     <Shadcn.Select
                         value={statusFilter}
-                        onValueChange={(v) => onStatusFilterChange(v as Schematic.Schematic.ProjectStatus | "all")}>
+                        onValueChange={(v) =>
+                            onStatusFilterChange(v as Schematic.Schematic.ProjectStatus | "all")
+                        }>
                         <Shadcn.SelectTrigger className="w-[140px]">
                             <Shadcn.SelectValue placeholder="筛选状态" />
                         </Shadcn.SelectTrigger>
                         <Shadcn.SelectContent>
                             <Shadcn.SelectGroup>
                                 <Shadcn.SelectItem value="all">全部状态</Shadcn.SelectItem>
-                                <Shadcn.SelectItem value="under_review">审核中</Shadcn.SelectItem>
+                                <Shadcn.SelectItem value="under_review">
+                                    审核中
+                                </Shadcn.SelectItem>
                                 <Shadcn.SelectItem value="published">已发布</Shadcn.SelectItem>
                                 <Shadcn.SelectItem value="rejected">已拒绝</Shadcn.SelectItem>
                                 <Shadcn.SelectItem value="draft">草稿</Shadcn.SelectItem>
@@ -96,7 +105,9 @@ export function AuditTable({
             </Shadcn.CardHeader>
             <Shadcn.CardContent>
                 {projects.length === 0 ? (
-                    <p className="py-8 text-center text-sm text-muted-foreground">暂无待审核项目</p>
+                    <p className="py-8 text-center text-sm text-muted-foreground">
+                        暂无待审核项目
+                    </p>
                 ) : (
                     <>
                         <Shadcn.Table>
@@ -105,8 +116,12 @@ export function AuditTable({
                                     <Shadcn.TableHead>名称</Shadcn.TableHead>
                                     <Shadcn.TableHead>作者</Shadcn.TableHead>
                                     <Shadcn.TableHead>状态</Shadcn.TableHead>
-                                    <Shadcn.TableHead className="text-center">浏览</Shadcn.TableHead>
-                                    <Shadcn.TableHead className="text-center">点赞</Shadcn.TableHead>
+                                    <Shadcn.TableHead className="text-center">
+                                        浏览
+                                    </Shadcn.TableHead>
+                                    <Shadcn.TableHead className="text-center">
+                                        点赞
+                                    </Shadcn.TableHead>
                                     <Shadcn.TableHead>创建时间</Shadcn.TableHead>
                                     <Shadcn.TableHead className="w-[60px]"></Shadcn.TableHead>
                                 </Shadcn.TableRow>
@@ -148,26 +163,36 @@ export function AuditTable({
                                             <Shadcn.TableCell>
                                                 <Shadcn.DropdownMenu>
                                                     <Shadcn.DropdownMenuTrigger asChild>
-                                                        <Shadcn.Button variant="ghost" size="icon-sm">
+                                                        <Shadcn.Button
+                                                            variant="ghost"
+                                                            size="icon-sm">
                                                             <MoreHorizontalIcon />
-                                                            <span className="sr-only">操作菜单</span>
+                                                            <span className="sr-only">
+                                                                操作菜单
+                                                            </span>
                                                         </Shadcn.Button>
                                                     </Shadcn.DropdownMenuTrigger>
                                                     <Shadcn.DropdownMenuContent align="end">
                                                         <Shadcn.DropdownMenuItem
-                                                            onClick={() => onViewDetails(project)}>
+                                                            onClick={() =>
+                                                                onViewDetails(project)
+                                                            }>
                                                             查看详情
                                                         </Shadcn.DropdownMenuItem>
                                                         {isUnderReview && (
                                                             <>
                                                                 <Shadcn.DropdownMenuItem
-                                                                    onClick={() => onApprove(project)}>
+                                                                    onClick={() =>
+                                                                        onApprove(project)
+                                                                    }>
                                                                     <CheckCircleIcon />
                                                                     批准
                                                                 </Shadcn.DropdownMenuItem>
                                                                 <Shadcn.DropdownMenuItem
                                                                     variant="destructive"
-                                                                    onClick={() => onReject(project)}>
+                                                                    onClick={() =>
+                                                                        onReject(project)
+                                                                    }>
                                                                     <XCircleIcon />
                                                                     拒绝
                                                                 </Shadcn.DropdownMenuItem>

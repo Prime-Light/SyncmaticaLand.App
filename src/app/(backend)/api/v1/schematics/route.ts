@@ -84,10 +84,11 @@ async function fetchSchematicsByTableFallback(
     const fallbackLimit = needsCategoryFilter ? 1000 : query.limit;
     const fallbackOffset = needsCategoryFilter ? 0 : query.offset;
 
-    const { data: rows, error, count } = await baseQuery.range(
-        fallbackOffset,
-        fallbackOffset + fallbackLimit - 1
-    );
+    const {
+        data: rows,
+        error,
+        count,
+    } = await baseQuery.range(fallbackOffset, fallbackOffset + fallbackLimit - 1);
 
     if (error) {
         throw error;
@@ -126,7 +127,7 @@ async function fetchSchematicsByTableFallback(
 
     return {
         schematics: paged,
-        total: needsCategoryFilter ? filtered.length : count ?? paged.length,
+        total: needsCategoryFilter ? filtered.length : (count ?? paged.length),
     };
 }
 
@@ -172,7 +173,11 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
                     .message("无权访问他人的草稿")
                     .build();
             }
-            if ((status === "under_review" || status === "rejected") && !isCreator && authorId !== user.id) {
+            if (
+                (status === "under_review" || status === "rejected") &&
+                !isCreator &&
+                authorId !== user.id
+            ) {
                 return new ApiError()
                     .code(ApiErrorCode.FORBIDDEN)
                     .message("无权访问该内容")
@@ -213,7 +218,9 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
                 offset,
             });
         } catch (fallbackError) {
-            BackendApiRouteLogger.error("Fallback fetch schematics failed", { error: fallbackError });
+            BackendApiRouteLogger.error("Fallback fetch schematics failed", {
+                error: fallbackError,
+            });
         }
     }
 
@@ -305,10 +312,7 @@ export async function POST(request: Request): Promise<NextResponse<SchematicCrea
     try {
         body = await request.json();
     } catch {
-        return new ApiError()
-            .code(ApiErrorCode.BAD_REQUEST)
-            .message("无效的请求体")
-            .build();
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("无效的请求体").build();
     }
 
     const parseResult = Schematic.Schematic.CreateSchematicReqSchema.safeParse(body);
@@ -357,10 +361,13 @@ export async function POST(request: Request): Promise<NextResponse<SchematicCrea
     let categories: Array<{ id: string; name: string; slug: string }> = [];
 
     if (body.category_ids && body.category_ids.length > 0) {
-        const { error: categoryError } = await supabaseServerAdmin.rpc("rpc__schematic_set_categories", {
-            schematic_id: newSchematic.id,
-            category_ids: body.category_ids,
-        });
+        const { error: categoryError } = await supabaseServerAdmin.rpc(
+            "rpc__schematic_set_categories",
+            {
+                schematic_id: newSchematic.id,
+                category_ids: body.category_ids,
+            }
+        );
 
         if (categoryError) {
             BackendApiRouteLogger.warn("Failed to set categories for new schematic", {
@@ -369,9 +376,12 @@ export async function POST(request: Request): Promise<NextResponse<SchematicCrea
             });
         }
 
-        const { data: categoryData } = await supabaseServerAdmin.rpc("rpc__schematic_get_categories", {
-            schematic_id: newSchematic.id,
-        });
+        const { data: categoryData } = await supabaseServerAdmin.rpc(
+            "rpc__schematic_get_categories",
+            {
+                schematic_id: newSchematic.id,
+            }
+        );
 
         if (categoryData) {
             categories = categoryData.map((c: { id: string; name: string; slug: string }) => ({

@@ -50,10 +50,16 @@ export const CreateCategoryReqSchema = z.object({
         description: "Category name (required)",
         example: "Medieval",
     }),
-    slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/).meta({
-        description: "Category slug for URL routing (required, lowercase letters, numbers, and hyphens only)",
-        example: "medieval",
-    }),
+    slug: z
+        .string()
+        .min(1)
+        .max(100)
+        .regex(/^[a-z0-9-]+$/)
+        .meta({
+            description:
+                "Category slug for URL routing (required, lowercase letters, numbers, and hyphens only)",
+            example: "medieval",
+        }),
     description: z.string().max(500).nullable().optional().meta({
         description: "Category description (optional)",
         example: "Medieval style builds including castles, villages, and fortresses",
@@ -71,10 +77,17 @@ export const UpdateCategoryReqSchema = z.object({
         description: "Category name",
         example: "Medieval",
     }),
-    slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/).optional().meta({
-        description: "Category slug for URL routing (lowercase letters, numbers, and hyphens only)",
-        example: "medieval",
-    }),
+    slug: z
+        .string()
+        .min(1)
+        .max(100)
+        .regex(/^[a-z0-9-]+$/)
+        .optional()
+        .meta({
+            description:
+                "Category slug for URL routing (lowercase letters, numbers, and hyphens only)",
+            example: "medieval",
+        }),
     description: z.string().max(500).nullable().optional().meta({
         description: "Category description",
         example: "Medieval style builds including castles, villages, and fortresses",

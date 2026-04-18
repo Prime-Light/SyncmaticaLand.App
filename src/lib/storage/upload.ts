@@ -12,7 +12,11 @@ export function generateSchematicPath(userId: string, fileName: string): string 
     return `schematics/${userId}/${timestamp}_${fileName}`;
 }
 
-export function generateImagePath(userId: string, schematicId: string | null, fileName: string): string {
+export function generateImagePath(
+    userId: string,
+    schematicId: string | null,
+    fileName: string
+): string {
     const timestamp = Date.now();
     if (schematicId) {
         return `images/${userId}/${schematicId}/${timestamp}_${fileName}`;

@@ -9,9 +9,27 @@ import { Schematic } from "@/schema";
 
 const MC_VERSIONS: Record<string, string[]> = {
     "1.21.x": [
-        "1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8",
-        "1.21.9", "1.21.10", "1.21.11", "1.21.12", "1.21.13", "1.21.14", "1.21.15", "1.21.16",
-        "1.21.17", "1.21.18", "1.21.19", "1.21.20",
+        "1.21",
+        "1.21.1",
+        "1.21.2",
+        "1.21.3",
+        "1.21.4",
+        "1.21.5",
+        "1.21.6",
+        "1.21.7",
+        "1.21.8",
+        "1.21.9",
+        "1.21.10",
+        "1.21.11",
+        "1.21.12",
+        "1.21.13",
+        "1.21.14",
+        "1.21.15",
+        "1.21.16",
+        "1.21.17",
+        "1.21.18",
+        "1.21.19",
+        "1.21.20",
     ],
     "1.20.x": ["1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6"],
     "1.19.x": ["1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4"],
@@ -22,7 +40,18 @@ const MC_VERSIONS: Record<string, string[]> = {
     "1.14.x": ["1.14", "1.14.1", "1.14.2", "1.14.3", "1.14.4"],
     "1.13.x": ["1.13", "1.13.1", "1.13.2"],
     "1.12.x": ["1.12", "1.12.1", "1.12.2"],
-    "1.8.x": ["1.8", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5", "1.8.6", "1.8.7", "1.8.8", "1.8.9"],
+    "1.8.x": [
+        "1.8",
+        "1.8.1",
+        "1.8.2",
+        "1.8.3",
+        "1.8.4",
+        "1.8.5",
+        "1.8.6",
+        "1.8.7",
+        "1.8.8",
+        "1.8.9",
+    ],
 };
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -61,7 +90,12 @@ export interface EditProjectDialogProps {
     onSuccess: () => void;
 }
 
-export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: EditProjectDialogProps) {
+export function EditProjectDialog({
+    project,
+    open,
+    onOpenChange,
+    onSuccess,
+}: EditProjectDialogProps) {
     const { updateSchematic, isLoading: isUpdating } = useUpdateSchematic(project?.id ?? "");
 
     const [name, setName] = React.useState("");
@@ -124,38 +158,44 @@ export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: Ed
         return valid;
     }
 
-    const handleImageDrop = React.useCallback((e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDraggingImage(false);
-        const files = filterImagesWithFeedback(Array.from(e.dataTransfer.files));
-        setNewImages((prev) => {
-            const available = 5 - existingImages.length - prev.length;
-            if (available <= 0) {
-                if (files.length > 0) toast.error("最多只能上传 5 张预览图片");
-                return prev;
-            }
-            const newEntries = files
-                .slice(0, available)
-                .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
-            return [...prev, ...newEntries];
-        });
-    }, [existingImages.length]);
+    const handleImageDrop = React.useCallback(
+        (e: React.DragEvent) => {
+            e.preventDefault();
+            setIsDraggingImage(false);
+            const files = filterImagesWithFeedback(Array.from(e.dataTransfer.files));
+            setNewImages((prev) => {
+                const available = 5 - existingImages.length - prev.length;
+                if (available <= 0) {
+                    if (files.length > 0) toast.error("最多只能上传 5 张预览图片");
+                    return prev;
+                }
+                const newEntries = files
+                    .slice(0, available)
+                    .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
+                return [...prev, ...newEntries];
+            });
+        },
+        [existingImages.length]
+    );
 
-    const handleImageSelect = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = filterImagesWithFeedback(Array.from(e.target.files ?? []));
-        setNewImages((prev) => {
-            const available = 5 - existingImages.length - prev.length;
-            if (available <= 0) {
-                if (files.length > 0) toast.error("最多只能上传 5 张预览图片");
-                return prev;
-            }
-            const newEntries = files
-                .slice(0, available)
-                .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
-            return [...prev, ...newEntries];
-        });
-        e.target.value = "";
-    }, [existingImages.length]);
+    const handleImageSelect = React.useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const files = filterImagesWithFeedback(Array.from(e.target.files ?? []));
+            setNewImages((prev) => {
+                const available = 5 - existingImages.length - prev.length;
+                if (available <= 0) {
+                    if (files.length > 0) toast.error("最多只能上传 5 张预览图片");
+                    return prev;
+                }
+                const newEntries = files
+                    .slice(0, available)
+                    .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
+                return [...prev, ...newEntries];
+            });
+            e.target.value = "";
+        },
+        [existingImages.length]
+    );
 
     const removeExistingImage = React.useCallback((index: number) => {
         setExistingImages((prev) => prev.filter((_, i) => i !== index));
@@ -221,9 +261,7 @@ export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: Ed
                     <Shadcn.SheetTitle className="text-base font-semibold">
                         编辑项目
                     </Shadcn.SheetTitle>
-                    <Shadcn.SheetDescription>
-                        修改原理图的基本信息
-                    </Shadcn.SheetDescription>
+                    <Shadcn.SheetDescription>修改原理图的基本信息</Shadcn.SheetDescription>
                 </Shadcn.SheetHeader>
 
                 <form onSubmit={handleSubmit} className="flex flex-1 flex-col gap-6 p-4">
@@ -293,11 +331,15 @@ export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: Ed
                                     </Shadcn.SelectTrigger>
                                     <Shadcn.SelectContent>
                                         <Shadcn.SelectGroup>
-                                            {(MC_VERSIONS[mcMajorVersion] ?? []).map((minor) => (
-                                                <Shadcn.SelectItem key={minor} value={minor}>
-                                                    {minor}
-                                                </Shadcn.SelectItem>
-                                            ))}
+                                            {(MC_VERSIONS[mcMajorVersion] ?? []).map(
+                                                (minor) => (
+                                                    <Shadcn.SelectItem
+                                                        key={minor}
+                                                        value={minor}>
+                                                        {minor}
+                                                    </Shadcn.SelectItem>
+                                                )
+                                            )}
                                         </Shadcn.SelectGroup>
                                     </Shadcn.SelectContent>
                                 </Shadcn.Select>
@@ -312,12 +354,17 @@ export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: Ed
                             </Shadcn.FieldLabel>
                             <div className="flex flex-wrap items-center gap-1.5 border border-input bg-transparent px-2.5 py-2 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/50">
                                 {tags.map((tag) => (
-                                    <Shadcn.Badge key={tag} variant="secondary" className="gap-1">
+                                    <Shadcn.Badge
+                                        key={tag}
+                                        variant="secondary"
+                                        className="gap-1">
                                         {tag}
                                         <button
                                             type="button"
                                             aria-label={`移除标签 ${tag}`}
-                                            onClick={() => setTags((prev) => prev.filter((t) => t !== tag))}
+                                            onClick={() =>
+                                                setTags((prev) => prev.filter((t) => t !== tag))
+                                            }
                                             className="cursor-pointer opacity-60 transition-opacity hover:opacity-100">
                                             <XIcon className="size-3" aria-hidden="true" />
                                         </button>
@@ -325,7 +372,9 @@ export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: Ed
                                 ))}
                                 <input
                                     id="edit-tags"
-                                    placeholder={tags.length === 0 ? "输入标签后按回车添加" : ""}
+                                    placeholder={
+                                        tags.length === 0 ? "输入标签后按回车添加" : ""
+                                    }
                                     value={tagInput}
                                     onChange={(e) => setTagInput(e.target.value)}
                                     onKeyDown={(e) => {
@@ -337,7 +386,11 @@ export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: Ed
                                             }
                                             setTagInput("");
                                         }
-                                        if (e.key === "Backspace" && tagInput === "" && tags.length > 0) {
+                                        if (
+                                            e.key === "Backspace" &&
+                                            tagInput === "" &&
+                                            tags.length > 0
+                                        ) {
                                             setTags((prev) => prev.slice(0, -1));
                                         }
                                     }}
@@ -379,7 +432,9 @@ export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: Ed
                                                         size="icon"
                                                         aria-label={`移除预览图片 ${index + 1}`}
                                                         className="text-white hover:text-white"
-                                                        onClick={() => removeExistingImage(index)}>
+                                                        onClick={() =>
+                                                            removeExistingImage(index)
+                                                        }>
                                                         <XIcon aria-hidden="true" />
                                                     </Shadcn.Button>
                                                 </div>
@@ -435,7 +490,8 @@ export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: Ed
                                         }`}>
                                         <ImageIcon className="text-muted-foreground" />
                                         <p className="text-base text-muted-foreground">
-                                            拖放图片到此处，或点击浏览（还可添加 {5 - totalImages} 张）
+                                            拖放图片到此处，或点击浏览（还可添加{" "}
+                                            {5 - totalImages} 张）
                                         </p>
                                         <input
                                             ref={imageInputRef}
@@ -463,7 +519,10 @@ export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: Ed
                             disabled={!isFormValid || isSubmitting || isUpdating}>
                             {isSubmitting || isUpdating ? (
                                 <>
-                                    <UploadIcon data-icon="inline-start" className="animate-pulse" />
+                                    <UploadIcon
+                                        data-icon="inline-start"
+                                        className="animate-pulse"
+                                    />
                                     保存中…
                                 </>
                             ) : (

@@ -1,9 +1,11 @@
 import { z } from "zod";
 
-export const ProjectStatusSchema = z.enum(["draft", "published", "under_review", "rejected"]).meta({
-    description: "Project status enum",
-    example: "draft",
-});
+export const ProjectStatusSchema = z
+    .enum(["draft", "published", "under_review", "rejected"])
+    .meta({
+        description: "Project status enum",
+        example: "draft",
+    });
 
 export type ProjectStatus = z.infer<typeof ProjectStatusSchema>;
 
@@ -37,18 +39,27 @@ export const SchematicSchema = z.object({
         description: "Minecraft version",
         example: "1.20.4",
     }),
-    tags: z.array(z.string()).default([]).meta({
-        description: "Array of tags",
-        example: ["medieval", "castle", "building"],
-    }),
+    tags: z
+        .array(z.string())
+        .default([])
+        .meta({
+            description: "Array of tags",
+            example: ["medieval", "castle", "building"],
+        }),
     file_url: z.string().meta({
         description: "URL to the schematic file",
         example: "https://example.com/schematics/castle.litematic",
     }),
-    images: z.array(z.string()).default([]).meta({
-        description: "Array of image URLs",
-        example: ["https://example.com/images/castle1.png", "https://example.com/images/castle2.png"],
-    }),
+    images: z
+        .array(z.string())
+        .default([])
+        .meta({
+            description: "Array of image URLs",
+            example: [
+                "https://example.com/images/castle1.png",
+                "https://example.com/images/castle2.png",
+            ],
+        }),
     upvotes: z.number().int().default(0).meta({
         description: "Number of upvotes",
         example: 42,
@@ -88,18 +99,26 @@ export const CreateSchematicReqSchema = z.object({
         description: "Minecraft version",
         example: "1.20.4",
     }),
-    tags: z.array(z.string()).optional().default([]).meta({
-        description: "Array of tags",
-        example: ["medieval", "castle", "building"],
-    }),
+    tags: z
+        .array(z.string())
+        .optional()
+        .default([])
+        .meta({
+            description: "Array of tags",
+            example: ["medieval", "castle", "building"],
+        }),
     file_url: z.string().url("Invalid file URL").meta({
         description: "URL to the schematic file",
         example: "https://example.com/schematics/castle.litematic",
     }),
-    images: z.array(z.string().url("Invalid image URL")).optional().default([]).meta({
-        description: "Array of image URLs",
-        example: ["https://example.com/images/castle1.png"],
-    }),
+    images: z
+        .array(z.string().url("Invalid image URL"))
+        .optional()
+        .default([])
+        .meta({
+            description: "Array of image URLs",
+            example: ["https://example.com/images/castle1.png"],
+        }),
 });
 
 export type CreateSchematicReq = z.infer<typeof CreateSchematicReqSchema>;
@@ -119,18 +138,24 @@ export const UpdateSchematicReqSchema = z.object({
         description: "Minecraft version",
         example: "1.21.0",
     }),
-    tags: z.array(z.string()).optional().meta({
-        description: "Array of tags",
-        example: ["medieval", "castle", "updated"],
-    }),
+    tags: z
+        .array(z.string())
+        .optional()
+        .meta({
+            description: "Array of tags",
+            example: ["medieval", "castle", "updated"],
+        }),
     file_url: z.string().url("Invalid file URL").optional().meta({
         description: "URL to the schematic file",
         example: "https://example.com/schematics/castle_v2.litematic",
     }),
-    images: z.array(z.string().url("Invalid image URL")).optional().meta({
-        description: "Array of image URLs",
-        example: ["https://example.com/images/castle_new.png"],
-    }),
+    images: z
+        .array(z.string().url("Invalid image URL"))
+        .optional()
+        .meta({
+            description: "Array of image URLs",
+            example: ["https://example.com/images/castle_new.png"],
+        }),
 });
 
 export type UpdateSchematicReq = z.infer<typeof UpdateSchematicReqSchema>;

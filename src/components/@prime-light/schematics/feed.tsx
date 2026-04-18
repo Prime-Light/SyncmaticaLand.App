@@ -46,7 +46,7 @@ export function SchematicFeed({ className, ...props }: SchematicFeedProps) {
     return (
         <div className={cn("h-full w-full", className)} {...props}>
             <Shadcn.Card size="sm">
-                <section className="w-full flex h-full">
+                <section className="flex h-full w-full">
                     <div className="flex h-full items-center px-4">
                         <span className="translate-y-px text-sm font-medium text-foreground">
                             视图

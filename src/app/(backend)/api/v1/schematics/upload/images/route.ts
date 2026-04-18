@@ -2,11 +2,7 @@ import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/database";
 import { BackendApiRouteLogger } from "@/lib/logger";
 import { ApiResponse, ApiError, ApiErrorCode, ApiResponseCode } from "@/lib/api-responses";
-import {
-    uploadImageFile,
-    MAX_IMAGE_SIZE,
-    ACCEPTED_IMAGE_TYPES,
-} from "@/lib/storage";
+import { uploadImageFile, MAX_IMAGE_SIZE, ACCEPTED_IMAGE_TYPES } from "@/lib/storage";
 import { Schematic } from "@/schema";
 import { IApiErrorResponse } from "@/types/api-error";
 
@@ -48,10 +44,7 @@ export async function POST(request: Request): Promise<NextResponse<MultiUploadRe
 
     if (!files || files.length === 0) {
         BackendApiRouteLogger.warn("No files provided in upload request");
-        return new ApiError()
-            .code(ApiErrorCode.BAD_REQUEST)
-            .message("未提供文件")
-            .build();
+        return new ApiError().code(ApiErrorCode.BAD_REQUEST).message("未提供文件").build();
     }
 
     if (files.length > MAX_FILES) {
