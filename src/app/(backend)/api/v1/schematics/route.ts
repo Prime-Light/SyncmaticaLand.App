@@ -16,6 +16,7 @@ export type SchematicCreateResult =
 interface SchematicWithCategories {
     id: string;
     author_id: string;
+    author_name?: string | null;
     name: string;
     description: string | null;
     status: Schematic.Schematic.ProjectStatus;
@@ -227,6 +228,27 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
     const schematics = result?.schematics ?? [];
     const total = result?.total ?? 0;
 
+    const authorIds = Array.from(new Set(schematics.map((s) => s.author_id).filter(Boolean)));
+    const authorNameMap = new Map<string, string>();
+
+    if (authorIds.length > 0) {
+        const { data: authorRows, error: authorError } = await supabaseServerAdmin
+            .from("profiles")
+            .select("user_id, display_name")
+            .in("user_id", authorIds);
+
+        if (authorError) {
+            BackendApiRouteLogger.warn("Failed to fetch schematic author names", { error: authorError });
+        } else {
+            for (const row of authorRows ?? []) {
+                const name = typeof row.display_name === "string" ? row.display_name.trim() : "";
+                if (name.length > 0) {
+                    authorNameMap.set(row.user_id, name);
+                }
+            }
+        }
+    }
+
     const allCategories = new Map<string, { id: string; name: string; slug: string }>();
     for (const schematic of schematics) {
         if (schematic.categories) {
@@ -245,6 +267,10 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
             schematics: schematics.map((s) => ({
                 id: s.id,
                 author_id: s.author_id,
+                author_name:
+                    typeof s.author_name === "string" && s.author_name.trim().length > 0
+                        ? s.author_name.trim()
+                        : (authorNameMap.get(s.author_id) ?? null),
                 name: s.name,
                 description: s.description,
                 status: s.status,

@@ -103,12 +103,24 @@ export async function GET(
             slug: c.slug,
         })) ?? [];
 
+    const { data: authorProfile } = await supabaseServerAdmin
+        .from("profiles")
+        .select("display_name")
+        .eq("user_id", schematic.author_id)
+        .single();
+
+    const authorName =
+        typeof authorProfile?.display_name === "string" && authorProfile.display_name.trim().length > 0
+            ? authorProfile.display_name.trim()
+            : null;
+
     return new ApiResponse<Schematic.Schematic.SchematicRes>()
         .code(ApiResponseCode.OK)
         .data({
             schematic: {
                 id: schematic.id,
                 author_id: schematic.author_id,
+                author_name: authorName,
                 name: schematic.name,
                 description: schematic.description,
                 status: schematic.status,
