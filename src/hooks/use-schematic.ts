@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Schematic, WrapSchema } from "@/schema";
 
 export interface UseSchematicResult {
@@ -14,7 +14,6 @@ export function useSchematic(id: string): UseSchematicResult {
     const [schematic, setSchematic] = useState<Schematic.Schematic.SchematicRes | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
-    const hasFetchedRef = useRef(false);
 
     const doFetch = useCallback(() => {
         if (!id) {
@@ -25,11 +24,10 @@ export function useSchematic(id: string): UseSchematicResult {
 
         let mounted = true;
         setIsLoading(true);
-        hasFetchedRef.current = false;
+        setError(null);
 
         const executeFetch = async () => {
-            if (!mounted || hasFetchedRef.current) return;
-            hasFetchedRef.current = true;
+            if (!mounted) return;
 
             try {
                 const res = await fetch(`/api/v1/schematics/${id}`, {
@@ -61,7 +59,7 @@ export function useSchematic(id: string): UseSchematicResult {
     }, [id]);
 
     useEffect(() => {
-        doFetch();
+        return doFetch();
     }, [doFetch]);
 
     return { schematic, isLoading, error, refetch: doFetch };

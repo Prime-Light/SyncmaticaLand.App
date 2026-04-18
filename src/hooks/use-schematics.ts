@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Schematic, WrapSchema } from "@/schema";
 
 export interface UseSchematicsOptions {
@@ -25,16 +25,14 @@ export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResu
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
     const [refetchToken, setRefetchToken] = useState(0);
-    const hasFetchedRef = useRef(false);
 
     useEffect(() => {
-        hasFetchedRef.current = false;
         let mounted = true;
         setIsLoading(true);
+        setError(null);
 
         const executeFetch = async () => {
-            if (!mounted || hasFetchedRef.current) return;
-            hasFetchedRef.current = true;
+            if (!mounted) return;
 
             const params = new URLSearchParams();
             if (options?.status) params.set("status", options.status);
