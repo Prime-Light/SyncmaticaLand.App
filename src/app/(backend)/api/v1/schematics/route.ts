@@ -41,6 +41,95 @@ interface RpcSchematicsResult {
     total: number;
 }
 
+interface ListQuery {
+    status: Schematic.Schematic.ProjectStatus | null;
+    categoryId: string | null;
+    authorId: string | null;
+    limit: number;
+    offset: number;
+}
+
+function normalizeRpcSchematicsResult(data: unknown): RpcSchematicsResult {
+    const payload = Array.isArray(data) ? data[0] : data;
+
+    if (!payload || typeof payload !== "object") {
+        return { schematics: [], total: 0 };
+    }
+
+    const result = payload as Partial<RpcSchematicsResult>;
+    return {
+        schematics: Array.isArray(result.schematics) ? result.schematics : [],
+        total: typeof result.total === "number" ? result.total : 0,
+    };
+}
+
+async function fetchSchematicsByTableFallback(
+    db: typeof supabaseServerAdmin,
+    query: ListQuery
+): Promise<RpcSchematicsResult> {
+    const needsCategoryFilter = !!query.categoryId;
+    const baseQuery = db
+        .from("schematics")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false });
+
+    if (query.status) {
+        baseQuery.eq("status", query.status);
+    }
+
+    if (query.authorId) {
+        baseQuery.eq("author_id", query.authorId);
+    }
+
+    const fallbackLimit = needsCategoryFilter ? 1000 : query.limit;
+    const fallbackOffset = needsCategoryFilter ? 0 : query.offset;
+
+    const { data: rows, error, count } = await baseQuery.range(
+        fallbackOffset,
+        fallbackOffset + fallbackLimit - 1
+    );
+
+    if (error) {
+        throw error;
+    }
+
+    const schematicsWithCategories = await Promise.all(
+        (rows ?? []).map(async (row) => {
+            const { data: categories } = await db.rpc("rpc__schematic_get_categories", {
+                schematic_id: row.id,
+            });
+
+            const normalizedCategories =
+                categories?.map((c: { id: string; name: string; slug: string }) => ({
+                    id: c.id,
+                    name: c.name,
+                    slug: c.slug,
+                })) ?? [];
+
+            return {
+                ...row,
+                categories: normalizedCategories,
+            } as SchematicWithCategories;
+        })
+    );
+
+    let filtered = schematicsWithCategories;
+    if (query.categoryId) {
+        filtered = filtered.filter((s) =>
+            (s.categories ?? []).some((c) => c.id === query.categoryId)
+        );
+    }
+
+    const paged = needsCategoryFilter
+        ? filtered.slice(query.offset, query.offset + query.limit)
+        : filtered;
+
+    return {
+        schematics: paged,
+        total: needsCategoryFilter ? filtered.length : count ?? paged.length,
+    };
+}
+
 export async function GET(request: Request): Promise<NextResponse<SchematicListResult>> {
     const supabase = await createSupabaseServerClient();
     const { searchParams } = new URL(request.url);
@@ -48,6 +137,8 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
     const {
         data: { user },
     } = await supabase.auth.getUser();
+
+    const listDb = supabase;
 
     const status = searchParams.get("status") as Schematic.Schematic.ProjectStatus | null;
     const categoryId = searchParams.get("category_id");
@@ -90,13 +181,17 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
         }
     }
 
-    const { data, error } = await supabaseServerAdmin.rpc("rpc__schematics_with_categories", {
+    queryStatus = queryStatus ?? "published";
+
+    const rpcQuery = {
         p_status: queryStatus,
         p_category_id: categoryId || null,
         p_author_id: authorId || null,
         p_limit: limit,
         p_offset: offset,
-    });
+    };
+
+    const { data, error } = await listDb.rpc("rpc__schematics_with_categories", rpcQuery);
 
     if (error) {
         BackendApiRouteLogger.error("Failed to fetch schematics", { error });
@@ -107,7 +202,21 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
             .build();
     }
 
-    const result = data as RpcSchematicsResult;
+    let result = normalizeRpcSchematicsResult(data);
+    if (result.total === 0) {
+        try {
+            result = await fetchSchematicsByTableFallback(listDb, {
+                status: queryStatus,
+                categoryId,
+                authorId,
+                limit,
+                offset,
+            });
+        } catch (fallbackError) {
+            BackendApiRouteLogger.error("Fallback fetch schematics failed", { error: fallbackError });
+        }
+    }
+
     const schematics = result?.schematics ?? [];
     const total = result?.total ?? 0;
 

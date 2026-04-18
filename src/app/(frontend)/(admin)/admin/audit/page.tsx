@@ -3,6 +3,26 @@ import { Prime } from "@/components";
 import { AuditPageClient } from "@/components/@prime-light/dashboard/audit-page-client";
 import { Schematic } from "@/schema";
 
+function resolveAuthorName(author: unknown): string {
+    const getName = (v: unknown) => {
+        if (!v || typeof v !== "object") return null;
+        const raw = (v as { display_name?: unknown }).display_name;
+        if (typeof raw !== "string") return null;
+        const name = raw.trim();
+        return name.length > 0 ? name : null;
+    };
+
+    if (Array.isArray(author)) {
+        for (const item of author) {
+            const name = getName(item);
+            if (name) return name;
+        }
+        return "未知用户";
+    }
+
+    return getName(author) ?? "未知用户";
+}
+
 export default async function AuditPage({
     searchParams,
 }: {
@@ -62,7 +82,6 @@ export default async function AuditPage({
 
     const projects: (Schematic.Schematic.Schematic & { author_name: string })[] =
         schematics?.map((s) => {
-            const author = s.author as Array<{ display_name: string | null }> | null;
             return {
                 id: s.id,
                 author_id: s.author_id,
@@ -79,7 +98,7 @@ export default async function AuditPage({
                 viewed: s.viewed ?? 0,
                 created_at: s.created_at,
                 updated_at: s.updated_at,
-                author_name: author?.[0]?.display_name ?? "未知用户",
+                author_name: resolveAuthorName(s.author),
             };
         }) ?? [];
 
