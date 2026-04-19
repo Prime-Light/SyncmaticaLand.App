@@ -2,12 +2,11 @@
 
 import * as React from "react";
 import { Shadcn } from "@/components";
-import { MoreHorizontalIcon, PencilIcon, Trash2Icon, CheckIcon, XIcon } from "lucide-react";
+import { MoreHorizontalIcon, Trash2Icon, CheckIcon, XIcon } from "lucide-react";
 import { Schematic } from "@/schema";
 
 export interface CategoriesTableProps {
     categories: Schematic.Category.Category[];
-    onEdit: (category: Schematic.Category.Category) => void;
     onDelete: (category: Schematic.Category.Category) => void;
     onUpdate: (id: string, data: Schematic.Category.UpdateCategoryReq) => Promise<boolean>;
 }
@@ -138,7 +137,6 @@ function formatDate(dateString: string): string {
 
 export function CategoriesTable({
     categories,
-    onEdit,
     onDelete,
     onUpdate,
 }: CategoriesTableProps) {
@@ -238,11 +236,6 @@ export function CategoriesTable({
                                             </Shadcn.Button>
                                         </Shadcn.DropdownMenuTrigger>
                                         <Shadcn.DropdownMenuContent align="end">
-                                            <Shadcn.DropdownMenuItem
-                                                onClick={() => onEdit(category)}>
-                                                <PencilIcon />
-                                                编辑
-                                            </Shadcn.DropdownMenuItem>
                                             <Shadcn.DropdownMenuItem
                                                 variant="destructive"
                                                 onClick={() => onDelete(category)}>

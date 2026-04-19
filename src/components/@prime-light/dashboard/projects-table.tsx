@@ -3,15 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { Shadcn } from "@/components";
-import {
-    EyeIcon,
-    ThumbsUpIcon,
-    StarIcon,
-    MoreHorizontalIcon,
-    PencilIcon,
-    Trash2Icon,
-} from "lucide-react";
+import { EyeIcon, ThumbsUpIcon, StarIcon, MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { Schematic } from "@/schema";
+import { STATUS_LABELS, STATUS_VARIANTS, formatDate } from "./shared";
 
 export interface ProjectsTableProps {
     projects: Schematic.Schematic.Schematic[];
@@ -20,61 +14,20 @@ export interface ProjectsTableProps {
     onDelete: (project: Schematic.Schematic.Schematic) => void;
 }
 
-const statusLabels: Record<Schematic.Schematic.ProjectStatus, string> = {
-    draft: "草稿",
-    published: "已发布",
-    under_review: "审核中",
-    rejected: "已拒绝",
-};
-
-const statusVariants: Record<
-    Schematic.Schematic.ProjectStatus,
-    "secondary" | "default" | "outline" | "destructive"
-> = {
-    draft: "secondary",
-    published: "default",
-    under_review: "outline",
-    rejected: "destructive",
-};
-
-function StatusBadge({ status }: { status: Schematic.Schematic.ProjectStatus }) {
-    return <Shadcn.Badge variant={statusVariants[status]}>{statusLabels[status]}</Shadcn.Badge>;
-}
-
-function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("zh-CN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
-}
-
 function canEdit(status: Schematic.Schematic.ProjectStatus): boolean {
     return status === "draft" || status === "under_review" || status === "rejected";
 }
 
-function canDelete(
-    status: Schematic.Schematic.ProjectStatus,
-    authorId: string,
-    currentUserId: string
-): boolean {
+function canDelete(status: Schematic.Schematic.ProjectStatus, authorId: string, currentUserId: string): boolean {
     return (status === "draft" || status === "rejected") && authorId === currentUserId;
 }
 
-export function ProjectsTable({
-    projects,
-    currentUserId,
-    onEdit,
-    onDelete,
-}: ProjectsTableProps) {
+export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: ProjectsTableProps) {
     const [currentPage, setCurrentPage] = React.useState(1);
     const pageSize = 10;
 
     const totalPages = Math.ceil(projects.length / pageSize);
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const paginatedProjects = projects.slice(startIndex, endIndex);
+    const paginated = projects.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     if (projects.length === 0) {
         return (
@@ -110,25 +63,20 @@ export function ProjectsTable({
                         </Shadcn.TableRow>
                     </Shadcn.TableHeader>
                     <Shadcn.TableBody>
-                        {paginatedProjects.map((project) => {
+                        {paginated.map((project) => {
                             const editable = canEdit(project.status);
-                            const deletable = canDelete(
-                                project.status,
-                                project.author_id,
-                                currentUserId
-                            );
-
+                            const deletable = canDelete(project.status, project.author_id, currentUserId);
                             return (
                                 <Shadcn.TableRow key={project.id}>
                                     <Shadcn.TableCell className="font-medium">
-                                        <Link
-                                            href={`/schematics/${project.id}`}
-                                            className="hover:underline">
+                                        <Link href={`/schematics/${project.id}`} className="hover:underline">
                                             {project.name}
                                         </Link>
                                     </Shadcn.TableCell>
                                     <Shadcn.TableCell>
-                                        <StatusBadge status={project.status} />
+                                        <Shadcn.Badge variant={STATUS_VARIANTS[project.status]}>
+                                            {STATUS_LABELS[project.status]}
+                                        </Shadcn.Badge>
                                     </Shadcn.TableCell>
                                     <Shadcn.TableCell className="text-center">
                                         <span className="inline-flex items-center gap-1">
@@ -148,9 +96,7 @@ export function ProjectsTable({
                                             {project.starred.toLocaleString()}
                                         </span>
                                     </Shadcn.TableCell>
-                                    <Shadcn.TableCell>
-                                        {formatDate(project.created_at)}
-                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell>{formatDate(project.created_at)}</Shadcn.TableCell>
                                     <Shadcn.TableCell>
                                         <Shadcn.DropdownMenu>
                                             <Shadcn.DropdownMenuTrigger asChild>
@@ -169,9 +115,7 @@ export function ProjectsTable({
                                                 <Shadcn.DropdownMenuItem
                                                     variant="destructive"
                                                     disabled={!deletable}
-                                                    onClick={() =>
-                                                        deletable && onDelete(project)
-                                                    }>
+                                                    onClick={() => deletable && onDelete(project)}>
                                                     <Trash2Icon />
                                                     删除
                                                 </Shadcn.DropdownMenuItem>

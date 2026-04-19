@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Shadcn } from "@/components";
 import { ExternalLinkIcon } from "lucide-react";
 import { Schematic } from "@/schema";
+import { STATUS_LABELS, STATUS_VARIANTS, formatDate } from "./shared";
 
 export interface RecentActivityProps {
     activities: Array<{
@@ -11,31 +12,6 @@ export interface RecentActivityProps {
         status: Schematic.Schematic.ProjectStatus;
         created_at: string;
     }>;
-}
-
-const statusLabels: Record<Schematic.Schematic.ProjectStatus, string> = {
-    draft: "草稿",
-    published: "已发布",
-    under_review: "审核中",
-    rejected: "已拒绝",
-};
-
-const statusColors: Record<Schematic.Schematic.ProjectStatus, string> = {
-    draft: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
-    published: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-    under_review: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-    rejected: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-};
-
-function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("zh-CN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-    });
 }
 
 export function RecentActivity({ activities }: RecentActivityProps) {
@@ -74,21 +50,18 @@ export function RecentActivity({ activities }: RecentActivityProps) {
                         {activities.map((activity) => (
                             <Shadcn.TableRow key={activity.id}>
                                 <Shadcn.TableCell className="font-medium">
-                                    <Link
-                                        href={`/schematics/${activity.id}`}
-                                        className="hover:underline">
+                                    <Link href={`/schematics/${activity.id}`} className="hover:underline">
                                         {activity.name}
                                     </Link>
                                 </Shadcn.TableCell>
                                 <Shadcn.TableCell>{activity.author_name}</Shadcn.TableCell>
                                 <Shadcn.TableCell>
-                                    <span
-                                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColors[activity.status]}`}>
-                                        {statusLabels[activity.status]}
-                                    </span>
+                                    <Shadcn.Badge variant={STATUS_VARIANTS[activity.status]}>
+                                        {STATUS_LABELS[activity.status]}
+                                    </Shadcn.Badge>
                                 </Shadcn.TableCell>
                                 <Shadcn.TableCell className="text-muted-foreground">
-                                    {formatDate(activity.created_at)}
+                                    {formatDate(activity.created_at, true)}
                                 </Shadcn.TableCell>
                                 <Shadcn.TableCell>
                                     <Link

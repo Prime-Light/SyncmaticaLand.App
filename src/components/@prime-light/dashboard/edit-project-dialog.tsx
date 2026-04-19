@@ -6,82 +6,7 @@ import { XIcon, ImageIcon, UploadIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useUpdateSchematic } from "@/hooks";
 import { Schematic } from "@/schema";
-
-const MC_VERSIONS: Record<string, string[]> = {
-    "1.21.x": [
-        "1.21",
-        "1.21.1",
-        "1.21.2",
-        "1.21.3",
-        "1.21.4",
-        "1.21.5",
-        "1.21.6",
-        "1.21.7",
-        "1.21.8",
-        "1.21.9",
-        "1.21.10",
-        "1.21.11",
-        "1.21.12",
-        "1.21.13",
-        "1.21.14",
-        "1.21.15",
-        "1.21.16",
-        "1.21.17",
-        "1.21.18",
-        "1.21.19",
-        "1.21.20",
-    ],
-    "1.20.x": ["1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6"],
-    "1.19.x": ["1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4"],
-    "1.18.x": ["1.18", "1.18.1", "1.18.2"],
-    "1.17.x": ["1.17", "1.17.1"],
-    "1.16.x": ["1.16", "1.16.1", "1.16.2", "1.16.3", "1.16.4", "1.16.5"],
-    "1.15.x": ["1.15", "1.15.1", "1.15.2"],
-    "1.14.x": ["1.14", "1.14.1", "1.14.2", "1.14.3", "1.14.4"],
-    "1.13.x": ["1.13", "1.13.1", "1.13.2"],
-    "1.12.x": ["1.12", "1.12.1", "1.12.2"],
-    "1.8.x": [
-        "1.8",
-        "1.8.1",
-        "1.8.2",
-        "1.8.3",
-        "1.8.4",
-        "1.8.5",
-        "1.8.6",
-        "1.8.7",
-        "1.8.8",
-        "1.8.9",
-    ],
-};
-
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
-
-function formatFileSize(bytes: number): string {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-async function uploadImages(files: File[]): Promise<string[]> {
-    if (files.length === 0) return [];
-
-    const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
-
-    const res = await fetch("/api/v1/schematics/upload/images", {
-        method: "POST",
-        body: formData,
-    });
-
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData?.error?.message || `图片上传失败: ${res.status}`);
-    }
-
-    const result = await res.json();
-    return result.data.files.map((f: { file_url: string }) => f.file_url);
-}
+import { MC_VERSIONS, MAX_IMAGE_SIZE, ACCEPTED_IMAGE_TYPES, formatFileSize, uploadImages } from "./shared";
 
 export interface EditProjectDialogProps {
     project: Schematic.Schematic.Schematic | null;
@@ -90,12 +15,7 @@ export interface EditProjectDialogProps {
     onSuccess: () => void;
 }
 
-export function EditProjectDialog({
-    project,
-    open,
-    onOpenChange,
-    onSuccess,
-}: EditProjectDialogProps) {
+export function EditProjectDialog({ project, open, onOpenChange, onSuccess }: EditProjectDialogProps) {
     const { updateSchematic, isLoading: isUpdating } = useUpdateSchematic(project?.id ?? "");
 
     const [name, setName] = React.useState("");
@@ -127,18 +47,15 @@ export function EditProjectDialog({
             setExistingImages(project.images ?? []);
             setNewImages([]);
 
-            const mcVersion = project.mc_version;
             let foundMajor = "";
             let foundMinor = "";
-
             for (const [major, minors] of Object.entries(MC_VERSIONS)) {
-                if (minors.includes(mcVersion)) {
+                if (minors.includes(project.mc_version)) {
                     foundMajor = major;
-                    foundMinor = mcVersion;
+                    foundMinor = project.mc_version;
                     break;
                 }
             }
-
             setMcMajorVersion(foundMajor);
             setMcMinorVersion(foundMinor);
         }
@@ -169,9 +86,7 @@ export function EditProjectDialog({
                     if (files.length > 0) toast.error("最多只能上传 5 张预览图片");
                     return prev;
                 }
-                const newEntries = files
-                    .slice(0, available)
-                    .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
+                const newEntries = files.slice(0, available).map((f) => ({ file: f, url: URL.createObjectURL(f) }));
                 return [...prev, ...newEntries];
             });
         },
@@ -187,9 +102,7 @@ export function EditProjectDialog({
                     if (files.length > 0) toast.error("最多只能上传 5 张预览图片");
                     return prev;
                 }
-                const newEntries = files
-                    .slice(0, available)
-                    .map((f) => ({ file: f, url: URL.createObjectURL(f) }));
+                const newEntries = files.slice(0, available).map((f) => ({ file: f, url: URL.createObjectURL(f) }));
                 return [...prev, ...newEntries];
             });
             e.target.value = "";
@@ -208,11 +121,7 @@ export function EditProjectDialog({
         });
     }, []);
 
-    const isFormValid =
-        name.trim().length > 0 &&
-        description.trim().length > 0 &&
-        mcMinorVersion.length > 0 &&
-        tags.length > 0;
+    const isFormValid = name.trim().length > 0 && description.trim().length > 0 && mcMinorVersion.length > 0 && tags.length > 0;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -221,7 +130,6 @@ export function EditProjectDialog({
         setIsSubmitting(true);
         try {
             let imageUrls = [...existingImages];
-
             if (newImages.length > 0) {
                 toast.info("正在上传新图片...");
                 const uploadedUrls = await uploadImages(newImages.map((p) => p.file));
@@ -245,8 +153,7 @@ export function EditProjectDialog({
                 toast.error("更新原理图失败");
             }
         } catch (err) {
-            const message = err instanceof Error ? err.message : "更新失败，请重试";
-            toast.error(message);
+            toast.error(err instanceof Error ? err.message : "更新失败，请重试");
         } finally {
             setIsSubmitting(false);
         }
@@ -258,9 +165,7 @@ export function EditProjectDialog({
         <Shadcn.Sheet open={open} onOpenChange={onOpenChange}>
             <Shadcn.SheetContent side="right" className="w-full overflow-y-auto sm:max-w-lg">
                 <Shadcn.SheetHeader className="pb-2">
-                    <Shadcn.SheetTitle className="text-base font-semibold">
-                        编辑项目
-                    </Shadcn.SheetTitle>
+                    <Shadcn.SheetTitle className="text-base font-semibold">编辑项目</Shadcn.SheetTitle>
                     <Shadcn.SheetDescription>修改原理图的基本信息</Shadcn.SheetDescription>
                 </Shadcn.SheetHeader>
 
@@ -268,9 +173,7 @@ export function EditProjectDialog({
                     <Shadcn.FieldGroup>
                         <Shadcn.Field>
                             <Shadcn.FieldLabel htmlFor="edit-name">
-                                <span>
-                                    标题<span className="text-destructive">*</span>
-                                </span>
+                                标题<span className="text-destructive">*</span>
                             </Shadcn.FieldLabel>
                             <Shadcn.Input
                                 id="edit-name"
@@ -282,9 +185,7 @@ export function EditProjectDialog({
 
                         <Shadcn.Field>
                             <Shadcn.FieldLabel htmlFor="edit-description">
-                                <span>
-                                    描述<span className="text-destructive">*</span>
-                                </span>
+                                描述<span className="text-destructive">*</span>
                             </Shadcn.FieldLabel>
                             <Shadcn.Textarea
                                 id="edit-description"
@@ -297,10 +198,7 @@ export function EditProjectDialog({
 
                         <Shadcn.Field>
                             <Shadcn.FieldLabel>
-                                <span>
-                                    原理图 Minecraft 版本
-                                    <span className="text-destructive">*</span>
-                                </span>
+                                原理图 Minecraft 版本<span className="text-destructive">*</span>
                             </Shadcn.FieldLabel>
                             <div className="flex gap-3">
                                 <Shadcn.Select
@@ -315,9 +213,7 @@ export function EditProjectDialog({
                                     <Shadcn.SelectContent>
                                         <Shadcn.SelectGroup>
                                             {Object.keys(MC_VERSIONS).map((major) => (
-                                                <Shadcn.SelectItem key={major} value={major}>
-                                                    {major}
-                                                </Shadcn.SelectItem>
+                                                <Shadcn.SelectItem key={major} value={major}>{major}</Shadcn.SelectItem>
                                             ))}
                                         </Shadcn.SelectGroup>
                                     </Shadcn.SelectContent>
@@ -331,15 +227,9 @@ export function EditProjectDialog({
                                     </Shadcn.SelectTrigger>
                                     <Shadcn.SelectContent>
                                         <Shadcn.SelectGroup>
-                                            {(MC_VERSIONS[mcMajorVersion] ?? []).map(
-                                                (minor) => (
-                                                    <Shadcn.SelectItem
-                                                        key={minor}
-                                                        value={minor}>
-                                                        {minor}
-                                                    </Shadcn.SelectItem>
-                                                )
-                                            )}
+                                            {(MC_VERSIONS[mcMajorVersion] ?? []).map((minor) => (
+                                                <Shadcn.SelectItem key={minor} value={minor}>{minor}</Shadcn.SelectItem>
+                                            ))}
                                         </Shadcn.SelectGroup>
                                     </Shadcn.SelectContent>
                                 </Shadcn.Select>
@@ -348,23 +238,16 @@ export function EditProjectDialog({
 
                         <Shadcn.Field>
                             <Shadcn.FieldLabel htmlFor="edit-tags">
-                                <span>
-                                    标签<span className="text-destructive">*</span>
-                                </span>
+                                标签<span className="text-destructive">*</span>
                             </Shadcn.FieldLabel>
                             <div className="flex flex-wrap items-center gap-1.5 border border-input bg-transparent px-2.5 py-2 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/50">
                                 {tags.map((tag) => (
-                                    <Shadcn.Badge
-                                        key={tag}
-                                        variant="secondary"
-                                        className="gap-1">
+                                    <Shadcn.Badge key={tag} variant="secondary" className="gap-1">
                                         {tag}
                                         <button
                                             type="button"
                                             aria-label={`移除标签 ${tag}`}
-                                            onClick={() =>
-                                                setTags((prev) => prev.filter((t) => t !== tag))
-                                            }
+                                            onClick={() => setTags((prev) => prev.filter((t) => t !== tag))}
                                             className="cursor-pointer opacity-60 transition-opacity hover:opacity-100">
                                             <XIcon className="size-3" aria-hidden="true" />
                                         </button>
@@ -372,25 +255,17 @@ export function EditProjectDialog({
                                 ))}
                                 <input
                                     id="edit-tags"
-                                    placeholder={
-                                        tags.length === 0 ? "输入标签后按回车添加" : ""
-                                    }
+                                    placeholder={tags.length === 0 ? "输入标签后按回车添加" : ""}
                                     value={tagInput}
                                     onChange={(e) => setTagInput(e.target.value)}
                                     onKeyDown={(e) => {
                                         if (e.key === "Enter" && tagInput.trim()) {
                                             e.preventDefault();
                                             const value = tagInput.trim();
-                                            if (!tags.includes(value)) {
-                                                setTags((prev) => [...prev, value]);
-                                            }
+                                            if (!tags.includes(value)) setTags((prev) => [...prev, value]);
                                             setTagInput("");
                                         }
-                                        if (
-                                            e.key === "Backspace" &&
-                                            tagInput === "" &&
-                                            tags.length > 0
-                                        ) {
+                                        if (e.key === "Backspace" && tagInput === "" && tags.length > 0) {
                                             setTags((prev) => prev.slice(0, -1));
                                         }
                                     }}
@@ -401,16 +276,10 @@ export function EditProjectDialog({
 
                         <Shadcn.Field>
                             <Shadcn.FieldLabel>
-                                <span>
-                                    预览图片
-                                    <span className="text-sm font-normal text-muted-foreground">
-                                        （选填）
-                                    </span>
-                                </span>
+                                预览图片
+                                <span className="text-sm font-normal text-muted-foreground">（选填）</span>
                             </Shadcn.FieldLabel>
-                            <Shadcn.FieldDescription>
-                                上传最多 5 张预览图片，支持 PNG、JPG、WebP，单张最大 5MB
-                            </Shadcn.FieldDescription>
+                            <Shadcn.FieldDescription>上传最多 5 张预览图片，支持 PNG、JPG、WebP，单张最大 5MB</Shadcn.FieldDescription>
 
                             <div className="flex flex-col gap-4">
                                 {(existingImages.length > 0 || newImages.length > 0) && (
@@ -420,11 +289,7 @@ export function EditProjectDialog({
                                                 key={`existing-${index}`}
                                                 className="group relative aspect-video overflow-hidden border border-border">
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img
-                                                    src={url}
-                                                    alt={`预览图片 ${index + 1}`}
-                                                    className="size-full object-cover"
-                                                />
+                                                <img src={url} alt={`预览图片 ${index + 1}`} className="size-full object-cover" />
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                                                     <Shadcn.Button
                                                         type="button"
@@ -432,9 +297,7 @@ export function EditProjectDialog({
                                                         size="icon"
                                                         aria-label={`移除预览图片 ${index + 1}`}
                                                         className="text-white hover:text-white"
-                                                        onClick={() =>
-                                                            removeExistingImage(index)
-                                                        }>
+                                                        onClick={() => removeExistingImage(index)}>
                                                         <XIcon aria-hidden="true" />
                                                     </Shadcn.Button>
                                                 </div>
@@ -445,11 +308,7 @@ export function EditProjectDialog({
                                                 key={`new-${file.name}-${index}`}
                                                 className="group relative aspect-video overflow-hidden border border-border">
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img
-                                                    src={url}
-                                                    alt={file.name}
-                                                    className="size-full object-cover"
-                                                />
+                                                <img src={url} alt={file.name} className="size-full object-cover" />
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                                                     <Shadcn.Button
                                                         type="button"
@@ -470,10 +329,7 @@ export function EditProjectDialog({
                                     <div
                                         role="button"
                                         tabIndex={0}
-                                        onDragOver={(e) => {
-                                            e.preventDefault();
-                                            setIsDraggingImage(true);
-                                        }}
+                                        onDragOver={(e) => { e.preventDefault(); setIsDraggingImage(true); }}
                                         onDragLeave={() => setIsDraggingImage(false)}
                                         onDrop={handleImageDrop}
                                         onClick={() => imageInputRef.current?.click()}
@@ -490,8 +346,7 @@ export function EditProjectDialog({
                                         }`}>
                                         <ImageIcon className="text-muted-foreground" />
                                         <p className="text-base text-muted-foreground">
-                                            拖放图片到此处，或点击浏览（还可添加{" "}
-                                            {5 - totalImages} 张）
+                                            拖放图片到此处，或点击浏览（还可添加 {5 - totalImages} 张）
                                         </p>
                                         <input
                                             ref={imageInputRef}
@@ -508,21 +363,13 @@ export function EditProjectDialog({
                     </Shadcn.FieldGroup>
 
                     <div className="flex items-center justify-end gap-3 pt-4">
-                        <Shadcn.Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => onOpenChange(false)}>
+                        <Shadcn.Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                             取消
                         </Shadcn.Button>
-                        <Shadcn.Button
-                            type="submit"
-                            disabled={!isFormValid || isSubmitting || isUpdating}>
+                        <Shadcn.Button type="submit" disabled={!isFormValid || isSubmitting || isUpdating}>
                             {isSubmitting || isUpdating ? (
                                 <>
-                                    <UploadIcon
-                                        data-icon="inline-start"
-                                        className="animate-pulse"
-                                    />
+                                    <UploadIcon data-icon="inline-start" className="animate-pulse" />
                                     保存中…
                                 </>
                             ) : (

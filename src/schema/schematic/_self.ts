@@ -123,6 +123,14 @@ export const CreateSchematicReqSchema = z.object({
             description: "Array of image URLs",
             example: ["https://example.com/images/castle1.png"],
         }),
+    category_ids: z
+        .array(z.string().uuid())
+        .optional()
+        .default([])
+        .meta({
+            description: "Array of category IDs to associate with this schematic",
+            example: ["550e8400-e29b-41d4-a716-446655440010"],
+        }),
 });
 
 export type CreateSchematicReq = z.infer<typeof CreateSchematicReqSchema>;

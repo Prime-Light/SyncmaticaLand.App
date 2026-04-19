@@ -8,7 +8,7 @@ import {
     ShieldUserIcon,
     SparklesIcon,
 } from "lucide-react";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { useCurrentUser, CurrentUser } from "@/hooks/use-current-user";
 import { toast } from "sonner";
 import { Auth } from "@/schema";
 
@@ -65,9 +65,9 @@ function LogoutItem({ onLogout }: { onLogout: () => void }) {
     );
 }
 
-export function NavUser() {
+export function NavUser({ currentUser }: { currentUser?: CurrentUser }) {
     const { isMobile } = useSidebar();
-    const { user, loading, userInitials } = useCurrentUser();
+    const { user, loading, userInitials } = useCurrentUser(currentUser);
 
     const handleLogout = async () => {
         try {
@@ -130,7 +130,7 @@ export function NavUser() {
                         <Shadcn.SidebarMenuButton
                             size="lg"
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                            <Shadcn.Avatar className="h-8 w-8 grayscale">
+                            <Shadcn.Avatar className="h-8 w-8">
                                 <Shadcn.AvatarImage
                                     src={user.avatar_url}
                                     alt={user.display_name}
