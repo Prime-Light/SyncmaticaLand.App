@@ -25,6 +25,10 @@ export const SchematicSchema = z.object({
         description: "Author's user ID (UUID)",
         example: "550e8400-e29b-41d4-a716-446655440001",
     }),
+    author_name: z.string().nullable().optional().meta({
+        description: "Author display name",
+        example: "创作者#1047",
+    }),
     name: z.string().meta({
         description: "Schematic name",
         example: "Medieval Castle",

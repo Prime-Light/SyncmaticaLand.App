@@ -1,6 +1,6 @@
 {
     "bracketSameLine": true,
-    "endOfLine": "lf",
+    "endOfLine": "crlf",
     "semi": true,
     "singleQuote": false,
     "tabWidth": 4,

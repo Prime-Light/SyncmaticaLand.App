@@ -41,7 +41,7 @@ export function SchematicFeed({ className, ...props }: SchematicFeedProps) {
             default:
                 return items;
         }
-    }, [schematics?.schematics, sort]);
+    }, [schematics, sort]);
 
     return (
         <div className={cn("h-full w-full", className)} {...props}>

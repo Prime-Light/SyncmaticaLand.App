@@ -15,45 +15,52 @@ export function useSchematic(id: string): UseSchematicResult {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
-    const fetchData = useCallback(() => {
+    const doFetch = useCallback(() => {
         if (!id) {
             setSchematic(null);
             setIsLoading(false);
-            return () => {};
+            return;
         }
 
         let mounted = true;
         setIsLoading(true);
         setError(null);
 
-        fetch(`/api/v1/schematics/${id}`, { method: "GET", cache: "no-store" })
-            .then(async (res) => {
+        const executeFetch = async () => {
+            if (!mounted) return;
+
+            try {
+                const res = await fetch(`/api/v1/schematics/${id}`, {
+                    method: "GET",
+                    cache: "no-store",
+                });
+                if (!mounted) return;
+
                 if (!res.ok) {
                     throw new Error(`Failed to fetch schematic: ${res.status}`);
                 }
-                return (await res.json()) as WrapSchema<Schematic.Schematic.SchematicRes>;
-            })
-            .then((data) => {
+                const data = (await res.json()) as WrapSchema<Schematic.Schematic.SchematicRes>;
                 if (!mounted) return;
+
                 setSchematic(data.data);
-            })
-            .catch((err) => {
+                setIsLoading(false);
+                setError(null);
+            } catch (err) {
                 if (!mounted) return;
                 setError(err instanceof Error ? err : new Error(String(err)));
-            })
-            .finally(() => {
-                if (mounted) setIsLoading(false);
-            });
+                setIsLoading(false);
+            }
+        };
 
+        executeFetch();
         return () => {
             mounted = false;
         };
     }, [id]);
 
     useEffect(() => {
-        const cleanup = fetchData();
-        return cleanup;
-    }, [fetchData]);
+        return doFetch();
+    }, [doFetch]);
 
-    return { schematic, isLoading, error, refetch: fetchData };
+    return { schematic, isLoading, error, refetch: doFetch };
 }

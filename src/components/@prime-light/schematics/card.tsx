@@ -15,15 +15,16 @@ function formatCount(count: number): string {
 export function SchematicCard({
     id,
     name,
+    author_name,
     description,
-    format,
-    mc_version,
     images,
     upvotes,
     starred,
     viewed,
 }: SchematicCardProps) {
     const previewImage = images?.[0];
+    const authorName = typeof author_name === "string" && author_name.trim() ? author_name.trim() : "未知作者";
+    const authorInitial = authorName.charAt(0).toUpperCase();
 
     return (
         <Link href={`/schematics/${id}`}>
@@ -58,10 +59,10 @@ export function SchematicCard({
                     <div className="flex items-center gap-2">
                         <div className="flex size-6 items-center justify-center rounded-full bg-primary/10">
                             <span className="text-xs font-medium text-primary">
-                                {format.charAt(0).toUpperCase()}
+                                {authorInitial}
                             </span>
                         </div>
-                        <span className="text-sm text-muted-foreground">{mc_version}</span>
+                        <span className="text-sm text-muted-foreground">{authorName}</span>
                     </div>
 
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">

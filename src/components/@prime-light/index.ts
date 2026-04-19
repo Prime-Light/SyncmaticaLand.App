@@ -23,7 +23,9 @@ export { Footer } from "./layout/footer";
 export { Navbar } from "./layout/navbar";
 
 export { SchematicCard, type SchematicCardProps } from "./schematics/card";
+export { SchematicDetailClient } from "./schematics/schematic-detail-client";
 export { SchematicFeed } from "./schematics/feed";
+export { ImageGallery, type ImageGalleryProps } from "./schematics/image-gallery";
 
 export { Captcha } from "./utils/captcha";
 export { IconifyIcon } from "./utils/icons";

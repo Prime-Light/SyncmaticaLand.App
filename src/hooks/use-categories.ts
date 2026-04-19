@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Schematic, WrapSchema } from "@/schema";
 
 export interface UseCategoriesResult {
@@ -15,11 +15,13 @@ export function useCategories(): UseCategoriesResult {
     );
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const hasFetched = useRef(false);
 
     useEffect(() => {
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+
         let mounted = true;
-        setIsLoading(true);
-        setError(null);
 
         fetch("/api/v1/categories", { method: "GET", cache: "no-store" })
             .then(async (res) => {
@@ -31,13 +33,12 @@ export function useCategories(): UseCategoriesResult {
             .then((data) => {
                 if (!mounted) return;
                 setCategories(data.data);
+                setIsLoading(false);
             })
             .catch((err) => {
                 if (!mounted) return;
                 setError(err instanceof Error ? err : new Error(String(err)));
-            })
-            .finally(() => {
-                if (mounted) setIsLoading(false);
+                setIsLoading(false);
             });
 
         return () => {

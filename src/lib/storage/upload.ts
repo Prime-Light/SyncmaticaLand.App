@@ -7,9 +7,25 @@ export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const ACCEPTED_SCHEMATIC_TYPES = [".schematic", ".schem", ".litematic", ".nbt"];
 export const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
-export function generateSchematicPath(userId: string, fileName: string): string {
+async function sha256(str: string): Promise<string> {
+    const data = new TextEncoder().encode(str);
+
+    // 防御性封装：优先使用 Web Crypto，服务端环境回退到 Node.js crypto
+    if (typeof crypto !== "undefined" && crypto.subtle) {
+        const hash = await crypto.subtle.digest("SHA-256", data);
+        return Array.from(new Uint8Array(hash))
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join("");
+    }
+
+    // Node.js 服务端回退
+    const { createHash } = await import("crypto");
+    return createHash("sha256").update(data).digest("hex");
+}
+
+export async function generateSchematicPath(userId: string, fileName: string): Promise<string> {
     const timestamp = Date.now();
-    return `schematics/${userId}/${timestamp}_${fileName}`;
+    return `schematics/${userId}/${timestamp}_${await sha256(fileName)}`;
 }
 
 export function generateImagePath(
@@ -29,7 +45,7 @@ export async function uploadSchematicFile(
     userId: string,
     fileName: string
 ): Promise<{ url: string; error: Error | null }> {
-    const path = generateSchematicPath(userId, fileName);
+    const path = await generateSchematicPath(userId, fileName);
 
     const isServer = typeof window === "undefined";
     const supabase = isServer ? supabaseServerAdmin : supabaseClient;

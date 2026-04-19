@@ -1,5 +1,4 @@
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 import { safelyGetEnv } from "../utils";
 
 export const supabaseServerAdmin = createServerClient(
