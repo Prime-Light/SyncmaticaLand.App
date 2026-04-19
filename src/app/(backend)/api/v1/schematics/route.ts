@@ -187,7 +187,12 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
         }
     }
 
-    queryStatus = queryStatus ?? "published";
+    // 查看自己的项目时，允许获取所有状态
+    if (user && authorId === user.id && !status) {
+        queryStatus = null;
+    } else {
+        queryStatus = queryStatus ?? "published";
+    }
 
     const rpcQuery = {
         p_status: queryStatus,

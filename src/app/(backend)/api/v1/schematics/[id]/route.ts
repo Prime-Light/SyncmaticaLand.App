@@ -193,15 +193,6 @@ export async function PATCH(
         return new ApiError().code(ApiErrorCode.FORBIDDEN).message("无权修改此原理图").build();
     }
 
-    if (isAuthor && !isAdmin) {
-        if (schematic.status === "published") {
-            return new ApiError()
-                .code(ApiErrorCode.FORBIDDEN)
-                .message("已发布的内容无法修改")
-                .build();
-        }
-    }
-
     let body: Schematic.Schematic.UpdateSchematicReq & { category_ids?: string[] };
     try {
         body = await request.json();
@@ -238,6 +229,11 @@ export async function PATCH(
     if (validatedData.tags !== undefined) updateData.tags = validatedData.tags;
     if (validatedData.file_url !== undefined) updateData.file_url = validatedData.file_url;
     if (validatedData.images !== undefined) updateData.images = validatedData.images;
+
+    // 作者修改已发布内容后，自动重新进入审核
+    if (isAuthor && !isAdmin && schematic.status === "published") {
+        updateData.status = "under_review";
+    }
 
     if (Object.keys(updateData).length > 0) {
         const { error: updateError } = await supabaseServerAdmin
@@ -374,15 +370,6 @@ export async function DELETE(
 
     if (!isAdmin && !isAuthor) {
         return new ApiError().code(ApiErrorCode.FORBIDDEN).message("无权删除此原理图").build();
-    }
-
-    if (isAuthor && !isAdmin) {
-        if (schematic.status !== "draft" && schematic.status !== "rejected") {
-            return new ApiError()
-                .code(ApiErrorCode.FORBIDDEN)
-                .message("只能删除草稿或被拒绝的内容")
-                .build();
-        }
     }
 
     const { error: deleteError } = await supabaseServerAdmin

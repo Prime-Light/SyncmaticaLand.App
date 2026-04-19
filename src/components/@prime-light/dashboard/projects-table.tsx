@@ -15,11 +15,11 @@ export interface ProjectsTableProps {
 }
 
 function canEdit(status: Schematic.Schematic.ProjectStatus): boolean {
-    return status === "draft" || status === "under_review" || status === "rejected";
+    return status === "draft" || status === "under_review" || status === "rejected" || status === "published";
 }
 
-function canDelete(status: Schematic.Schematic.ProjectStatus, authorId: string, currentUserId: string): boolean {
-    return (status === "draft" || status === "rejected") && authorId === currentUserId;
+function canDelete(_status: Schematic.Schematic.ProjectStatus, authorId: string, currentUserId: string): boolean {
+    return authorId === currentUserId;
 }
 
 export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: ProjectsTableProps) {
@@ -106,19 +106,21 @@ export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: Pro
                                                 </Shadcn.Button>
                                             </Shadcn.DropdownMenuTrigger>
                                             <Shadcn.DropdownMenuContent align="end">
-                                                <Shadcn.DropdownMenuItem
-                                                    disabled={!editable}
-                                                    onClick={() => editable && onEdit(project)}>
-                                                    <PencilIcon />
-                                                    编辑
-                                                </Shadcn.DropdownMenuItem>
-                                                <Shadcn.DropdownMenuItem
-                                                    variant="destructive"
-                                                    disabled={!deletable}
-                                                    onClick={() => deletable && onDelete(project)}>
-                                                    <Trash2Icon />
-                                                    删除
-                                                </Shadcn.DropdownMenuItem>
+                                                <Shadcn.DropdownMenuGroup>
+                                                    <Shadcn.DropdownMenuItem
+                                                        disabled={!editable}
+                                                        onClick={() => editable && onEdit(project)}>
+                                                        <PencilIcon />
+                                                        编辑
+                                                    </Shadcn.DropdownMenuItem>
+                                                    <Shadcn.DropdownMenuItem
+                                                        variant="destructive"
+                                                        disabled={!deletable}
+                                                        onClick={() => deletable && onDelete(project)}>
+                                                        <Trash2Icon />
+                                                        删除
+                                                    </Shadcn.DropdownMenuItem>
+                                                </Shadcn.DropdownMenuGroup>
                                             </Shadcn.DropdownMenuContent>
                                         </Shadcn.DropdownMenu>
                                     </Shadcn.TableCell>

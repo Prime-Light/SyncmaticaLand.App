@@ -52,7 +52,7 @@ export function useCreateSchematic(): UseCreateSchematicResult {
 
 export interface UseUpdateSchematicResult {
     updateSchematic: (
-        data: Schematic.Schematic.UpdateSchematicReq
+        data: Schematic.Schematic.UpdateSchematicReq & { category_ids?: string[] }
     ) => Promise<Schematic.Schematic.SchematicRes | null>;
     isLoading: boolean;
     error: Error | null;
@@ -64,7 +64,7 @@ export function useUpdateSchematic(id: string): UseUpdateSchematicResult {
 
     const updateSchematic = useCallback(
         async (
-            data: Schematic.Schematic.UpdateSchematicReq
+            data: Schematic.Schematic.UpdateSchematicReq & { category_ids?: string[] }
         ): Promise<Schematic.Schematic.SchematicRes | null> => {
             setIsLoading(true);
             setError(null);
