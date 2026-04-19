@@ -160,7 +160,7 @@ type ActionButtonsProps =
     | { skeleton: true }
     | {
           skeleton?: false;
-          fileUrl: string;
+          schematicId: string;
           upvoted: boolean;
           upvoteLoading: boolean;
           starred: boolean;
@@ -189,8 +189,7 @@ function ActionButtons(props: ActionButtonsProps) {
                     <Shadcn.Button
                         size="lg"
                         className="w-full"
-                        onClick={props.onDownload}
-                        disabled={!props.fileUrl}>
+                        onClick={props.onDownload}>
                         <Download data-icon="inline-start" />
                         下载原理图
                     </Shadcn.Button>
@@ -428,9 +427,8 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
     }, []);
 
     const handleDownload = useCallback(() => {
-        if (!res?.schematic?.file_url) return;
-        window.open(res.schematic.file_url, "_blank", "noopener,noreferrer");
-    }, [res]);
+        window.open(`/api/v1/schematics/${id}/download`, "_blank", "noopener,noreferrer");
+    }, [id]);
 
     const handleDeleteConfirm = useCallback(async () => {
         try {
@@ -529,7 +527,7 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                     <Shadcn.Separator />
 
                     <ActionButtons
-                        fileUrl={schematicData.file_url}
+                        schematicId={schematicData.id}
                         upvoted={upvoted}
                         upvoteLoading={upvoteLoading}
                         starred={starred}
