@@ -1,9 +1,10 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient, supabaseServerAdmin } from "@/lib/database";
+import { createSupabaseServerClient } from "@/lib/database";
 import { Prime } from "@/components";
 import { DashboardStats } from "@/components/@prime-light/dashboard/dashboard-stats";
 import { RecentProjects } from "@/components/@prime-light/dashboard/recent-projects";
-import { Schematic } from "@/schema";
+import { Schematic, WrapSchema } from "@/schema";
 
 export default async function DashboardPage() {
     const supabase = await createSupabaseServerClient();
@@ -15,25 +16,32 @@ export default async function DashboardPage() {
         redirect("/auth/login");
     }
 
-    const { data, error } = await supabaseServerAdmin.rpc("rpc__schematics_with_categories", {
-        p_status: null,
-        p_category_id: null,
-        p_author_id: user.id,
-        p_limit: 100,
-        p_offset: 0,
-    });
+    const headersList = await headers();
+    const host = headersList.get("host") || "localhost:3000";
+    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+    const baseUrl = process.env.NEXT_PUBLIC_HOST_URL || `${protocol}://${host}`;
+    const cookie = headersList.get("cookie") || "";
 
-    if (error) {
-        console.error("Failed to fetch schematics:", error);
+    let schematics: Schematic.Schematic.Schematic[] = [];
+
+    try {
+        const res = await fetch(
+            `${baseUrl}/api/v1/schematics?author_id=${user.id}&limit=100&offset=0`,
+            {
+                headers: { cookie },
+                cache: "no-store",
+            }
+        );
+
+        if (res.ok) {
+            const result = (await res.json()) as WrapSchema<Schematic.Schematic.SchematicListRes>;
+            schematics = result.data.schematics ?? [];
+        } else {
+            console.error("Failed to fetch schematics via API:", res.status);
+        }
+    } catch (err) {
+        console.error("Failed to fetch schematics via API:", err);
     }
-
-    interface SchematicResult {
-        schematics: Schematic.Schematic.Schematic[];
-        total: number;
-    }
-
-    const result = data as SchematicResult | null;
-    const schematics = result?.schematics ?? [];
 
     const totalProjects = schematics.length;
     const totalViews = schematics.reduce((sum, s) => sum + (s.viewed ?? 0), 0);
