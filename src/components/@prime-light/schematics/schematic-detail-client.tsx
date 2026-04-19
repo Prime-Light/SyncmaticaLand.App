@@ -6,7 +6,6 @@ import {
     Heart,
     Star,
     Download,
-    Eye,
     Calendar,
     Tag,
     Cpu,
@@ -251,7 +250,6 @@ type MetaRowProps =
           skeleton?: false;
           format: string;
           mcVersion: string;
-          viewed: number;
           createdAt: string;
       };
 
@@ -287,19 +285,11 @@ function MetaRows(props: MetaRowProps) {
                     </div>
 
                     <div className="flex items-center gap-2 text-muted-foreground">
-                        <Eye className="size-4 shrink-0" />
-                        <span className="font-medium text-foreground">浏览量</span>
-                        <span className="ml-auto font-mono text-foreground">
-                            {formatCount(props.viewed)}
-                        </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-muted-foreground">
                         <Calendar className="size-4 shrink-0" />
                         <span className="font-medium text-foreground">发布时间</span>
-                        <span className="ml-auto text-xs text-foreground">
+                        <Shadcn.Badge variant="secondary" className="ml-auto">
                             {formatDate(props.createdAt)}
-                        </span>
+                        </Shadcn.Badge>
                     </div>
                 </>
             )}
@@ -532,7 +522,6 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                     <MetaRows
                         format={schematicData.format}
                         mcVersion={schematicData.mc_version}
-                        viewed={schematicData.viewed}
                         createdAt={schematicData.created_at}
                     />
 
