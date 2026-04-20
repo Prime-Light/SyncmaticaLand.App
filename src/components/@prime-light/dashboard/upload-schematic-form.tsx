@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { UploadIcon, FileIcon, XIcon, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useCreateSchematic, useCategories } from "@/hooks";

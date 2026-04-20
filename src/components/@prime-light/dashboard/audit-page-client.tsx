@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { AuditTable } from "@/components/@prime-light/dashboard/audit-table";
 import { AuditDetailDialog } from "@/components/@prime-light/dashboard/audit-detail-dialog";
 import { Schematic } from "@/schema";

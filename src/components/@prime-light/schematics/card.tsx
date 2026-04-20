@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, Eye, Download } from "lucide-react";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { Schematic } from "@/schema";
 
 export type SchematicCardProps = Schematic.Schematic.Schematic;

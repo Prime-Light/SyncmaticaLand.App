@@ -1,6 +1,6 @@
 "use client";
 
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { useSidebar } from "@/components/@shadcn-ui/sidebar";
 import { EllipsisVerticalIcon, LogOutIcon, ShieldUserIcon, SparklesIcon } from "lucide-react";
 import { useCurrentUser, CurrentUser } from "@/hooks/use-current-user";

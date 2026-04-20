@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import {
     CheckCircleIcon,
     XCircleIcon,

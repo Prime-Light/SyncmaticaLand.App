@@ -1,4 +1,4 @@
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { type LucideIcon } from "lucide-react";
 
 interface StatItem {

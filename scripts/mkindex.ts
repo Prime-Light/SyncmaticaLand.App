@@ -9,7 +9,14 @@ type ExportItem = {
     isType: boolean;
 };
 
+type BarrelViolation = {
+    filePath: string;
+    line: number;
+    moduleSpecifier: string;
+};
+
 const VALID_EXT = [".ts", ".tsx"];
+const ROOT_BARREL_SPECIFIERS = new Set(["@/components", "@/components/index"]);
 
 function isValidFile(file: string) {
     return (
@@ -133,19 +140,65 @@ function extractExports(filePath: string, sourceFile: SourceFile): ExportItem[] 
     return exports;
 }
 
+function findRootBarrelViolations(filePath: string, sourceFile: SourceFile): BarrelViolation[] {
+    const violations: BarrelViolation[] = [];
+
+    for (const decl of sourceFile.getImportDeclarations()) {
+        const moduleSpecifier = decl.getModuleSpecifierValue();
+        if (!ROOT_BARREL_SPECIFIERS.has(moduleSpecifier)) continue;
+
+        violations.push({
+            filePath,
+            line: decl.getStartLineNumber(),
+            moduleSpecifier,
+        });
+    }
+
+    for (const decl of sourceFile.getExportDeclarations()) {
+        const moduleSpecifier = decl.getModuleSpecifierValue();
+        if (!moduleSpecifier || !ROOT_BARREL_SPECIFIERS.has(moduleSpecifier)) continue;
+
+        violations.push({
+            filePath,
+            line: decl.getStartLineNumber(),
+            moduleSpecifier,
+        });
+    }
+
+    return violations;
+}
+
 function main() {
     const [, , rootArg, subDir, ...rest] = process.argv;
 
     if (!rootArg || !subDir) {
-        console.log("用法: tsx generate-index.ts <root> <subDir> [--exclude a b]");
+        console.log(
+            "用法: tsx scripts/mkindex.ts <root> <subDir> [--exclude a b] [--allow-root-barrel-import]"
+        );
         process.exit(1);
     }
 
     const root = path.resolve(rootArg);
     const target = path.join(root, subDir);
 
-    const excludeIdx = rest.indexOf("--exclude");
-    const exclude = excludeIdx !== -1 ? new Set(rest.slice(excludeIdx + 1)) : new Set();
+    const exclude = new Set<string>();
+    let allowRootBarrelImport = false;
+
+    for (let i = 0; i < rest.length; i++) {
+        const arg = rest[i];
+
+        if (arg === "--allow-root-barrel-import") {
+            allowRootBarrelImport = true;
+            continue;
+        }
+
+        if (arg === "--exclude") {
+            while (i + 1 < rest.length && !rest[i + 1].startsWith("--")) {
+                exclude.add(rest[i + 1]);
+                i++;
+            }
+        }
+    }
 
     const project = new Project({
         tsConfigFilePath: "./tsconfig.json",
@@ -157,6 +210,7 @@ function main() {
     console.log("扫描:", target);
 
     const all: ExportItem[] = [];
+    const violations: BarrelViolation[] = [];
 
     for (const file of files) {
         const sf = project.addSourceFileAtPath(file);
@@ -165,6 +219,10 @@ function main() {
             .relative(target, file)
             .replace(/\.(ts|tsx)$/, "")
             .replace(/\\/g, "/");
+
+        if (!allowRootBarrelImport) {
+            violations.push(...findRootBarrelViolations(file, sf));
+        }
 
         const exports = extractExports(file, sf);
 
@@ -176,6 +234,23 @@ function main() {
                 importPath,
             });
         }
+    }
+
+    if (violations.length > 0) {
+        console.error(
+            "\n检测到组件内部引用根 barrel（@/components），这会导致循环依赖与运行时 undefined：\n"
+        );
+
+        for (const violation of violations) {
+            const relPath = path.relative(root, violation.filePath).replace(/\\/g, "/");
+            console.error(`- ${relPath}:${violation.line} -> ${violation.moduleSpecifier}`);
+        }
+
+        console.error(
+            "\n请改为精确子路径导入，例如 '@/components/@shadcn-ui' 或 '@/components/@prime-light/...'."
+        );
+        console.error("如需临时跳过校验，可增加 --allow-root-barrel-import 参数。\n");
+        process.exit(1);
     }
 
     if (!all.length) {

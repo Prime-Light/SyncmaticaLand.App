@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { MoreHorizontalIcon, Trash2Icon, CheckIcon, XIcon } from "lucide-react";
 import { Schematic } from "@/schema";
 

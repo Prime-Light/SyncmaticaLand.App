@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { ExternalLinkIcon } from "lucide-react";
 import { Schematic } from "@/schema";
 import { STATUS_LABELS, STATUS_VARIANTS, formatDate } from "./shared";

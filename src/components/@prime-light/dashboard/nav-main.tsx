@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { CirclePlusIcon } from "lucide-react";
 import { CurrentUser } from "@/hooks/use-current-user";
 

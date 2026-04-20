@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import {
     LayoutDashboardIcon,
     FolderIcon,
