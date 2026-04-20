@@ -140,8 +140,6 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
         data: { user },
     } = await supabase.auth.getUser();
 
-    const listDb = supabase;
-
     const status = searchParams.get("status") as Schematic.Schematic.ProjectStatus | null;
     const categoryId = searchParams.get("category_id");
     const authorId = searchParams.get("author_id");
@@ -202,7 +200,7 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
         p_offset: offset,
     };
 
-    const { data, error } = await listDb.rpc("rpc__schematics_with_categories", rpcQuery);
+    const { data, error } = await supabaseServerAdmin.rpc("rpc__schematics_with_categories", rpcQuery);
 
     if (error) {
         BackendApiRouteLogger.error("Failed to fetch schematics", { error });
@@ -216,7 +214,7 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
     let result = normalizeRpcSchematicsResult(data);
     if (result.total === 0) {
         try {
-            result = await fetchSchematicsByTableFallback(listDb, {
+            result = await fetchSchematicsByTableFallback(supabaseServerAdmin, {
                 status: queryStatus,
                 categoryId,
                 authorId,

@@ -35,7 +35,7 @@ export function Captcha({ onSolve }: { onSolve: (solved: boolean) => void }) {
             ref={captchaRef}
             id="cap"
             suppressHydrationWarning
-            data-cap-api-endpoint={process.env.NEXT_PUBLIC_CAP_API_ENDPOINT}
+            data-cap-api-endpoint={process.env.NEXT_PUBLIC_CAPJS_ENDPOINT}
             data-cap-i18n-verifying-label={"验证中..."}
             data-cap-i18n-initial-state={"点击以验证"}
             data-cap-i18n-solved-label={"成功"}
