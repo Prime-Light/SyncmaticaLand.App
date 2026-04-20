@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Eye, EyeOff, Stone } from "lucide-react";
-import { Prime, Shadcn } from "@/components";
+import { Captcha } from "@/components/@prime-light/utils/captcha";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { useEmailStore } from "@/lib/stores/email";
 import { cn } from "@/lib/utils";
 import { IApiErrorResponse } from "@/types/api-error";
@@ -129,7 +130,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"div"
 
                     <Shadcn.Field>
                         <Shadcn.FieldLabel htmlFor="captcha">{"人机验证"}</Shadcn.FieldLabel>
-                        <Prime.Captcha onSolve={setCaptchaSolved} />
+                        <Captcha onSolve={setCaptchaSolved} />
                     </Shadcn.Field>
 
                     <Shadcn.Field>

@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import { Eye, EyeOff, Key, RectangleEllipsis, Stone } from "lucide-react";
-import { Prime, Shadcn } from "@/components";
+import { Captcha } from "@/components/@prime-light/utils/captcha";
+import { IconifyIcon } from "@/components/@prime-light/utils/icons";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { useEmailStore } from "@/lib/stores/email";
 import { cn } from "@/lib/utils";
 import { IApiErrorResponse } from "@/types/api-error";
@@ -161,7 +163,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     )}
                     <Shadcn.Field>
                         <Shadcn.FieldLabel htmlFor="cap">{"人机验证"}</Shadcn.FieldLabel>
-                        <Prime.Captcha onSolve={setCaptchaSolved} />
+                        <Captcha onSolve={setCaptchaSolved} />
                     </Shadcn.Field>
                     <Shadcn.Field>
                         <Shadcn.Button
@@ -193,7 +195,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                     variant="outline"
                                     type="button"
                                     disabled>
-                                    <Prime.IconifyIcon
+                                    <IconifyIcon
                                         icon="logos:microsoft-icon"
                                         className="size-4"
                                     />
@@ -210,7 +212,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                     variant="outline"
                                     type="button"
                                     disabled>
-                                    <Prime.IconifyIcon
+                                    <IconifyIcon
                                         icon="logos:google-icon"
                                         className="size-4"
                                     />

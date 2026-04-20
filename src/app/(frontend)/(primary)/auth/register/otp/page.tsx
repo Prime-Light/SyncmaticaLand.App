@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
-import { Prime } from "@/components";
+import { ReusableOtpForm } from "@/components/@prime-light/forms/otp-form";
 import { IApiErrorResponse } from "@/types/api-error";
 import { useEmailStore } from "@/lib/stores/email";
 
@@ -108,7 +108,7 @@ export default function Page() {
     return (
         <div className="fixed inset-0 flex flex-col items-center justify-center bg-background p-6 md:p-10">
             <div className="w-full max-w-sm">
-                <Prime.ReusableOtpForm
+                <ReusableOtpForm
                     topText="注册验证"
                     otp={otp}
                     onOtpChange={setOtp}

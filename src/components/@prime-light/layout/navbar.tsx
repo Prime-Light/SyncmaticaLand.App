@@ -16,7 +16,8 @@ import {
     SparklesIcon,
     ShieldUserIcon,
 } from "lucide-react";
-import { Prime, Shadcn } from "@/components";
+import { ThemeToggle } from "@/components/@prime-light/utils/theme-toggle";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { cn } from "@/lib/utils";
 import { Auth } from "@/schema";
 import { toast } from "sonner";
@@ -241,7 +242,7 @@ export function Navbar({ initialUser, className }: NavbarProps) {
                             className="mx-4 my-auto h-3/4"
                             orientation="vertical"
                         />
-                        <Prime.ThemeToggle />
+                        <ThemeToggle />
                     </Shadcn.NavigationMenu>
                 </div>
 
