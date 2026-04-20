@@ -1,6 +1,7 @@
 "use client";
 
-import { Prime, Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
+import * as Prime from "@/components/@prime-light";
 import { useSchematics } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { LayoutGrid, List, Loader2 } from "lucide-react";

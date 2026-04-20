@@ -18,7 +18,8 @@ import {
     PencilIcon,
     Trash2Icon,
 } from "lucide-react";
-import { Shadcn, Prime } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
+import * as Prime from "@/components/@prime-light";
 import { useSchematic, useEngagement, useCurrentUser, useDeleteSchematic } from "@/hooks";
 import { EditProjectDialog } from "@/components/@prime-light/dashboard/edit-project-dialog";
 import { cn } from "@/lib/utils";
