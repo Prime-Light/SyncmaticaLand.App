@@ -118,11 +118,14 @@ export default function SchematicsIndex() {
                     </div>
                 )}
 
-                {!error && schematicsLoading && page === 1 && accumulatedSchematics.length === 0 && (
-                    <div className="flex items-center justify-center py-12">
-                        <Loader2 className="size-8 animate-spin text-muted-foreground" />
-                    </div>
-                )}
+                {!error &&
+                    schematicsLoading &&
+                    page === 1 &&
+                    accumulatedSchematics.length === 0 && (
+                        <div className="flex items-center justify-center py-12">
+                            <Loader2 className="size-8 animate-spin text-muted-foreground" />
+                        </div>
+                    )}
 
                 {!error && !schematicsLoading && filteredSchematics.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-12">

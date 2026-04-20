@@ -51,7 +51,8 @@ export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResu
                 if (!res.ok) {
                     throw new Error(`Failed to fetch schematics: ${res.status}`);
                 }
-                const data = (await res.json()) as WrapSchema<Schematic.Schematic.SchematicListRes>;
+                const data =
+                    (await res.json()) as WrapSchema<Schematic.Schematic.SchematicListRes>;
                 if (!mounted) return;
 
                 setSchematics(data.data);
@@ -65,11 +66,20 @@ export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResu
         };
 
         executeFetch();
-        return () => { mounted = false; };
-    }, [options?.status, options?.category_id, options?.author_id, options?.limit, options?.offset, refetchToken]);
+        return () => {
+            mounted = false;
+        };
+    }, [
+        options?.status,
+        options?.category_id,
+        options?.author_id,
+        options?.limit,
+        options?.offset,
+        refetchToken,
+    ]);
 
     const refetch = () => {
-        setRefetchToken(prev => prev + 1);
+        setRefetchToken((prev) => prev + 1);
     };
 
     return { schematics, isLoading, error, refetch };

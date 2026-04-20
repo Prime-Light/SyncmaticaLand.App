@@ -110,7 +110,8 @@ export async function GET(
         .single();
 
     const authorName =
-        typeof authorProfile?.display_name === "string" && authorProfile.display_name.trim().length > 0
+        typeof authorProfile?.display_name === "string" &&
+        authorProfile.display_name.trim().length > 0
             ? authorProfile.display_name.trim()
             : null;
 

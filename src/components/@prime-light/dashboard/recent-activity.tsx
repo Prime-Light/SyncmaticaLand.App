@@ -50,7 +50,9 @@ export function RecentActivity({ activities }: RecentActivityProps) {
                         {activities.map((activity) => (
                             <Shadcn.TableRow key={activity.id}>
                                 <Shadcn.TableCell className="font-medium">
-                                    <Link href={`/schematics/${activity.id}`} className="hover:underline">
+                                    <Link
+                                        href={`/schematics/${activity.id}`}
+                                        className="hover:underline">
                                         {activity.name}
                                     </Link>
                                 </Shadcn.TableCell>

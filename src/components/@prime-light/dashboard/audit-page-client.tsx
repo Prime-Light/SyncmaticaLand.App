@@ -249,7 +249,11 @@ export function AuditPageClient({
                             onClick={handleConfirmBulkAction}
                             disabled={isUpdating}
                             variant={bulkAction === "reject" ? "destructive" : "default"}>
-                            {isUpdating ? "处理中..." : bulkAction === "approve" ? "批准" : "拒绝"}
+                            {isUpdating
+                                ? "处理中..."
+                                : bulkAction === "approve"
+                                  ? "批准"
+                                  : "拒绝"}
                         </Shadcn.Button>
                     </div>
                 </Shadcn.SheetContent>

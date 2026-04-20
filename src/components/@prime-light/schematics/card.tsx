@@ -23,7 +23,8 @@ export function SchematicCard({
     viewed,
 }: SchematicCardProps) {
     const previewImage = images?.[0];
-    const authorName = typeof author_name === "string" && author_name.trim() ? author_name.trim() : "未知作者";
+    const authorName =
+        typeof author_name === "string" && author_name.trim() ? author_name.trim() : "未知作者";
     const authorInitial = authorName.charAt(0).toUpperCase();
 
     return (

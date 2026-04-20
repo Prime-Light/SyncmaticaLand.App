@@ -24,9 +24,17 @@ interface SectionItem {
     requiredRole?: UserRole;
 }
 
-export function NavMain({ items, currentUser }: { items: SectionItem[]; currentUser?: CurrentUser }) {
+export function NavMain({
+    items,
+    currentUser,
+}: {
+    items: SectionItem[];
+    currentUser?: CurrentUser;
+}) {
     const userRole = currentUser?.role as UserRole | undefined;
-    const filteredItems = items.filter((sItem) => hasRequiredRole(userRole, sItem.requiredRole ?? "user"));
+    const filteredItems = items.filter((sItem) =>
+        hasRequiredRole(userRole, sItem.requiredRole ?? "user")
+    );
 
     return (
         <Shadcn.SidebarGroup>
@@ -50,7 +58,10 @@ export function NavMain({ items, currentUser }: { items: SectionItem[]; currentU
                             <Shadcn.SidebarGroupLabel>{sItem.text}</Shadcn.SidebarGroupLabel>
                             {sItem.items
                                 .filter((item) =>
-                                    hasRequiredRole(userRole, item.requiredRole ?? sItem.requiredRole ?? "user")
+                                    hasRequiredRole(
+                                        userRole,
+                                        item.requiredRole ?? sItem.requiredRole ?? "user"
+                                    )
                                 )
                                 .map((item) => (
                                     <Shadcn.SidebarMenuItem key={item.title}>

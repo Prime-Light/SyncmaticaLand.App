@@ -45,7 +45,9 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
                         {projects.map((project) => (
                             <Shadcn.TableRow key={project.id}>
                                 <Shadcn.TableCell className="font-medium">
-                                    <Link href={`/schematics/${project.id}`} className="hover:underline">
+                                    <Link
+                                        href={`/schematics/${project.id}`}
+                                        className="hover:underline">
                                         {project.name}
                                     </Link>
                                 </Shadcn.TableCell>

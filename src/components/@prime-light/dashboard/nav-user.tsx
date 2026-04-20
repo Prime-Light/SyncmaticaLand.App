@@ -2,12 +2,7 @@
 
 import { Shadcn } from "@/components";
 import { useSidebar } from "@/components/@shadcn-ui/sidebar";
-import {
-    EllipsisVerticalIcon,
-    LogOutIcon,
-    ShieldUserIcon,
-    SparklesIcon,
-} from "lucide-react";
+import { EllipsisVerticalIcon, LogOutIcon, ShieldUserIcon, SparklesIcon } from "lucide-react";
 import { useCurrentUser, CurrentUser } from "@/hooks/use-current-user";
 import { toast } from "sonner";
 import { Auth } from "@/schema";

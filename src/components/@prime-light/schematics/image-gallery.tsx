@@ -42,17 +42,17 @@ export function ImageGallery({ images, name, className, skeleton = false }: Imag
                             <>
                                 <button
                                     onClick={prev}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-background/70 p-1.5 backdrop-blur-sm transition-opacity hover:bg-background/90"
+                                    className="absolute top-1/2 left-3 -translate-y-1/2 rounded-full bg-background/70 p-1.5 backdrop-blur-sm transition-opacity hover:bg-background/90"
                                     aria-label="上一张">
                                     <ChevronLeft className="size-5" />
                                 </button>
                                 <button
                                     onClick={next}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-background/70 p-1.5 backdrop-blur-sm transition-opacity hover:bg-background/90"
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-background/70 p-1.5 backdrop-blur-sm transition-opacity hover:bg-background/90"
                                     aria-label="下一张">
                                     <ChevronRight className="size-5" />
                                 </button>
-                                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                                <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
                                     {images.map((_, i) => (
                                         <button
                                             key={i}
@@ -60,7 +60,7 @@ export function ImageGallery({ images, name, className, skeleton = false }: Imag
                                             className={cn(
                                                 "size-2 rounded-full transition-all",
                                                 i === activeIndex
-                                                    ? "bg-foreground scale-110"
+                                                    ? "scale-110 bg-foreground"
                                                     : "bg-foreground/40 hover:bg-foreground/60"
                                             )}
                                             aria-label={`查看第 ${i + 1} 张图片`}

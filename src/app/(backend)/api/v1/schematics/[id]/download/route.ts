@@ -63,18 +63,12 @@ export async function GET(
             error: fetchError,
             schematicId,
         });
-        return new ApiError()
-            .code(ApiErrorCode.NOT_FOUND)
-            .message("原理图不存在")
-            .build();
+        return new ApiError().code(ApiErrorCode.NOT_FOUND).message("原理图不存在").build();
     }
 
     if (!schematic.file_url) {
         BackendApiRouteLogger.warn("Schematic has no file_url", { schematicId });
-        return new ApiError()
-            .code(ApiErrorCode.NOT_FOUND)
-            .message("文件不存在")
-            .build();
+        return new ApiError().code(ApiErrorCode.NOT_FOUND).message("文件不存在").build();
     }
 
     const permissionCheck = await checkDownloadPermission(schematic, user, supabaseServerAdmin);
@@ -125,9 +119,6 @@ export async function GET(
             schematicId,
         });
 
-        return new ApiError()
-            .code(ApiErrorCode.SERVER_ERROR)
-            .message("下载失败")
-            .build();
+        return new ApiError().code(ApiErrorCode.SERVER_ERROR).message("下载失败").build();
     }
 }

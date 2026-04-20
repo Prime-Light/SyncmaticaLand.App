@@ -243,10 +243,13 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
             .in("user_id", authorIds);
 
         if (authorError) {
-            BackendApiRouteLogger.warn("Failed to fetch schematic author names", { error: authorError });
+            BackendApiRouteLogger.warn("Failed to fetch schematic author names", {
+                error: authorError,
+            });
         } else {
             for (const row of authorRows ?? []) {
-                const name = typeof row.display_name === "string" ? row.display_name.trim() : "";
+                const name =
+                    typeof row.display_name === "string" ? row.display_name.trim() : "";
                 if (name.length > 0) {
                     authorNameMap.set(row.user_id, name);
                 }

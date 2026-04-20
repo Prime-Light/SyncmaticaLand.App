@@ -16,7 +16,8 @@ export function CategoriesPageClient({ initialCategories }: CategoriesPageClient
     const [categories, setCategories] = React.useState(initialCategories);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-    const [selectedCategory, setSelectedCategory] = React.useState<Schematic.Category.Category | null>(null);
+    const [selectedCategory, setSelectedCategory] =
+        React.useState<Schematic.Category.Category | null>(null);
     const [updatingCategoryId, setUpdatingCategoryId] = React.useState<string | null>(null);
 
     const { updateCategory } = useUpdateCategory(updatingCategoryId ?? "");
@@ -32,7 +33,9 @@ export function CategoriesPageClient({ initialCategories }: CategoriesPageClient
             try {
                 const result = await updateCategory(data);
                 if (result) {
-                    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, ...result.category } : c)));
+                    setCategories((prev) =>
+                        prev.map((c) => (c.id === id ? { ...c, ...result.category } : c))
+                    );
                     toast.success("分类更新成功");
                     return true;
                 }
@@ -77,7 +80,11 @@ export function CategoriesPageClient({ initialCategories }: CategoriesPageClient
                 />
             </div>
 
-            <CategoriesTable categories={categories} onDelete={handleDelete} onUpdate={handleUpdate} />
+            <CategoriesTable
+                categories={categories}
+                onDelete={handleDelete}
+                onUpdate={handleUpdate}
+            />
 
             <DeleteCategoryDialog
                 category={selectedCategory}

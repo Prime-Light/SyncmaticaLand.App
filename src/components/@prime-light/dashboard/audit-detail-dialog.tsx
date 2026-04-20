@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import { Shadcn } from "@/components";
-import { CheckCircleIcon, XCircleIcon, EyeIcon, ThumbsUpIcon, StarIcon, ImageIcon } from "lucide-react";
+import {
+    CheckCircleIcon,
+    XCircleIcon,
+    EyeIcon,
+    ThumbsUpIcon,
+    StarIcon,
+    ImageIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useUpdateSchematic } from "@/hooks";
 import { Schematic } from "@/schema";
@@ -15,7 +22,12 @@ export interface AuditDetailDialogProps {
     onSuccess: () => void;
 }
 
-export function AuditDetailDialog({ project, open, onOpenChange, onSuccess }: AuditDetailDialogProps) {
+export function AuditDetailDialog({
+    project,
+    open,
+    onOpenChange,
+    onSuccess,
+}: AuditDetailDialogProps) {
     const { updateSchematic, isLoading: isUpdating } = useUpdateSchematic(project?.id ?? "");
     const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -45,23 +57,33 @@ export function AuditDetailDialog({ project, open, onOpenChange, onSuccess }: Au
         <Shadcn.Sheet open={open} onOpenChange={onOpenChange}>
             <Shadcn.SheetContent side="right" className="w-full overflow-y-auto sm:max-w-lg">
                 <Shadcn.SheetHeader className="pb-2">
-                    <Shadcn.SheetTitle className="text-base font-semibold">项目详情</Shadcn.SheetTitle>
-                    <Shadcn.SheetDescription>查看原理图详细信息并进行审核操作</Shadcn.SheetDescription>
+                    <Shadcn.SheetTitle className="text-base font-semibold">
+                        项目详情
+                    </Shadcn.SheetTitle>
+                    <Shadcn.SheetDescription>
+                        查看原理图详细信息并进行审核操作
+                    </Shadcn.SheetDescription>
                 </Shadcn.SheetHeader>
 
                 <div className="flex flex-1 flex-col gap-6 p-4">
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-lg font-semibold">{project.name}</h3>
-                            <p className="text-sm text-muted-foreground">作者: {project.author_name}</p>
+                            <p className="text-sm text-muted-foreground">
+                                作者: {project.author_name}
+                            </p>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <Shadcn.Badge variant={STATUS_VARIANTS[project.status]}>
                                 {STATUS_LABELS[project.status]}
                             </Shadcn.Badge>
-                            <Shadcn.Badge variant="secondary">{FORMAT_LABELS[project.format]}</Shadcn.Badge>
-                            <Shadcn.Badge variant="outline">MC {project.mc_version}</Shadcn.Badge>
+                            <Shadcn.Badge variant="secondary">
+                                {FORMAT_LABELS[project.format]}
+                            </Shadcn.Badge>
+                            <Shadcn.Badge variant="outline">
+                                MC {project.mc_version}
+                            </Shadcn.Badge>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4">
@@ -93,7 +115,9 @@ export function AuditDetailDialog({ project, open, onOpenChange, onSuccess }: Au
                                 <h4 className="mb-2 text-sm font-medium">标签</h4>
                                 <div className="flex flex-wrap gap-1.5">
                                     {project.tags.map((tag) => (
-                                        <Shadcn.Badge key={tag} variant="secondary">{tag}</Shadcn.Badge>
+                                        <Shadcn.Badge key={tag} variant="secondary">
+                                            {tag}
+                                        </Shadcn.Badge>
                                     ))}
                                 </div>
                             </div>
@@ -108,7 +132,11 @@ export function AuditDetailDialog({ project, open, onOpenChange, onSuccess }: Au
                                             key={`image-${index}`}
                                             className="relative aspect-video overflow-hidden border border-border">
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={url} alt={`预览图片 ${index + 1}`} className="size-full object-cover" />
+                                            <img
+                                                src={url}
+                                                alt={`预览图片 ${index + 1}`}
+                                                className="size-full object-cover"
+                                            />
                                         </div>
                                     ))}
                                 </div>
@@ -128,19 +156,35 @@ export function AuditDetailDialog({ project, open, onOpenChange, onSuccess }: Au
 
                     {isUnderReview && (
                         <div className="flex items-center justify-end gap-3 border-t pt-4">
-                            <Shadcn.Button variant="outline" onClick={() => onOpenChange(false)}>
+                            <Shadcn.Button
+                                variant="outline"
+                                onClick={() => onOpenChange(false)}>
                                 取消
                             </Shadcn.Button>
                             <Shadcn.Button
                                 variant="destructive"
                                 disabled={isSubmitting || isUpdating}
                                 onClick={() => handleStatusUpdate("rejected")}>
-                                {isSubmitting || isUpdating ? "处理中..." : <><XCircleIcon />拒绝</>}
+                                {isSubmitting || isUpdating ? (
+                                    "处理中..."
+                                ) : (
+                                    <>
+                                        <XCircleIcon />
+                                        拒绝
+                                    </>
+                                )}
                             </Shadcn.Button>
                             <Shadcn.Button
                                 disabled={isSubmitting || isUpdating}
                                 onClick={() => handleStatusUpdate("published")}>
-                                {isSubmitting || isUpdating ? "处理中..." : <><CheckCircleIcon />批准</>}
+                                {isSubmitting || isUpdating ? (
+                                    "处理中..."
+                                ) : (
+                                    <>
+                                        <CheckCircleIcon />
+                                        批准
+                                    </>
+                                )}
                             </Shadcn.Button>
                         </div>
                     )}

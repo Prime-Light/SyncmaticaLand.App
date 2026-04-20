@@ -33,7 +33,8 @@ export default async function ProjectsPage() {
         );
 
         if (res.ok) {
-            const result = (await res.json()) as WrapSchema<Schematic.Schematic.SchematicListRes>;
+            const result =
+                (await res.json()) as WrapSchema<Schematic.Schematic.SchematicListRes>;
             schematics = result.data.schematics ?? [];
         } else {
             console.error("Failed to fetch schematics via API:", res.status);

@@ -3,7 +3,14 @@
 import * as React from "react";
 import Link from "next/link";
 import { Shadcn } from "@/components";
-import { EyeIcon, ThumbsUpIcon, StarIcon, MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import {
+    EyeIcon,
+    ThumbsUpIcon,
+    StarIcon,
+    MoreHorizontalIcon,
+    PencilIcon,
+    Trash2Icon,
+} from "lucide-react";
 import { Schematic } from "@/schema";
 import { STATUS_LABELS, STATUS_VARIANTS, formatDate } from "./shared";
 
@@ -15,14 +22,28 @@ export interface ProjectsTableProps {
 }
 
 function canEdit(status: Schematic.Schematic.ProjectStatus): boolean {
-    return status === "draft" || status === "under_review" || status === "rejected" || status === "published";
+    return (
+        status === "draft" ||
+        status === "under_review" ||
+        status === "rejected" ||
+        status === "published"
+    );
 }
 
-function canDelete(_status: Schematic.Schematic.ProjectStatus, authorId: string, currentUserId: string): boolean {
+function canDelete(
+    _status: Schematic.Schematic.ProjectStatus,
+    authorId: string,
+    currentUserId: string
+): boolean {
     return authorId === currentUserId;
 }
 
-export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: ProjectsTableProps) {
+export function ProjectsTable({
+    projects,
+    currentUserId,
+    onEdit,
+    onDelete,
+}: ProjectsTableProps) {
     const [currentPage, setCurrentPage] = React.useState(1);
     const pageSize = 10;
 
@@ -65,11 +86,17 @@ export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: Pro
                     <Shadcn.TableBody>
                         {paginated.map((project) => {
                             const editable = canEdit(project.status);
-                            const deletable = canDelete(project.status, project.author_id, currentUserId);
+                            const deletable = canDelete(
+                                project.status,
+                                project.author_id,
+                                currentUserId
+                            );
                             return (
                                 <Shadcn.TableRow key={project.id}>
                                     <Shadcn.TableCell className="font-medium">
-                                        <Link href={`/schematics/${project.id}`} className="hover:underline">
+                                        <Link
+                                            href={`/schematics/${project.id}`}
+                                            className="hover:underline">
                                             {project.name}
                                         </Link>
                                     </Shadcn.TableCell>
@@ -96,7 +123,9 @@ export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: Pro
                                             {project.starred.toLocaleString()}
                                         </span>
                                     </Shadcn.TableCell>
-                                    <Shadcn.TableCell>{formatDate(project.created_at)}</Shadcn.TableCell>
+                                    <Shadcn.TableCell>
+                                        {formatDate(project.created_at)}
+                                    </Shadcn.TableCell>
                                     <Shadcn.TableCell>
                                         <Shadcn.DropdownMenu>
                                             <Shadcn.DropdownMenuTrigger asChild>
@@ -109,14 +138,18 @@ export function ProjectsTable({ projects, currentUserId, onEdit, onDelete }: Pro
                                                 <Shadcn.DropdownMenuGroup>
                                                     <Shadcn.DropdownMenuItem
                                                         disabled={!editable}
-                                                        onClick={() => editable && onEdit(project)}>
+                                                        onClick={() =>
+                                                            editable && onEdit(project)
+                                                        }>
                                                         <PencilIcon />
                                                         编辑
                                                     </Shadcn.DropdownMenuItem>
                                                     <Shadcn.DropdownMenuItem
                                                         variant="destructive"
                                                         disabled={!deletable}
-                                                        onClick={() => deletable && onDelete(project)}>
+                                                        onClick={() =>
+                                                            deletable && onDelete(project)
+                                                        }>
                                                         <Trash2Icon />
                                                         删除
                                                     </Shadcn.DropdownMenuItem>

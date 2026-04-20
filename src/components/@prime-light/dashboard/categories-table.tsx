@@ -135,11 +135,7 @@ function formatDate(dateString: string): string {
     });
 }
 
-export function CategoriesTable({
-    categories,
-    onDelete,
-    onUpdate,
-}: CategoriesTableProps) {
+export function CategoriesTable({ categories, onDelete, onUpdate }: CategoriesTableProps) {
     const [currentPage, setCurrentPage] = React.useState(1);
     const pageSize = 10;
 

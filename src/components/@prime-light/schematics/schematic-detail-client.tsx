@@ -186,10 +186,7 @@ function ActionButtons(props: ActionButtonsProps) {
                 </>
             ) : (
                 <>
-                    <Shadcn.Button
-                        size="lg"
-                        className="w-full"
-                        onClick={props.onDownload}>
+                    <Shadcn.Button size="lg" className="w-full" onClick={props.onDownload}>
                         <Download data-icon="inline-start" />
                         下载原理图
                     </Shadcn.Button>
@@ -553,7 +550,9 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                             <div className="flex flex-col gap-2">
                                 <p className="text-sm font-medium">作者操作</p>
                                 <div className="flex gap-2">
-                                    {(schematicData.status === "draft" || schematicData.status === "under_review" || schematicData.status === "rejected") && (
+                                    {(schematicData.status === "draft" ||
+                                        schematicData.status === "under_review" ||
+                                        schematicData.status === "rejected") && (
                                         <Shadcn.Button
                                             variant="outline"
                                             className="flex-1"
@@ -562,7 +561,8 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                                             编辑
                                         </Shadcn.Button>
                                     )}
-                                    {(schematicData.status === "draft" || schematicData.status === "rejected") && (
+                                    {(schematicData.status === "draft" ||
+                                        schematicData.status === "rejected") && (
                                         <Shadcn.Button
                                             variant="destructive"
                                             className="flex-1"
@@ -592,7 +592,9 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                                 <Shadcn.SheetTitle className="text-base font-semibold">
                                     确认删除
                                 </Shadcn.SheetTitle>
-                                <Shadcn.SheetDescription>此操作无法撤销</Shadcn.SheetDescription>
+                                <Shadcn.SheetDescription>
+                                    此操作无法撤销
+                                </Shadcn.SheetDescription>
                             </Shadcn.SheetHeader>
 
                             <div className="flex flex-col gap-4 p-4">
