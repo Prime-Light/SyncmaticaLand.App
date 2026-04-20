@@ -7,6 +7,7 @@ import { AuditDetailDialog } from "@/components/@prime-light/dashboard/audit-det
 import { Schematic } from "@/schema";
 import { toast } from "sonner";
 import { useUpdateSchematic } from "@/hooks";
+import { CheckCircleIcon, XCircleIcon } from "lucide-react";
 
 export interface AuditPageClientProps {
     initialProjects: (Schematic.Schematic.Schematic & { author_name: string })[];
@@ -30,6 +31,9 @@ export function AuditPageClient({
     const [confirmProject, setConfirmProject] = React.useState<
         (Schematic.Schematic.Schematic & { author_name: string }) | null
     >(null);
+    const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
+    const [bulkDialogOpen, setBulkDialogOpen] = React.useState(false);
+    const [bulkAction, setBulkAction] = React.useState<"approve" | "reject" | null>(null);
 
     const { updateSchematic, isLoading: isUpdating } = useUpdateSchematic(
         confirmProject?.id ?? ""
@@ -99,12 +103,80 @@ export function AuditPageClient({
         setProjects(initialProjects);
     }, [initialProjects]);
 
+    const handleBulkAction = (action: "approve" | "reject") => {
+        setBulkAction(action);
+        setBulkDialogOpen(true);
+    };
+
+    const handleConfirmBulkAction = async () => {
+        if (!bulkAction) return;
+        const newStatus = bulkAction === "approve" ? "published" : "rejected";
+
+        try {
+            const updatePromises = Array.from(selectedIds).map((id) =>
+                updateSchematic({ status: newStatus })
+            );
+            await Promise.all(updatePromises);
+
+            setProjects((prev) =>
+                prev.map((p) => (selectedIds.has(p.id) ? { ...p, status: newStatus } : p))
+            );
+            toast.success(
+                bulkAction === "approve"
+                    ? `已批准 ${selectedIds.size} 个项目`
+                    : `已拒绝 ${selectedIds.size} 个项目`
+            );
+            setBulkDialogOpen(false);
+            setBulkAction(null);
+            setSelectedIds(new Set());
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "操作失败，请重试";
+            toast.error(message);
+        }
+    };
+
     React.useEffect(() => {
         setProjects(initialProjects);
     }, [initialProjects]);
 
+    const underReviewSelected = React.useMemo(() => {
+        return Array.from(selectedIds).filter((id) => {
+            const project = projects.find((p) => p.id === id);
+            return project?.status === "under_review";
+        });
+    }, [selectedIds, projects]);
+
     return (
         <>
+            {selectedIds.size > 0 && (
+                <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
+                    <span className="text-sm text-muted-foreground">
+                        已选择 {selectedIds.size} 个项目
+                    </span>
+                    <Shadcn.Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleBulkAction("approve")}
+                        disabled={underReviewSelected.length === 0}>
+                        <CheckCircleIcon className="mr-1 h-4 w-4" />
+                        批量批准
+                    </Shadcn.Button>
+                    <Shadcn.Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleBulkAction("reject")}
+                        disabled={underReviewSelected.length === 0}>
+                        <XCircleIcon className="mr-1 h-4 w-4" />
+                        批量拒绝
+                    </Shadcn.Button>
+                    <Shadcn.Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setSelectedIds(new Set())}>
+                        取消选择
+                    </Shadcn.Button>
+                </div>
+            )}
             <AuditTable
                 projects={filteredProjects}
                 onViewDetails={handleViewDetails}
@@ -112,6 +184,8 @@ export function AuditPageClient({
                 onReject={handleReject}
                 statusFilter={statusFilter}
                 onStatusFilterChange={setStatusFilter}
+                selectedIds={selectedIds}
+                onSelectionChange={setSelectedIds}
             />
 
             <AuditDetailDialog
@@ -148,6 +222,34 @@ export function AuditPageClient({
                                 : confirmAction === "approve"
                                   ? "批准"
                                   : "拒绝"}
+                        </Shadcn.Button>
+                    </div>
+                </Shadcn.SheetContent>
+            </Shadcn.Sheet>
+
+            <Shadcn.Sheet open={bulkDialogOpen} onOpenChange={setBulkDialogOpen}>
+                <Shadcn.SheetContent side="bottom" className="sm:mx-auto sm:max-w-md">
+                    <Shadcn.SheetHeader>
+                        <Shadcn.SheetTitle>
+                            {bulkAction === "approve" ? "确认批量批准" : "确认批量拒绝"}
+                        </Shadcn.SheetTitle>
+                        <Shadcn.SheetDescription>
+                            {bulkAction === "approve"
+                                ? `确定要批准选中的 ${underReviewSelected.length} 个审核中的项目吗？批准后这些项目将公开发布。`
+                                : `确定要拒绝选中的 ${underReviewSelected.length} 个审核中的项目吗？拒绝后作者可以修改后重新提交。`}
+                        </Shadcn.SheetDescription>
+                    </Shadcn.SheetHeader>
+                    <div className="flex items-center justify-end gap-3 p-4">
+                        <Shadcn.Button
+                            variant="outline"
+                            onClick={() => setBulkDialogOpen(false)}>
+                            取消
+                        </Shadcn.Button>
+                        <Shadcn.Button
+                            onClick={handleConfirmBulkAction}
+                            disabled={isUpdating}
+                            variant={bulkAction === "reject" ? "destructive" : "default"}>
+                            {isUpdating ? "处理中..." : bulkAction === "approve" ? "批准" : "拒绝"}
                         </Shadcn.Button>
                     </div>
                 </Shadcn.SheetContent>

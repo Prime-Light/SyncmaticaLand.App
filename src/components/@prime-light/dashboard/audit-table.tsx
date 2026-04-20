@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { Shadcn } from "@/components";
-import { EyeIcon, ThumbsUpIcon, MoreHorizontalIcon, CheckCircleIcon, XCircleIcon } from "lucide-react";
+import { EyeIcon, ThumbsUpIcon, MoreHorizontalIcon, CheckCircleIcon, XCircleIcon, SearchIcon } from "lucide-react";
 import { Schematic } from "@/schema";
 import { STATUS_LABELS, STATUS_VARIANTS, formatDate } from "./shared";
 
@@ -14,6 +14,8 @@ export interface AuditTableProps {
     onReject: (project: Schematic.Schematic.Schematic & { author_name: string }) => void;
     statusFilter: Schematic.Schematic.ProjectStatus | "all";
     onStatusFilterChange: (status: Schematic.Schematic.ProjectStatus | "all") => void;
+    selectedIds: Set<string>;
+    onSelectionChange: (ids: Set<string>) => void;
 }
 
 export function AuditTable({
@@ -23,39 +25,91 @@ export function AuditTable({
     onReject,
     statusFilter,
     onStatusFilterChange,
+    selectedIds,
+    onSelectionChange,
 }: AuditTableProps) {
     const [currentPage, setCurrentPage] = React.useState(1);
+    const [searchQuery, setSearchQuery] = React.useState("");
     const pageSize = 10;
 
-    const totalPages = Math.ceil(projects.length / pageSize);
-    const paginated = projects.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    const filteredProjects = React.useMemo(() => {
+        if (!searchQuery.trim()) return projects;
+        const q = searchQuery.toLowerCase();
+        return projects.filter(
+            (p) =>
+                p.name.toLowerCase().includes(q) ||
+                p.author_name.toLowerCase().includes(q) ||
+                p.description?.toLowerCase().includes(q)
+        );
+    }, [projects, searchQuery]);
+
+    const totalPages = Math.ceil(filteredProjects.length / pageSize);
+    const paginated = filteredProjects.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+    const allSelected = paginated.length > 0 && paginated.every((p) => selectedIds.has(p.id));
+    const someSelected = paginated.some((p) => selectedIds.has(p.id));
+
+    const handleToggleAll = () => {
+        if (allSelected) {
+            const newIds = new Set(selectedIds);
+            paginated.forEach((p) => newIds.delete(p.id));
+            onSelectionChange(newIds);
+        } else {
+            const newIds = new Set(selectedIds);
+            paginated.forEach((p) => newIds.add(p.id));
+            onSelectionChange(newIds);
+        }
+    };
+
+    const handleToggleOne = (id: string) => {
+        const newIds = new Set(selectedIds);
+        if (newIds.has(id)) {
+            newIds.delete(id);
+        } else {
+            newIds.add(id);
+        }
+        onSelectionChange(newIds);
+    };
 
     React.useEffect(() => {
         setCurrentPage(1);
-    }, [statusFilter]);
+    }, [statusFilter, searchQuery]);
 
     return (
         <Shadcn.Card>
             <Shadcn.CardHeader>
                 <div className="flex items-center justify-between">
                     <div>
-                        <Shadcn.CardTitle>项目审核</Shadcn.CardTitle>
-                        <Shadcn.CardDescription>共 {projects.length} 个项目</Shadcn.CardDescription>
+                        <Shadcn.CardTitle>项目管理</Shadcn.CardTitle>
+                        <Shadcn.CardDescription>
+                            共 {filteredProjects.length} 个项目{selectedIds.size > 0 && `，已选择 ${selectedIds.size} 个`}
+                        </Shadcn.CardDescription>
                     </div>
-                    <Shadcn.Select
-                        value={statusFilter}
-                        onValueChange={(v) => onStatusFilterChange(v as Schematic.Schematic.ProjectStatus | "all")}>
-                        <Shadcn.SelectTrigger className="w-[140px]">
-                            <Shadcn.SelectValue placeholder="筛选状态" />
-                        </Shadcn.SelectTrigger>
-                        <Shadcn.SelectContent>
-                            <Shadcn.SelectItem value="all">全部状态</Shadcn.SelectItem>
-                            <Shadcn.SelectItem value="under_review">审核中</Shadcn.SelectItem>
-                            <Shadcn.SelectItem value="published">已发布</Shadcn.SelectItem>
-                            <Shadcn.SelectItem value="rejected">已拒绝</Shadcn.SelectItem>
-                            <Shadcn.SelectItem value="draft">草稿</Shadcn.SelectItem>
-                        </Shadcn.SelectContent>
-                    </Shadcn.Select>
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Shadcn.Input
+                                placeholder="搜索项目..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-[200px] pl-9"
+                            />
+                        </div>
+                        <Shadcn.Select
+                            value={statusFilter}
+                            onValueChange={(v) => onStatusFilterChange(v as Schematic.Schematic.ProjectStatus | "all")}>
+                            <Shadcn.SelectTrigger className="w-[140px]">
+                                <Shadcn.SelectValue placeholder="筛选状态" />
+                            </Shadcn.SelectTrigger>
+                            <Shadcn.SelectContent>
+                                <Shadcn.SelectItem value="all">全部状态</Shadcn.SelectItem>
+                                <Shadcn.SelectItem value="under_review">审核中</Shadcn.SelectItem>
+                                <Shadcn.SelectItem value="published">已发布</Shadcn.SelectItem>
+                                <Shadcn.SelectItem value="rejected">已拒绝</Shadcn.SelectItem>
+                                <Shadcn.SelectItem value="draft">草稿</Shadcn.SelectItem>
+                            </Shadcn.SelectContent>
+                        </Shadcn.Select>
+                    </div>
                 </div>
             </Shadcn.CardHeader>
             <Shadcn.CardContent>
@@ -66,6 +120,12 @@ export function AuditTable({
                         <Shadcn.Table>
                             <Shadcn.TableHeader>
                                 <Shadcn.TableRow>
+                                    <Shadcn.TableHead className="w-[40px]">
+                                        <Shadcn.Checkbox
+                                            checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                                            onCheckedChange={handleToggleAll}
+                                        />
+                                    </Shadcn.TableHead>
                                     <Shadcn.TableHead>名称</Shadcn.TableHead>
                                     <Shadcn.TableHead>作者</Shadcn.TableHead>
                                     <Shadcn.TableHead>状态</Shadcn.TableHead>
@@ -78,8 +138,15 @@ export function AuditTable({
                             <Shadcn.TableBody>
                                 {paginated.map((project) => {
                                     const isUnderReview = project.status === "under_review";
+                                    const isSelected = selectedIds.has(project.id);
                                     return (
-                                        <Shadcn.TableRow key={project.id}>
+                                        <Shadcn.TableRow key={project.id} data-selected={isSelected}>
+                                            <Shadcn.TableCell>
+                                                <Shadcn.Checkbox
+                                                    checked={isSelected}
+                                                    onCheckedChange={() => handleToggleOne(project.id)}
+                                                />
+                                            </Shadcn.TableCell>
                                             <Shadcn.TableCell className="font-medium">
                                                 <Link href={`/schematics/${project.id}`} className="hover:underline">
                                                     {project.name}

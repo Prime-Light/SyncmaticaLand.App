@@ -9,7 +9,7 @@ import {
     FolderIcon,
     StoneIcon,
     HomeIcon,
-    ScaleIcon,
+    LayersIcon,
     TagsIcon,
 } from "lucide-react";
 import { CurrentUser } from "@/hooks/use-current-user";
@@ -30,7 +30,7 @@ const NAV_SECTIONS = [
         requiredRole: "admin" as const,
         items: [
             { title: "管理员仪表盘", url: "/admin", icon: <StoneIcon /> },
-            { title: "项目审核", url: "/admin/audit", icon: <ScaleIcon /> },
+            { title: "项目管理", url: "/admin/audit", icon: <LayersIcon /> },
             { title: "分类管理", url: "/admin/categories", icon: <TagsIcon /> },
         ],
     },
