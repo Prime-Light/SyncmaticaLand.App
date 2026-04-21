@@ -1,69 +1,93 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/database";
+"use client";
+
+import { useEffect } from "react";
 import { Prime } from "@/components";
 import { DashboardStats } from "@/components/@prime-light/dashboard/dashboard-stats";
 import { RecentProjects } from "@/components/@prime-light/dashboard/recent-projects";
-import { Schematic, WrapSchema } from "@/schema";
+import { Skeleton } from "@/components/@shadcn-ui/skeleton";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useSchematics } from "@/hooks/use-schematics";
 
-export default async function DashboardPage() {
-    const supabase = await createSupabaseServerClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+export default function DashboardPage() {
+    const { user, loading: userLoading, refetch: refetchUser } = useCurrentUser();
+    const { schematics, isLoading: schematicsLoading, refetch: refetchSchematics } = useSchematics(
+        user?.user_id
+            ? { author_id: user.user_id, limit: 100, offset: 0 }
+            : { skip: true }
+    );
 
-    if (!user) {
-        redirect("/auth/login");
-    }
+    // 每次进入页面都重新获取数据
+    useEffect(() => {
+        refetchUser();
+        refetchSchematics();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    const headersList = await headers();
-    const host = headersList.get("host") || "localhost:3000";
-    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-    const baseUrl = process.env.NEXT_PUBLIC_HOST_URL || `${protocol}://${host}`;
-    const cookie = headersList.get("cookie") || "";
+    const isLoading = userLoading || schematicsLoading;
+    const allProjects = schematics?.schematics ?? [];
 
-    let schematics: Schematic.Schematic.Schematic[] = [];
+    const totalProjects = allProjects.length;
+    const totalViews = allProjects.reduce((sum, s) => sum + (s.viewed ?? 0), 0);
+    const totalUpvotes = allProjects.reduce((sum, s) => sum + (s.upvotes ?? 0), 0);
+    const totalStars = allProjects.reduce((sum, s) => sum + (s.starred ?? 0), 0);
 
-    try {
-        const res = await fetch(
-            `${baseUrl}/api/v1/schematics?author_id=${user.id}&limit=100&offset=0`,
-            {
-                headers: { cookie },
-                cache: "no-store",
-            }
-        );
-
-        if (res.ok) {
-            const result =
-                (await res.json()) as WrapSchema<Schematic.Schematic.SchematicListRes>;
-            schematics = result.data.schematics ?? [];
-        } else {
-            console.error("Failed to fetch schematics via API:", res.status);
-        }
-    } catch (err) {
-        console.error("Failed to fetch schematics via API:", err);
-    }
-
-    const totalProjects = schematics.length;
-    const totalViews = schematics.reduce((sum, s) => sum + (s.viewed ?? 0), 0);
-    const totalUpvotes = schematics.reduce((sum, s) => sum + (s.upvotes ?? 0), 0);
-    const totalStars = schematics.reduce((sum, s) => sum + (s.starred ?? 0), 0);
-
-    const recentProjects = [...schematics]
-        .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+    const recentProjects = [...allProjects]
+        .sort(
+            (a, b) =>
+                new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        )
         .slice(0, 5);
 
     return (
         <>
             <Prime.SiteHeader breadcrumbs={[{ label: "创作者仪表盘" }]} />
             <div className="flex flex-1 flex-col gap-4 p-4">
-                <DashboardStats
-                    totalProjects={totalProjects}
-                    totalViews={totalViews}
-                    totalUpvotes={totalUpvotes}
-                    totalStars={totalStars}
-                />
-                <RecentProjects projects={recentProjects} />
+                {isLoading ? (
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <Skeleton key={i} className="h-28 w-full rounded-xl" />
+                        ))}
+                    </div>
+                ) : (
+                    <DashboardStats
+                        totalProjects={totalProjects}
+                        totalViews={totalViews}
+                        totalUpvotes={totalUpvotes}
+                        totalStars={totalStars}
+                    />
+                )}
+                {isLoading ? (
+                    <div className="rounded-xl border bg-card text-card-foreground shadow">
+                        <div className="flex flex-col space-y-1.5 p-6">
+                            <Skeleton className="h-6 w-32" />
+                            <Skeleton className="h-4 w-48" />
+                        </div>
+                        <div className="p-6 pt-0">
+                            <div className="space-y-3">
+                                <div className="flex gap-4">
+                                    <Skeleton className="h-4 flex-1" />
+                                    <Skeleton className="h-4 w-24" />
+                                    <Skeleton className="h-4 w-16" />
+                                    <Skeleton className="h-4 w-16" />
+                                    <Skeleton className="h-4 w-16" />
+                                    <Skeleton className="h-4 w-12" />
+                                </div>
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <div key={i} className="flex items-center gap-4">
+                                        <Skeleton className="h-4 flex-1" />
+                                        <Skeleton className="h-4 w-24" />
+                                        <Skeleton className="h-4 w-16" />
+                                        <Skeleton className="h-4 w-16" />
+                                        <Skeleton className="h-4 w-16" />
+                                        <Skeleton className="h-8 w-8 rounded-md" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <RecentProjects projects={recentProjects} />
+                )}
             </div>
         </>
     );

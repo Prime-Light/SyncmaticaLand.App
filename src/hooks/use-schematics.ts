@@ -9,6 +9,7 @@ export interface UseSchematicsOptions {
     author_id?: string;
     limit?: number;
     offset?: number;
+    skip?: boolean;
 }
 
 export interface UseSchematicsResult {
@@ -16,6 +17,24 @@ export interface UseSchematicsResult {
     isLoading: boolean;
     error: Error | null;
     refetch: () => void;
+}
+
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+const cache = new Map<
+    string,
+    { data: Schematic.Schematic.SchematicListRes; timestamp: number }
+>();
+
+function buildUrl(options?: UseSchematicsOptions): string {
+    const params = new URLSearchParams();
+    if (options?.status) params.set("status", options.status);
+    if (options?.category_id) params.set("category_id", options.category_id);
+    if (options?.author_id) params.set("author_id", options.author_id);
+    if (options?.limit !== undefined) params.set("limit", String(options.limit));
+    if (options?.offset !== undefined) params.set("offset", String(options.offset));
+    const queryString = params.toString();
+    return `/api/v1/schematics${queryString ? `?${queryString}` : ""}`;
 }
 
 export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResult {
@@ -27,22 +46,28 @@ export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResu
     const [refetchToken, setRefetchToken] = useState(0);
 
     useEffect(() => {
+        if (options?.skip) {
+            setIsLoading(false);
+            setError(null);
+            return;
+        }
+
         let mounted = true;
         setIsLoading(true);
         setError(null);
 
+        const url = buildUrl(options);
+        const cached = cache.get(url);
+
+        if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+            setSchematics(cached.data);
+            setIsLoading(false);
+            setError(null);
+            return;
+        }
+
         const executeFetch = async () => {
             if (!mounted) return;
-
-            const params = new URLSearchParams();
-            if (options?.status) params.set("status", options.status);
-            if (options?.category_id) params.set("category_id", options.category_id);
-            if (options?.author_id) params.set("author_id", options.author_id);
-            if (options?.limit !== undefined) params.set("limit", String(options.limit));
-            if (options?.offset !== undefined) params.set("offset", String(options.offset));
-
-            const queryString = params.toString();
-            const url = `/api/v1/schematics${queryString ? `?${queryString}` : ""}`;
 
             try {
                 const res = await fetch(url, { method: "GET", cache: "no-store" });
@@ -55,6 +80,7 @@ export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResu
                     (await res.json()) as WrapSchema<Schematic.Schematic.SchematicListRes>;
                 if (!mounted) return;
 
+                cache.set(url, { data: data.data, timestamp: Date.now() });
                 setSchematics(data.data);
                 setIsLoading(false);
                 setError(null);
@@ -70,6 +96,7 @@ export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResu
             mounted = false;
         };
     }, [
+        options?.skip,
         options?.status,
         options?.category_id,
         options?.author_id,
@@ -79,6 +106,7 @@ export function useSchematics(options?: UseSchematicsOptions): UseSchematicsResu
     ]);
 
     const refetch = () => {
+        cache.delete(buildUrl(options));
         setRefetchToken((prev) => prev + 1);
     };
 
