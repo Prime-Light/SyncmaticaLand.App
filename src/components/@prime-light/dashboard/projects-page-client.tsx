@@ -21,11 +21,13 @@ import {
 export interface ProjectsPageClientProps {
     projects: Schematic.Schematic.Schematic[];
     currentUserId: string;
+    isLoading?: boolean;
 }
 
 export function ProjectsPageClient({
     projects: initialProjects,
     currentUserId,
+    isLoading,
 }: ProjectsPageClientProps) {
     const router = useRouter();
     const [projects, setProjects] = React.useState(initialProjects);
@@ -83,6 +85,7 @@ export function ProjectsPageClient({
                 currentUserId={currentUserId}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                isLoading={isLoading}
             />
 
             <EditProjectDialog

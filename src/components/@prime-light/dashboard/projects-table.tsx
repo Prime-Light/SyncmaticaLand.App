@@ -19,6 +19,7 @@ export interface ProjectsTableProps {
     currentUserId: string;
     onEdit: (project: Schematic.Schematic.Schematic) => void;
     onDelete: (project: Schematic.Schematic.Schematic) => void;
+    isLoading?: boolean;
 }
 
 function canEdit(status: Schematic.Schematic.ProjectStatus): boolean {
@@ -43,12 +44,80 @@ export function ProjectsTable({
     currentUserId,
     onEdit,
     onDelete,
+    isLoading,
 }: ProjectsTableProps) {
     const [currentPage, setCurrentPage] = React.useState(1);
     const pageSize = 10;
 
     const totalPages = Math.ceil(projects.length / pageSize);
     const paginated = projects.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+    if (isLoading) {
+        return (
+            <Shadcn.Card>
+                <Shadcn.CardHeader>
+                    <Shadcn.Skeleton className="h-6 w-20" />
+                    <Shadcn.Skeleton className="h-4 w-48" />
+                </Shadcn.CardHeader>
+                <Shadcn.CardContent>
+                    <Shadcn.Table>
+                        <Shadcn.TableHeader>
+                            <Shadcn.TableRow>
+                                <Shadcn.TableHead>
+                                    <Shadcn.Skeleton className="h-4 w-16" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead>
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="text-center">
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="text-center">
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="text-center">
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead>
+                                    <Shadcn.Skeleton className="h-4 w-16" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="w-[60px]">
+                                    <Shadcn.Skeleton className="h-4 w-4" />
+                                </Shadcn.TableHead>
+                            </Shadcn.TableRow>
+                        </Shadcn.TableHeader>
+                        <Shadcn.TableBody>
+                            {Array.from({ length: 5 }).map((_, i) => (
+                                <Shadcn.TableRow key={i}>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="h-4 w-full" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="h-4 w-16" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell className="text-center">
+                                        <Shadcn.Skeleton className="h-4 w-12" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell className="text-center">
+                                        <Shadcn.Skeleton className="h-4 w-12" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell className="text-center">
+                                        <Shadcn.Skeleton className="h-4 w-12" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="h-4 w-20" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="size-8 rounded-md" />
+                                    </Shadcn.TableCell>
+                                </Shadcn.TableRow>
+                            ))}
+                        </Shadcn.TableBody>
+                    </Shadcn.Table>
+                </Shadcn.CardContent>
+            </Shadcn.Card>
+        );
+    }
 
     if (projects.length === 0) {
         return (
