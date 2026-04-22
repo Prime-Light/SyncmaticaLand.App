@@ -2,7 +2,7 @@
 
 import { RefreshCwIcon, Stone } from "lucide-react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { cn } from "@/lib/utils";
 
 export type OtpFormProps = React.ComponentProps<"div"> & {

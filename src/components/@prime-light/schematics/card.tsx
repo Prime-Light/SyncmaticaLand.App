@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, Eye, Download } from "lucide-react";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { Schematic } from "@/schema";
 
 export type SchematicCardProps = Schematic.Schematic.Schematic;
@@ -23,7 +23,8 @@ export function SchematicCard({
     viewed,
 }: SchematicCardProps) {
     const previewImage = images?.[0];
-    const authorName = typeof author_name === "string" && author_name.trim() ? author_name.trim() : "未知作者";
+    const authorName =
+        typeof author_name === "string" && author_name.trim() ? author_name.trim() : "未知作者";
     const authorInitial = authorName.charAt(0).toUpperCase();
 
     return (

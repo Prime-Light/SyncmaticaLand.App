@@ -1,27 +1,76 @@
 import Link from "next/link";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { EyeIcon, ThumbsUpIcon, StarIcon, ExternalLinkIcon } from "lucide-react";
 import { Schematic } from "@/schema";
+import { STATUS_LABELS, STATUS_VARIANTS } from "./shared";
 
 export interface RecentProjectsProps {
     projects: Schematic.Schematic.Schematic[];
+    isLoading?: boolean;
 }
 
-const statusLabels: Record<Schematic.Schematic.ProjectStatus, string> = {
-    draft: "草稿",
-    published: "已发布",
-    under_review: "审核中",
-    rejected: "已拒绝",
-};
+export function RecentProjects({ projects, isLoading }: RecentProjectsProps) {
+    if (isLoading) {
+        return (
+            <Shadcn.Card>
+                <Shadcn.CardHeader>
+                    <Shadcn.Skeleton className="h-6 w-20" />
+                    <Shadcn.Skeleton className="h-4 w-48" />
+                </Shadcn.CardHeader>
+                <Shadcn.CardContent>
+                    <Shadcn.Table>
+                        <Shadcn.TableHeader>
+                            <Shadcn.TableRow>
+                                <Shadcn.TableHead>
+                                    <Shadcn.Skeleton className="h-4 w-16" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead>
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="text-center">
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="text-center">
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="text-center">
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="w-[50px]">
+                                    <Shadcn.Skeleton className="h-4 w-4" />
+                                </Shadcn.TableHead>
+                            </Shadcn.TableRow>
+                        </Shadcn.TableHeader>
+                        <Shadcn.TableBody>
+                            {Array.from({ length: 5 }).map((_, i) => (
+                                <Shadcn.TableRow key={i}>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="h-4 w-full" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="h-4 w-16" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell className="text-center">
+                                        <Shadcn.Skeleton className="h-4 w-12" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell className="text-center">
+                                        <Shadcn.Skeleton className="h-4 w-12" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell className="text-center">
+                                        <Shadcn.Skeleton className="h-4 w-12" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="size-8 rounded-md" />
+                                    </Shadcn.TableCell>
+                                </Shadcn.TableRow>
+                            ))}
+                        </Shadcn.TableBody>
+                    </Shadcn.Table>
+                </Shadcn.CardContent>
+            </Shadcn.Card>
+        );
+    }
 
-const statusColors: Record<Schematic.Schematic.ProjectStatus, string> = {
-    draft: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
-    published: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-    under_review: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-    rejected: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-};
-
-export function RecentProjects({ projects }: RecentProjectsProps) {
     if (projects.length === 0) {
         return (
             <Shadcn.Card>
@@ -65,10 +114,9 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
                                     </Link>
                                 </Shadcn.TableCell>
                                 <Shadcn.TableCell>
-                                    <span
-                                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColors[project.status]}`}>
-                                        {statusLabels[project.status]}
-                                    </span>
+                                    <Shadcn.Badge variant={STATUS_VARIANTS[project.status]}>
+                                        {STATUS_LABELS[project.status]}
+                                    </Shadcn.Badge>
                                 </Shadcn.TableCell>
                                 <Shadcn.TableCell className="text-center">
                                     <span className="inline-flex items-center gap-1">

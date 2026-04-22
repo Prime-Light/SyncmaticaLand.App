@@ -105,7 +105,7 @@ export default async function AuditPage({
     return (
         <>
             <Prime.SiteHeader
-                breadcrumbs={[{ label: "管理后台", href: "/admin" }, { label: "项目审核" }]}
+                breadcrumbs={[{ label: "管理后台", href: "/admin" }, { label: "项目管理" }]}
             />
             <div className="flex flex-1 flex-col gap-4 p-4">
                 <AuditPageClient

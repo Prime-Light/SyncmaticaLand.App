@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import {
     CheckCircleIcon,
     XCircleIcon,
@@ -13,41 +13,7 @@ import {
 import { toast } from "sonner";
 import { useUpdateSchematic } from "@/hooks";
 import { Schematic } from "@/schema";
-
-const statusLabels: Record<Schematic.Schematic.ProjectStatus, string> = {
-    draft: "草稿",
-    published: "已发布",
-    under_review: "审核中",
-    rejected: "已拒绝",
-};
-
-const statusVariants: Record<
-    Schematic.Schematic.ProjectStatus,
-    "secondary" | "default" | "outline" | "destructive"
-> = {
-    draft: "secondary",
-    published: "default",
-    under_review: "outline",
-    rejected: "destructive",
-};
-
-const formatLabels: Record<Schematic.Schematic.ProjectFormat, string> = {
-    litematic: "Litematic",
-    schem: "Schematic",
-    nbt: "NBT",
-    bp: "Bedrock Pack",
-};
-
-function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("zh-CN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-    });
-}
+import { STATUS_LABELS, STATUS_VARIANTS, FORMAT_LABELS, formatDate } from "./shared";
 
 export interface AuditDetailDialogProps {
     project: (Schematic.Schematic.Schematic & { author_name: string }) | null;
@@ -67,11 +33,9 @@ export function AuditDetailDialog({
 
     const handleStatusUpdate = async (newStatus: "published" | "rejected") => {
         if (!project) return;
-
         setIsSubmitting(true);
         try {
             const result = await updateSchematic({ status: newStatus });
-
             if (result) {
                 toast.success(newStatus === "published" ? "项目已批准发布" : "项目已拒绝");
                 onOpenChange(false);
@@ -80,15 +44,13 @@ export function AuditDetailDialog({
                 toast.error("操作失败，请重试");
             }
         } catch (err) {
-            const message = err instanceof Error ? err.message : "操作失败，请重试";
-            toast.error(message);
+            toast.error(err instanceof Error ? err.message : "操作失败，请重试");
         } finally {
             setIsSubmitting(false);
         }
     };
 
     if (!project) return null;
-
     const isUnderReview = project.status === "under_review";
 
     return (
@@ -113,11 +75,11 @@ export function AuditDetailDialog({
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <Shadcn.Badge variant={statusVariants[project.status]}>
-                                {statusLabels[project.status]}
+                            <Shadcn.Badge variant={STATUS_VARIANTS[project.status]}>
+                                {STATUS_LABELS[project.status]}
                             </Shadcn.Badge>
                             <Shadcn.Badge variant="secondary">
-                                {formatLabels[project.format]}
+                                {FORMAT_LABELS[project.format]}
                             </Shadcn.Badge>
                             <Shadcn.Badge variant="outline">
                                 MC {project.mc_version}
@@ -161,7 +123,7 @@ export function AuditDetailDialog({
                             </div>
                         )}
 
-                        {project.images && project.images.length > 0 && (
+                        {project.images && project.images.length > 0 ? (
                             <div>
                                 <h4 className="mb-2 text-sm font-medium">预览图片</h4>
                                 <div className="grid grid-cols-2 gap-3">
@@ -179,9 +141,7 @@ export function AuditDetailDialog({
                                     ))}
                                 </div>
                             </div>
-                        )}
-
-                        {(!project.images || project.images.length === 0) && (
+                        ) : (
                             <div className="flex flex-col items-center justify-center gap-2 py-8 text-muted-foreground">
                                 <ImageIcon className="h-8 w-8" />
                                 <p className="text-sm">暂无预览图片</p>
@@ -189,8 +149,8 @@ export function AuditDetailDialog({
                         )}
 
                         <div className="space-y-1 text-sm text-muted-foreground">
-                            <p>创建时间: {formatDate(project.created_at)}</p>
-                            <p>更新时间: {formatDate(project.updated_at)}</p>
+                            <p>创建时间: {formatDate(project.created_at, true)}</p>
+                            <p>更新时间: {formatDate(project.updated_at, true)}</p>
                         </div>
                     </div>
 

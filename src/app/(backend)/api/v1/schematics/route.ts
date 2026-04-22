@@ -140,8 +140,6 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
         data: { user },
     } = await supabase.auth.getUser();
 
-    const listDb = supabase;
-
     const status = searchParams.get("status") as Schematic.Schematic.ProjectStatus | null;
     const categoryId = searchParams.get("category_id");
     const authorId = searchParams.get("author_id");
@@ -187,7 +185,12 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
         }
     }
 
-    queryStatus = queryStatus ?? "published";
+    // 查看自己的项目时，允许获取所有状态
+    if (user && authorId === user.id && !status) {
+        queryStatus = null;
+    } else {
+        queryStatus = queryStatus ?? "published";
+    }
 
     const rpcQuery = {
         p_status: queryStatus,
@@ -197,7 +200,7 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
         p_offset: offset,
     };
 
-    const { data, error } = await listDb.rpc("rpc__schematics_with_categories", rpcQuery);
+    const { data, error } = await supabaseServerAdmin.rpc("rpc__schematics_with_categories", rpcQuery);
 
     if (error) {
         BackendApiRouteLogger.error("Failed to fetch schematics", { error });
@@ -211,7 +214,7 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
     let result = normalizeRpcSchematicsResult(data);
     if (result.total === 0) {
         try {
-            result = await fetchSchematicsByTableFallback(listDb, {
+            result = await fetchSchematicsByTableFallback(supabaseServerAdmin, {
                 status: queryStatus,
                 categoryId,
                 authorId,
@@ -238,10 +241,13 @@ export async function GET(request: Request): Promise<NextResponse<SchematicListR
             .in("user_id", authorIds);
 
         if (authorError) {
-            BackendApiRouteLogger.warn("Failed to fetch schematic author names", { error: authorError });
+            BackendApiRouteLogger.warn("Failed to fetch schematic author names", {
+                error: authorError,
+            });
         } else {
             for (const row of authorRows ?? []) {
-                const name = typeof row.display_name === "string" ? row.display_name.trim() : "";
+                const name =
+                    typeof row.display_name === "string" ? row.display_name.trim() : "";
                 if (name.length > 0) {
                     authorNameMap.set(row.user_id, name);
                 }

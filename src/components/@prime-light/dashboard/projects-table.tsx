@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import {
     EyeIcon,
     ThumbsUpIcon,
@@ -12,54 +12,31 @@ import {
     Trash2Icon,
 } from "lucide-react";
 import { Schematic } from "@/schema";
+import { STATUS_LABELS, STATUS_VARIANTS, formatDate } from "./shared";
 
 export interface ProjectsTableProps {
     projects: Schematic.Schematic.Schematic[];
     currentUserId: string;
     onEdit: (project: Schematic.Schematic.Schematic) => void;
     onDelete: (project: Schematic.Schematic.Schematic) => void;
-}
-
-const statusLabels: Record<Schematic.Schematic.ProjectStatus, string> = {
-    draft: "草稿",
-    published: "已发布",
-    under_review: "审核中",
-    rejected: "已拒绝",
-};
-
-const statusVariants: Record<
-    Schematic.Schematic.ProjectStatus,
-    "secondary" | "default" | "outline" | "destructive"
-> = {
-    draft: "secondary",
-    published: "default",
-    under_review: "outline",
-    rejected: "destructive",
-};
-
-function StatusBadge({ status }: { status: Schematic.Schematic.ProjectStatus }) {
-    return <Shadcn.Badge variant={statusVariants[status]}>{statusLabels[status]}</Shadcn.Badge>;
-}
-
-function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("zh-CN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
+    isLoading?: boolean;
 }
 
 function canEdit(status: Schematic.Schematic.ProjectStatus): boolean {
-    return status === "draft" || status === "under_review" || status === "rejected";
+    return (
+        status === "draft" ||
+        status === "under_review" ||
+        status === "rejected" ||
+        status === "published"
+    );
 }
 
 function canDelete(
-    status: Schematic.Schematic.ProjectStatus,
+    _status: Schematic.Schematic.ProjectStatus,
     authorId: string,
     currentUserId: string
 ): boolean {
-    return (status === "draft" || status === "rejected") && authorId === currentUserId;
+    return authorId === currentUserId;
 }
 
 export function ProjectsTable({
@@ -67,14 +44,80 @@ export function ProjectsTable({
     currentUserId,
     onEdit,
     onDelete,
+    isLoading,
 }: ProjectsTableProps) {
     const [currentPage, setCurrentPage] = React.useState(1);
     const pageSize = 10;
 
     const totalPages = Math.ceil(projects.length / pageSize);
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const paginatedProjects = projects.slice(startIndex, endIndex);
+    const paginated = projects.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+    if (isLoading) {
+        return (
+            <Shadcn.Card>
+                <Shadcn.CardHeader>
+                    <Shadcn.Skeleton className="h-6 w-20" />
+                    <Shadcn.Skeleton className="h-4 w-48" />
+                </Shadcn.CardHeader>
+                <Shadcn.CardContent>
+                    <Shadcn.Table>
+                        <Shadcn.TableHeader>
+                            <Shadcn.TableRow>
+                                <Shadcn.TableHead>
+                                    <Shadcn.Skeleton className="h-4 w-16" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead>
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="text-center">
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="text-center">
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="text-center">
+                                    <Shadcn.Skeleton className="h-4 w-12" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead>
+                                    <Shadcn.Skeleton className="h-4 w-16" />
+                                </Shadcn.TableHead>
+                                <Shadcn.TableHead className="w-[60px]">
+                                    <Shadcn.Skeleton className="h-4 w-4" />
+                                </Shadcn.TableHead>
+                            </Shadcn.TableRow>
+                        </Shadcn.TableHeader>
+                        <Shadcn.TableBody>
+                            {Array.from({ length: 5 }).map((_, i) => (
+                                <Shadcn.TableRow key={i}>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="h-4 w-full" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="h-4 w-16" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell className="text-center">
+                                        <Shadcn.Skeleton className="h-4 w-12" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell className="text-center">
+                                        <Shadcn.Skeleton className="h-4 w-12" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell className="text-center">
+                                        <Shadcn.Skeleton className="h-4 w-12" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="h-4 w-20" />
+                                    </Shadcn.TableCell>
+                                    <Shadcn.TableCell>
+                                        <Shadcn.Skeleton className="size-8 rounded-md" />
+                                    </Shadcn.TableCell>
+                                </Shadcn.TableRow>
+                            ))}
+                        </Shadcn.TableBody>
+                    </Shadcn.Table>
+                </Shadcn.CardContent>
+            </Shadcn.Card>
+        );
+    }
 
     if (projects.length === 0) {
         return (
@@ -110,14 +153,13 @@ export function ProjectsTable({
                         </Shadcn.TableRow>
                     </Shadcn.TableHeader>
                     <Shadcn.TableBody>
-                        {paginatedProjects.map((project) => {
+                        {paginated.map((project) => {
                             const editable = canEdit(project.status);
                             const deletable = canDelete(
                                 project.status,
                                 project.author_id,
                                 currentUserId
                             );
-
                             return (
                                 <Shadcn.TableRow key={project.id}>
                                     <Shadcn.TableCell className="font-medium">
@@ -128,7 +170,9 @@ export function ProjectsTable({
                                         </Link>
                                     </Shadcn.TableCell>
                                     <Shadcn.TableCell>
-                                        <StatusBadge status={project.status} />
+                                        <Shadcn.Badge variant={STATUS_VARIANTS[project.status]}>
+                                            {STATUS_LABELS[project.status]}
+                                        </Shadcn.Badge>
                                     </Shadcn.TableCell>
                                     <Shadcn.TableCell className="text-center">
                                         <span className="inline-flex items-center gap-1">
@@ -160,21 +204,25 @@ export function ProjectsTable({
                                                 </Shadcn.Button>
                                             </Shadcn.DropdownMenuTrigger>
                                             <Shadcn.DropdownMenuContent align="end">
-                                                <Shadcn.DropdownMenuItem
-                                                    disabled={!editable}
-                                                    onClick={() => editable && onEdit(project)}>
-                                                    <PencilIcon />
-                                                    编辑
-                                                </Shadcn.DropdownMenuItem>
-                                                <Shadcn.DropdownMenuItem
-                                                    variant="destructive"
-                                                    disabled={!deletable}
-                                                    onClick={() =>
-                                                        deletable && onDelete(project)
-                                                    }>
-                                                    <Trash2Icon />
-                                                    删除
-                                                </Shadcn.DropdownMenuItem>
+                                                <Shadcn.DropdownMenuGroup>
+                                                    <Shadcn.DropdownMenuItem
+                                                        disabled={!editable}
+                                                        onClick={() =>
+                                                            editable && onEdit(project)
+                                                        }>
+                                                        <PencilIcon />
+                                                        编辑
+                                                    </Shadcn.DropdownMenuItem>
+                                                    <Shadcn.DropdownMenuItem
+                                                        variant="destructive"
+                                                        disabled={!deletable}
+                                                        onClick={() =>
+                                                            deletable && onDelete(project)
+                                                        }>
+                                                        <Trash2Icon />
+                                                        删除
+                                                    </Shadcn.DropdownMenuItem>
+                                                </Shadcn.DropdownMenuGroup>
                                             </Shadcn.DropdownMenuContent>
                                         </Shadcn.DropdownMenu>
                                     </Shadcn.TableCell>

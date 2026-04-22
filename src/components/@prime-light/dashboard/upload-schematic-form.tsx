@@ -2,75 +2,22 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { UploadIcon, FileIcon, XIcon, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
-import { useCreateSchematic } from "@/hooks";
+import { useCreateSchematic, useCategories } from "@/hooks";
 import { Schematic, WrapSchema } from "@/schema";
 import { useCallback } from "react";
-
-const MC_VERSIONS: Record<string, string[]> = {
-    "1.21.x": [
-        "1.21",
-        "1.21.1",
-        "1.21.2",
-        "1.21.3",
-        "1.21.4",
-        "1.21.5",
-        "1.21.6",
-        "1.21.7",
-        "1.21.8",
-        "1.21.9",
-        "1.21.10",
-        "1.21.11",
-        "1.21.12",
-        "1.21.13",
-        "1.21.14",
-        "1.21.15",
-        "1.21.16",
-        "1.21.17",
-        "1.21.18",
-        "1.21.19",
-        "1.21.20",
-    ],
-    "1.20.x": ["1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6"],
-    "1.19.x": ["1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4"],
-    "1.18.x": ["1.18", "1.18.1", "1.18.2"],
-    "1.17.x": ["1.17", "1.17.1"],
-    "1.16.x": ["1.16", "1.16.1", "1.16.2", "1.16.3", "1.16.4", "1.16.5"],
-    "1.15.x": ["1.15", "1.15.1", "1.15.2"],
-    "1.14.x": ["1.14", "1.14.1", "1.14.2", "1.14.3", "1.14.4"],
-    "1.13.x": ["1.13", "1.13.1", "1.13.2"],
-    "1.12.x": ["1.12", "1.12.1", "1.12.2"],
-    "1.8.x": [
-        "1.8",
-        "1.8.1",
-        "1.8.2",
-        "1.8.3",
-        "1.8.4",
-        "1.8.5",
-        "1.8.6",
-        "1.8.7",
-        "1.8.8",
-        "1.8.9",
-    ],
-};
-
-const CATEGORIES = [
-    { value: "building", label: "建筑" },
-    { value: "redstone", label: "红石" },
-    { value: "decoration", label: "装饰" },
-    { value: "farm", label: "农场" },
-    { value: "modern", label: "现代" },
-    { value: "medieval", label: "中世纪" },
-    { value: "fantasy", label: "幻想" },
-    { value: "other", label: "其他" },
-] as const;
+import {
+    MC_VERSIONS,
+    MAX_IMAGE_SIZE,
+    ACCEPTED_IMAGE_TYPES,
+    formatFileSize,
+    uploadImages,
+} from "./shared";
 
 const MAX_SCHEMATIC_SIZE = 10 * 1024 * 1024;
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_SCHEMATIC_TYPES = [".schematic", ".schem", ".litematic", ".nbt"];
-const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
 const FORMAT_MAP: Record<string, Schematic.Schematic.ProjectFormat> = {
     ".litematic": "litematic",
@@ -79,56 +26,26 @@ const FORMAT_MAP: Record<string, Schematic.Schematic.ProjectFormat> = {
     ".nbt": "nbt",
 };
 
-function formatFileSize(bytes: number): string {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 async function uploadSchematicFile(file: File): Promise<string> {
     const formData = new FormData();
     formData.append("file", file);
-
-    const res = await fetch("/api/v1/schematics/upload", {
-        method: "POST",
-        body: formData,
-    });
-
+    const res = await fetch("/api/v1/schematics/upload", { method: "POST", body: formData });
     if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         throw new Error(errorData?.error?.message || `上传失败: ${res.status}`);
     }
-
     const result = (await res.json()) as WrapSchema<Schematic.Upload.UploadRes>;
     return result.data.file_url;
-}
-
-async function uploadImages(files: File[]): Promise<string[]> {
-    if (files.length === 0) return [];
-
-    const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
-
-    const res = await fetch("/api/v1/schematics/upload/images", {
-        method: "POST",
-        body: formData,
-    });
-
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData?.error?.message || `图片上传失败: ${res.status}`);
-    }
-
-    const result = (await res.json()) as WrapSchema<Schematic.Upload.MultiUploadRes>;
-    return result.data.files.map((f) => f.file_url);
 }
 
 export function UploadSchematicForm() {
     const router = useRouter();
     const { createSchematic, isLoading: isCreating } = useCreateSchematic();
+    const { categories: categoriesData, isLoading: isCategoriesLoading } = useCategories();
+
     const [title, setTitle] = React.useState("");
     const [description, setDescription] = React.useState("");
-    const [category, setCategory] = React.useState("");
+    const [categoryId, setCategoryId] = React.useState("");
     const [tags, setTags] = React.useState<string[]>([]);
     const [tagInput, setTagInput] = React.useState("");
     const [schematicFile, setSchematicFile] = React.useState<File | null>(null);
@@ -153,7 +70,6 @@ export function UploadSchematicForm() {
         };
     }, []);
 
-    // ── Schematic file handlers ──
     function validateSchematicFile(file: File): string | null {
         const ext = "." + file.name.split(".").pop()?.toLowerCase();
         if (!ACCEPTED_SCHEMATIC_TYPES.includes(ext)) {
@@ -195,7 +111,6 @@ export function UploadSchematicForm() {
         [handleSchematicValidation]
     );
 
-    // ── Preview image handlers ──
     function filterImagesWithFeedback(files: File[]): File[] {
         const valid: File[] = [];
         for (const f of files) {
@@ -254,7 +169,7 @@ export function UploadSchematicForm() {
         !!schematicFile &&
         title.trim().length > 0 &&
         description.trim().length > 0 &&
-        !!category &&
+        !!categoryId &&
         !!mcMinorVersion &&
         tags.length > 0 &&
         agreedToTerms;
@@ -291,6 +206,7 @@ export function UploadSchematicForm() {
                 tags,
                 file_url: fileUrl,
                 images: imageUrls,
+                category_ids: categoryId ? [categoryId] : [],
             });
 
             if (result) {
@@ -300,8 +216,7 @@ export function UploadSchematicForm() {
                 toast.error("创建原理图记录失败");
             }
         } catch (err) {
-            const message = err instanceof Error ? err.message : "上传失败，请重试";
-            toast.error(message);
+            toast.error(err instanceof Error ? err.message : "上传失败，请重试");
         } finally {
             setIsSubmitting(false);
         }
@@ -320,13 +235,11 @@ export function UploadSchematicForm() {
 
             <Shadcn.Separator />
 
-            {/* ── Schematic file upload ── */}
+            {/* Schematic file upload */}
             <Shadcn.Card>
                 <Shadcn.CardHeader>
                     <Shadcn.CardTitle>
-                        <span>
-                            原理图文件<span className="text-destructive">*</span>
-                        </span>
+                        原理图文件<span className="text-destructive">*</span>
                     </Shadcn.CardTitle>
                     <Shadcn.CardDescription>
                         支持 .schematic, .schem, .litematic, .nbt 格式，最大 10MB
@@ -334,7 +247,7 @@ export function UploadSchematicForm() {
                 </Shadcn.CardHeader>
                 <Shadcn.CardContent>
                     {schematicFile ? (
-                        <div className="flex items-center gap-3 border border-border bg-muted/50 p-4">
+                        <div className="flex items-center gap-3 rounded-md border border-border bg-muted/50 p-4">
                             <FileIcon className="text-primary" />
                             <div className="flex flex-1 flex-col gap-0.5">
                                 <span className="text-base font-medium">
@@ -361,7 +274,6 @@ export function UploadSchematicForm() {
                         <div
                             role="button"
                             tabIndex={0}
-                            // aria-invalid={!!schematicError}
                             aria-describedby={
                                 schematicError ? "schematic-file-error" : undefined
                             }
@@ -378,7 +290,7 @@ export function UploadSchematicForm() {
                                     schematicInputRef.current?.click();
                                 }
                             }}
-                            className={`flex cursor-pointer flex-col items-center gap-3 border-2 border-dashed p-8 transition-colors ${
+                            className={`flex cursor-pointer flex-col items-center gap-3 rounded-md border-2 border-dashed p-8 transition-colors ${
                                 schematicError
                                     ? "border-destructive bg-destructive/5"
                                     : isDraggingSchematic
@@ -416,7 +328,7 @@ export function UploadSchematicForm() {
                 </Shadcn.CardContent>
             </Shadcn.Card>
 
-            {/* ── Basic info ── */}
+            {/* Basic info */}
             <Shadcn.Card>
                 <Shadcn.CardHeader>
                     <Shadcn.CardTitle>基本信息</Shadcn.CardTitle>
@@ -428,9 +340,7 @@ export function UploadSchematicForm() {
                     <Shadcn.FieldGroup>
                         <Shadcn.Field>
                             <Shadcn.FieldLabel htmlFor="title">
-                                <span>
-                                    标题<span className="text-destructive">*</span>
-                                </span>
+                                标题<span className="text-destructive">*</span>
                             </Shadcn.FieldLabel>
                             <Shadcn.Input
                                 id="title"
@@ -445,9 +355,7 @@ export function UploadSchematicForm() {
 
                         <Shadcn.Field>
                             <Shadcn.FieldLabel htmlFor="description">
-                                <span>
-                                    描述<span className="text-destructive">*</span>
-                                </span>
+                                描述<span className="text-destructive">*</span>
                             </Shadcn.FieldLabel>
                             <Shadcn.Textarea
                                 id="description"
@@ -463,21 +371,24 @@ export function UploadSchematicForm() {
 
                         <Shadcn.Field>
                             <Shadcn.FieldLabel htmlFor="category">
-                                <span>
-                                    分类<span className="text-destructive">*</span>
-                                </span>
+                                分类<span className="text-destructive">*</span>
                             </Shadcn.FieldLabel>
-                            <Shadcn.Select value={category} onValueChange={setCategory}>
+                            <Shadcn.Select
+                                value={categoryId}
+                                onValueChange={setCategoryId}
+                                disabled={isCategoriesLoading}>
                                 <Shadcn.SelectTrigger id="category">
-                                    <Shadcn.SelectValue placeholder="选择分类" />
+                                    <Shadcn.SelectValue
+                                        placeholder={
+                                            isCategoriesLoading ? "加载分类中..." : "选择分类"
+                                        }
+                                    />
                                 </Shadcn.SelectTrigger>
                                 <Shadcn.SelectContent>
                                     <Shadcn.SelectGroup>
-                                        {CATEGORIES.map((cat) => (
-                                            <Shadcn.SelectItem
-                                                key={cat.value}
-                                                value={cat.value}>
-                                                {cat.label}
+                                        {(categoriesData?.categories ?? []).map((cat) => (
+                                            <Shadcn.SelectItem key={cat.id} value={cat.id}>
+                                                {cat.name}
                                             </Shadcn.SelectItem>
                                         ))}
                                     </Shadcn.SelectGroup>
@@ -487,10 +398,7 @@ export function UploadSchematicForm() {
 
                         <Shadcn.Field>
                             <Shadcn.FieldLabel>
-                                <span>
-                                    原理图 Minecraft 版本
-                                    <span className="text-destructive">*</span>
-                                </span>
+                                原理图 Minecraft 版本<span className="text-destructive">*</span>
                             </Shadcn.FieldLabel>
                             <div className="flex gap-3">
                                 <Shadcn.Select
@@ -541,11 +449,9 @@ export function UploadSchematicForm() {
 
                         <Shadcn.Field>
                             <Shadcn.FieldLabel htmlFor="tags">
-                                <span>
-                                    标签<span className="text-destructive">*</span>
-                                </span>
+                                标签<span className="text-destructive">*</span>
                             </Shadcn.FieldLabel>
-                            <div className="flex flex-wrap items-center gap-1.5 border border-input bg-transparent px-2.5 py-2 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/50">
+                            <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-input bg-transparent px-2.5 py-2 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/50">
                                 {tags.map((tag) => (
                                     <Shadcn.Badge
                                         key={tag}
@@ -574,9 +480,8 @@ export function UploadSchematicForm() {
                                         if (e.key === "Enter" && tagInput.trim()) {
                                             e.preventDefault();
                                             const value = tagInput.trim();
-                                            if (!tags.includes(value)) {
+                                            if (!tags.includes(value))
                                                 setTags((prev) => [...prev, value]);
-                                            }
                                             setTagInput("");
                                         }
                                         if (
@@ -598,15 +503,13 @@ export function UploadSchematicForm() {
                 </Shadcn.CardContent>
             </Shadcn.Card>
 
-            {/* ── Preview images ── */}
+            {/* Preview images */}
             <Shadcn.Card>
                 <Shadcn.CardHeader>
                     <Shadcn.CardTitle>
-                        <span>
-                            预览图片
-                            <span className="text-sm font-normal text-muted-foreground">
-                                （选填）
-                            </span>
+                        预览图片
+                        <span className="text-sm font-normal text-muted-foreground">
+                            （选填）
                         </span>
                     </Shadcn.CardTitle>
                     <Shadcn.CardDescription>
@@ -615,7 +518,6 @@ export function UploadSchematicForm() {
                 </Shadcn.CardHeader>
                 <Shadcn.CardContent>
                     <div className="flex flex-col gap-4">
-                        {/* Preview grid */}
                         {previewImages.length > 0 && (
                             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                                 {previewImages.map(({ file, url }, index) => (
@@ -644,7 +546,6 @@ export function UploadSchematicForm() {
                             </div>
                         )}
 
-                        {/* Upload zone */}
                         {previewImages.length < 5 && (
                             <div
                                 role="button"
@@ -662,7 +563,7 @@ export function UploadSchematicForm() {
                                         imageInputRef.current?.click();
                                     }
                                 }}
-                                className={`flex cursor-pointer flex-col items-center gap-3 border-2 border-dashed p-6 transition-colors ${
+                                className={`flex cursor-pointer flex-col items-center gap-3 rounded-md border-2 border-dashed p-6 transition-colors ${
                                     isDraggingImage
                                         ? "border-primary bg-primary/5"
                                         : "border-border hover:border-primary/50 hover:bg-muted/50"
@@ -686,17 +587,14 @@ export function UploadSchematicForm() {
                 </Shadcn.CardContent>
             </Shadcn.Card>
 
-            {/* ── Agreement ── */}
+            {/* Agreement */}
             <div className="flex items-center gap-3">
                 <Shadcn.Checkbox
                     id="agree-terms"
                     checked={agreedToTerms}
                     onCheckedChange={(checked) => {
-                        if (checked) {
-                            setSheetOpen(true);
-                        } else {
-                            setAgreedToTerms(false);
-                        }
+                        if (checked) setSheetOpen(true);
+                        else setAgreedToTerms(false);
                     }}
                 />
                 <Shadcn.Label htmlFor="agree-terms" className="cursor-pointer text-sm">
@@ -725,7 +623,6 @@ export function UploadSchematicForm() {
                                 <p className="text-muted-foreground">
                                     在上传原理图之前，请仔细阅读以下协议。上传即表示您已阅读、理解并同意受本协议约束。
                                 </p>
-
                                 <section className="space-y-1.5">
                                     <h3 className="text-sm font-semibold">一、定义</h3>
                                     <p>
@@ -739,7 +636,6 @@ export function UploadSchematicForm() {
                                     </p>
                                     <p>「用户」是指注册并使用本平台的任何个人或组织。</p>
                                 </section>
-
                                 <section className="space-y-1.5">
                                     <h3 className="text-sm font-semibold">二、上传资格</h3>
                                     <p>您须年满 16 周岁或在监护人同意下方可上传内容。</p>
@@ -747,7 +643,6 @@ export function UploadSchematicForm() {
                                         您须对上传的原理图文件及预览图片拥有合法的所有权或充分的授权。
                                     </p>
                                 </section>
-
                                 <section className="space-y-1.5">
                                     <h3 className="text-sm font-semibold">三、内容规范</h3>
                                     <p>
@@ -761,7 +656,6 @@ export function UploadSchematicForm() {
                                         <li>与 Minecraft 建筑完全无关的文件。</li>
                                     </ul>
                                 </section>
-
                                 <section className="space-y-1.5">
                                     <h3 className="text-sm font-semibold">四、知识产权授权</h3>
                                     <p>
@@ -771,7 +665,6 @@ export function UploadSchematicForm() {
                                         平台不会将您的原理图用于商业销售，但可在社区活动或推广中展示或引用。
                                     </p>
                                 </section>
-
                                 <section className="space-y-1.5">
                                     <h3 className="text-sm font-semibold">五、侵权投诉</h3>
                                     <p>
@@ -779,7 +672,6 @@ export function UploadSchematicForm() {
                                         7 个工作日内处理有效投诉。
                                     </p>
                                 </section>
-
                                 <section className="space-y-1.5">
                                     <h3 className="text-sm font-semibold">六、免责声明</h3>
                                     <p>
@@ -789,14 +681,12 @@ export function UploadSchematicForm() {
                                         用户因上传违规内容所引发的法律责任，由上传者本人独立承担，与本平台无关。
                                     </p>
                                 </section>
-
                                 <section className="space-y-1.5">
                                     <h3 className="text-sm font-semibold">七、协议修改</h3>
                                     <p>
                                         本平台保留随时修改本协议的权利。修改后的协议将在平台公告后生效。继续使用本平台即视为接受修改后的协议。
                                     </p>
                                 </section>
-
                                 <section className="space-y-1.5">
                                     <h3 className="text-sm font-semibold">八、联系我们</h3>
                                     <p>如有任何疑问，欢迎通过平台官方渠道与我们联系。</p>

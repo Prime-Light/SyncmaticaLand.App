@@ -1,47 +1,40 @@
-import { redirect } from "next/navigation";
-import { createSupabaseServerClient, supabaseServerAdmin } from "@/lib/database";
+"use client";
+
+import { useEffect } from "react";
 import { Prime } from "@/components";
 import { DashboardStats } from "@/components/@prime-light/dashboard/dashboard-stats";
 import { RecentProjects } from "@/components/@prime-light/dashboard/recent-projects";
-import { Schematic } from "@/schema";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useSchematics } from "@/hooks/use-schematics";
 
-export default async function DashboardPage() {
-    const supabase = await createSupabaseServerClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+export default function DashboardPage() {
+    const { user, loading: userLoading, refetch: refetchUser } = useCurrentUser();
+    const { schematics, isLoading: schematicsLoading, refetch: refetchSchematics } = useSchematics(
+        user?.user_id
+            ? { author_id: user.user_id, limit: 100, offset: 0 }
+            : { skip: true }
+    );
 
-    if (!user) {
-        redirect("/auth/login");
-    }
+    // 每次进入页面都重新获取数据
+    useEffect(() => {
+        refetchUser();
+        refetchSchematics();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    const { data, error } = await supabaseServerAdmin.rpc("rpc__schematics_with_categories", {
-        p_status: null,
-        p_category_id: null,
-        p_author_id: user.id,
-        p_limit: 100,
-        p_offset: 0,
-    });
+    const isLoading = userLoading || schematicsLoading;
+    const allProjects = schematics?.schematics ?? [];
 
-    if (error) {
-        console.error("Failed to fetch schematics:", error);
-    }
+    const totalProjects = allProjects.length;
+    const totalViews = allProjects.reduce((sum, s) => sum + (s.viewed ?? 0), 0);
+    const totalUpvotes = allProjects.reduce((sum, s) => sum + (s.upvotes ?? 0), 0);
+    const totalStars = allProjects.reduce((sum, s) => sum + (s.starred ?? 0), 0);
 
-    interface SchematicResult {
-        schematics: Schematic.Schematic.Schematic[];
-        total: number;
-    }
-
-    const result = data as SchematicResult | null;
-    const schematics = result?.schematics ?? [];
-
-    const totalProjects = schematics.length;
-    const totalViews = schematics.reduce((sum, s) => sum + (s.viewed ?? 0), 0);
-    const totalUpvotes = schematics.reduce((sum, s) => sum + (s.upvotes ?? 0), 0);
-    const totalStars = schematics.reduce((sum, s) => sum + (s.starred ?? 0), 0);
-
-    const recentProjects = [...schematics]
-        .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+    const recentProjects = [...allProjects]
+        .sort(
+            (a, b) =>
+                new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        )
         .slice(0, 5);
 
     return (
@@ -53,8 +46,9 @@ export default async function DashboardPage() {
                     totalViews={totalViews}
                     totalUpvotes={totalUpvotes}
                     totalStars={totalStars}
+                    isLoading={isLoading}
                 />
-                <RecentProjects projects={recentProjects} />
+                <RecentProjects projects={recentProjects} isLoading={isLoading} />
             </div>
         </>
     );

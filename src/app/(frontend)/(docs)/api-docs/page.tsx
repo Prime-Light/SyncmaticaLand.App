@@ -4,7 +4,7 @@ import { ApiReferenceReact } from "@scalar/api-reference-react";
 import "@scalar/api-reference-react/style.css";
 import "./ui.css";
 import { useCallback, useEffect, useRef } from "react";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import { createRoot } from "react-dom/client";

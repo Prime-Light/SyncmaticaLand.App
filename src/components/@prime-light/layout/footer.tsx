@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { cn } from "@/lib/utils";
 
 export function Footer({ className }: { className?: string }) {

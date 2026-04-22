@@ -15,11 +15,16 @@ import {
     AlertCircle,
     Share2,
     Check,
+    PencilIcon,
+    Trash2Icon,
 } from "lucide-react";
-import { Shadcn, Prime } from "@/components";
-import { useSchematic, useEngagement } from "@/hooks";
+import * as Shadcn from "@/components/@shadcn-ui";
+import * as Prime from "@/components/@prime-light";
+import { useSchematic, useEngagement, useCurrentUser, useDeleteSchematic } from "@/hooks";
+import { EditProjectDialog } from "@/components/@prime-light/dashboard/edit-project-dialog";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type SchematicDetailClientProps = {
     id: string;
@@ -156,7 +161,7 @@ type ActionButtonsProps =
     | { skeleton: true }
     | {
           skeleton?: false;
-          fileUrl: string;
+          schematicId: string;
           upvoted: boolean;
           upvoteLoading: boolean;
           starred: boolean;
@@ -182,11 +187,7 @@ function ActionButtons(props: ActionButtonsProps) {
                 </>
             ) : (
                 <>
-                    <Shadcn.Button
-                        size="lg"
-                        className="w-full"
-                        onClick={props.onDownload}
-                        disabled={!props.fileUrl}>
+                    <Shadcn.Button size="lg" className="w-full" onClick={props.onDownload}>
                         <Download data-icon="inline-start" />
                         下载原理图
                     </Shadcn.Button>
@@ -324,8 +325,11 @@ function PageShell({
 }
 
 export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
+    const router = useRouter();
+    const { user } = useCurrentUser();
     const { schematic: res, isLoading, error, refetch } = useSchematic(id);
     const { upvote, unupvote, star, unstar } = useEngagement();
+    const { deleteSchematic, isLoading: isDeleting } = useDeleteSchematic(id);
 
     const [upvoted, setUpvoted] = useState(false);
     const [starred, setStarred] = useState(false);
@@ -334,6 +338,8 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
     const [upvoteLoading, setUpvoteLoading] = useState(false);
     const [starLoading, setStarLoading] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
     useEffect(() => {
         const fetchUserActions = async () => {
@@ -419,9 +425,23 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
     }, []);
 
     const handleDownload = useCallback(() => {
-        if (!res?.schematic?.file_url) return;
-        window.open(res.schematic.file_url, "_blank", "noopener,noreferrer");
-    }, [res]);
+        window.open(`/api/v1/schematics/${id}/download`, "_blank", "noopener,noreferrer");
+    }, [id]);
+
+    const handleDeleteConfirm = useCallback(async () => {
+        try {
+            const success = await deleteSchematic();
+            if (success) {
+                toast.success("项目已删除");
+                setIsDeleteOpen(false);
+                router.push("/dashboard/projects");
+            } else {
+                toast.error("删除失败，请重试");
+            }
+        } catch {
+            toast.error("删除失败，请重试");
+        }
+    }, [deleteSchematic, router]);
 
     if (isLoading) {
         return (
@@ -505,7 +525,7 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                     <Shadcn.Separator />
 
                     <ActionButtons
-                        fileUrl={schematicData.file_url}
+                        schematicId={schematicData.id}
                         upvoted={upvoted}
                         upvoteLoading={upvoteLoading}
                         starred={starred}
@@ -524,6 +544,87 @@ export function SchematicDetailClient({ id }: SchematicDetailClientProps) {
                         mcVersion={schematicData.mc_version}
                         createdAt={schematicData.created_at}
                     />
+
+                    {user?.user_id === schematicData.author_id && (
+                        <>
+                            <Shadcn.Separator />
+                            <div className="flex flex-col gap-2">
+                                <p className="text-sm font-medium">作者操作</p>
+                                <div className="flex gap-2">
+                                    {(schematicData.status === "draft" ||
+                                        schematicData.status === "under_review" ||
+                                        schematicData.status === "rejected") && (
+                                        <Shadcn.Button
+                                            variant="outline"
+                                            className="flex-1"
+                                            onClick={() => setIsEditOpen(true)}>
+                                            <PencilIcon className="size-4" />
+                                            编辑
+                                        </Shadcn.Button>
+                                    )}
+                                    {(schematicData.status === "draft" ||
+                                        schematicData.status === "rejected") && (
+                                        <Shadcn.Button
+                                            variant="destructive"
+                                            className="flex-1"
+                                            onClick={() => setIsDeleteOpen(true)}
+                                            disabled={isDeleting}>
+                                            <Trash2Icon className="size-4" />
+                                            {isDeleting ? "删除中..." : "删除"}
+                                        </Shadcn.Button>
+                                    )}
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    <EditProjectDialog
+                        project={schematicData}
+                        open={isEditOpen}
+                        onOpenChange={setIsEditOpen}
+                        onSuccess={() => {
+                            refetch();
+                        }}
+                    />
+
+                    <Shadcn.Sheet open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+                        <Shadcn.SheetContent side="right" className="w-full sm:max-w-sm">
+                            <Shadcn.SheetHeader className="pb-2">
+                                <Shadcn.SheetTitle className="text-base font-semibold">
+                                    确认删除
+                                </Shadcn.SheetTitle>
+                                <Shadcn.SheetDescription>
+                                    此操作无法撤销
+                                </Shadcn.SheetDescription>
+                            </Shadcn.SheetHeader>
+
+                            <div className="flex flex-col gap-4 p-4">
+                                <p className="text-sm text-muted-foreground">
+                                    确定要删除项目{" "}
+                                    <span className="font-medium text-foreground">
+                                        &ldquo;{schematicData.name}&rdquo;
+                                    </span>{" "}
+                                    吗？删除后将无法恢复。
+                                </p>
+
+                                <div className="flex items-center justify-end gap-3">
+                                    <Shadcn.Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setIsDeleteOpen(false)}>
+                                        取消
+                                    </Shadcn.Button>
+                                    <Shadcn.Button
+                                        type="button"
+                                        variant="destructive"
+                                        disabled={isDeleting}
+                                        onClick={handleDeleteConfirm}>
+                                        {isDeleting ? "删除中..." : "确认删除"}
+                                    </Shadcn.Button>
+                                </div>
+                            </div>
+                        </Shadcn.SheetContent>
+                    </Shadcn.Sheet>
 
                     {categories && categories.length > 0 && (
                         <>

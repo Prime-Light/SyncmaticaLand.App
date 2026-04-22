@@ -1,4 +1,5 @@
-import { Prime } from "@/components";
+import { Footer } from "@/components/@prime-light/layout/footer";
+import { Navbar } from "@/components/@prime-light/layout/navbar";
 
 export default async function PrimaryLayout({
     children,
@@ -7,14 +8,9 @@ export default async function PrimaryLayout({
 }>) {
     return (
         <>
-            {/* 导航栏 */}
-            <Prime.Navbar initialUser={null} />
-
-            {/* 主内容  */}
+            <Navbar initialUser={null} />
             {children}
-
-            {/* 脚部 */}
-            <Prime.Footer />
+            <Footer />
         </>
     );
 }

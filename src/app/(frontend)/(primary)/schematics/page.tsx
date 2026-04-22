@@ -56,7 +56,6 @@ export default function SchematicsIndex() {
         setSearchQuery(e.target.value);
     }, []);
 
-    const isLoading = categoriesLoading || schematicsLoading;
     const hasMore = schematics ? page < schematics.total_pages : false;
 
     return (
@@ -76,7 +75,7 @@ export default function SchematicsIndex() {
             </section>
 
             <section>
-                <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6">
                     <div className="relative mb-6">
                         <Search className="absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground" />
                         <Shadcn.Input
@@ -108,7 +107,7 @@ export default function SchematicsIndex() {
                 </div>
             </section>
 
-            <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <section className="mx-auto max-w-7xl px-4 pt-0 pb-6 sm:px-6 sm:pb-7 lg:px-8 lg:pb-8">
                 {error && (
                     <div className="mb-6 flex flex-col items-center justify-center gap-4 py-12">
                         <AlertCircle className="size-12 text-destructive" />
@@ -119,13 +118,16 @@ export default function SchematicsIndex() {
                     </div>
                 )}
 
-                {!error && isLoading && page === 1 && (
-                    <div className="flex items-center justify-center py-12">
-                        <Loader2 className="size-8 animate-spin text-muted-foreground" />
-                    </div>
-                )}
+                {!error &&
+                    schematicsLoading &&
+                    page === 1 &&
+                    accumulatedSchematics.length === 0 && (
+                        <div className="flex items-center justify-center py-12">
+                            <Loader2 className="size-8 animate-spin text-muted-foreground" />
+                        </div>
+                    )}
 
-                {!error && !isLoading && filteredSchematics.length === 0 && (
+                {!error && !schematicsLoading && filteredSchematics.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-12">
                         <p className="text-lg text-muted-foreground">暂无原理图</p>
                     </div>

@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Shadcn } from "@/components";
+import * as Shadcn from "@/components/@shadcn-ui";
 import { CirclePlusIcon } from "lucide-react";
-import { SidebarGroup, SidebarGroupLabel } from "@/components/@shadcn-ui";
 import { CurrentUser } from "@/hooks/use-current-user";
 
 type UserRole = "user" | "creator" | "admin";
@@ -19,16 +18,9 @@ function hasRequiredRole(userRole: UserRole | undefined, requiredRole: UserRole)
     return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[requiredRole];
 }
 
-interface ButtonItem {
-    title: string;
-    url: string;
-    icon?: React.ReactNode;
-    requiredRole?: UserRole;
-}
-
 interface SectionItem {
     text: string;
-    items: ButtonItem[];
+    items: { title: string; url: string; icon?: React.ReactNode; requiredRole?: UserRole }[];
     requiredRole?: UserRole;
 }
 
@@ -40,11 +32,9 @@ export function NavMain({
     currentUser?: CurrentUser;
 }) {
     const userRole = currentUser?.role as UserRole | undefined;
-
-    const filteredItems = items.filter((sItem) => {
-        const sectionRole = sItem.requiredRole ?? "user";
-        return hasRequiredRole(userRole, sectionRole);
-    });
+    const filteredItems = items.filter((sItem) =>
+        hasRequiredRole(userRole, sItem.requiredRole ?? "user")
+    );
 
     return (
         <Shadcn.SidebarGroup>
@@ -64,8 +54,8 @@ export function NavMain({
                 </Shadcn.SidebarMenu>
                 {filteredItems.map((sItem) => (
                     <Shadcn.SidebarMenu key={sItem.text}>
-                        <SidebarGroup className="p-0">
-                            <SidebarGroupLabel>{sItem.text}</SidebarGroupLabel>
+                        <Shadcn.SidebarGroup className="p-0">
+                            <Shadcn.SidebarGroupLabel>{sItem.text}</Shadcn.SidebarGroupLabel>
                             {sItem.items
                                 .filter((item) =>
                                     hasRequiredRole(
@@ -83,7 +73,7 @@ export function NavMain({
                                         </Shadcn.SidebarMenuButton>
                                     </Shadcn.SidebarMenuItem>
                                 ))}
-                        </SidebarGroup>
+                        </Shadcn.SidebarGroup>
                     </Shadcn.SidebarMenu>
                 ))}
             </Shadcn.SidebarGroupContent>
