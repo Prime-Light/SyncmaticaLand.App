@@ -34,10 +34,13 @@ export function generateImagePath(
     fileName: string
 ): string {
     const timestamp = Date.now();
+    const ext = fileName.split(".").pop() || "png";
+    const random = Math.random().toString(36).substring(2, 10);
+    const safeFileName = `${timestamp}_${random}.${ext}`;
     if (schematicId) {
-        return `images/${userId}/${schematicId}/${timestamp}_${fileName}`;
+        return `images/${userId}/${schematicId}/${safeFileName}`;
     }
-    return `images/${userId}/temp/${timestamp}_${fileName}`;
+    return `images/${userId}/temp/${safeFileName}`;
 }
 
 export async function uploadSchematicFile(
