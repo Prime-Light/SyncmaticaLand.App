@@ -278,7 +278,7 @@ export function EditProjectDialog({
                 images: imageUrls,
                 file_url: fileUrl,
                 format,
-                status: "under_review",
+                status: project.status === "published" ? "under_review" : project.status,
                 category_ids: categoryId ? [categoryId] : [],
             });
 

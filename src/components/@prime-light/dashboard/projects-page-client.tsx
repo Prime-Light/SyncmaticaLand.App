@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useDeleteSchematic } from "@/hooks";
 import { Schematic } from "@/schema";
@@ -22,14 +21,15 @@ export interface ProjectsPageClientProps {
     projects: Schematic.Schematic.Schematic[];
     currentUserId: string;
     isLoading?: boolean;
+    onRefetch?: () => void;
 }
 
 export function ProjectsPageClient({
     projects: initialProjects,
     currentUserId,
     isLoading,
+    onRefetch,
 }: ProjectsPageClientProps) {
-    const router = useRouter();
     const [projects, setProjects] = React.useState(initialProjects);
 
     React.useEffect(() => {
@@ -75,8 +75,8 @@ export function ProjectsPageClient({
     }, [deletingProject, deleteSchematic]);
 
     const handleEditSuccess = React.useCallback(() => {
-        router.refresh();
-    }, [router]);
+        onRefetch?.();
+    }, [onRefetch]);
 
     return (
         <>

@@ -38,6 +38,7 @@ export default function ProjectsPage() {
                     projects={sortedSchematics}
                     currentUserId={user?.user_id ?? ""}
                     isLoading={isLoading}
+                    onRefetch={refetchSchematics}
                 />
             </div>
         </>
